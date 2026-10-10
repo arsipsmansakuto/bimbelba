@@ -52,6 +52,12 @@
 
       <!-- Header Action & Status Items -->
       <div class="flex items-center space-x-2 sm:space-x-3">
+        <!-- Tombol Tarik Data Cloud Cepat -->
+        <button id="btnPullCloudData" onclick="tarikDataDariGoogleSheets(false)" title="Tarik & Perbarui data dari Google Sheets (Cloud)" class="flex items-center space-x-1.5 bg-indigo-800/80 hover:bg-indigo-900 border border-indigo-500/30 text-white text-xs px-2.5 py-1.5 rounded-lg transition shadow-sm">
+          <i id="iconPullCloud" class="fa-solid fa-arrows-rotate text-emerald-300"></i>
+          <span class="hidden md:inline font-medium text-[11px]">Tarik Cloud</span>
+        </button>
+
         <!-- Google Sheets Sync Status Button -->
         <button id="btnSheetsStatus" onclick="openModalSheetsConfig()" class="flex items-center space-x-2 bg-indigo-800/80 hover:bg-indigo-900 border border-indigo-500/30 text-white text-xs px-3 py-1.5 rounded-lg transition shadow-sm">
           <span id="sheetsStatusIndicator" class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
@@ -1326,11 +1332,14 @@
         </div>
 
         <div class="flex items-center space-x-2 pt-2">
-          <button type="button" onclick="testKoneksiSheets()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold shadow-sm transition">
+          <button type="button" onclick="testKoneksiSheets()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold shadow-sm transition">
             <i class="fa-solid fa-plug mr-1"></i> Tes Koneksi
           </button>
-          <button type="button" onclick="syncAllDataKeSheets()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold shadow-sm transition">
-            <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Sinkronkan Semua Data
+          <button type="button" onclick="tarikDataDariGoogleSheets(false)" class="px-3.5 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl font-semibold shadow-sm transition">
+            <i class="fa-solid fa-cloud-arrow-down mr-1"></i> Tarik Data Cloud
+          </button>
+          <button type="button" onclick="syncAllDataKeSheets()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold shadow-sm transition">
+            <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Kirim Semua Data
           </button>
         </div>
 
@@ -1510,6 +1519,13 @@
 
   <script>
     /* =========================================================================
+       KONFIGURASI PERMANEN GOOGLE APPS SCRIPT (CUKUP SETEL 1x DI SINI)
+       Masukkan URL Web App Anda di antara tanda kutip di bawah ini.
+       Semua komputer, laptop, dan HP lain akan otomatis terhubung tanpa setting ulang!
+       ========================================================================= */
+    const DEFAULT_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxZ8G_E_El1vfmj8o5aNprWHjo46jnIKgryFj8Nw6eXP1aBNtILK192yMUJgy8vWWIe/exec';
+
+    /* =========================================================================
        AUDIO TONE SYNTHESIZER FOR SCANNER & FEEDBACK
        ========================================================================= */
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1535,7 +1551,7 @@
        DATABASE LOKAL DEFAULT (INITIAL STARTER DATA)
        ========================================================================= */
     const DEFAULT_DATA = {
-      sheetsUrl: '',
+      sheetsUrl: DEFAULT_SHEETS_URL,
       currentUser: null,
       siswa: [
         {
@@ -1616,12 +1632,18 @@
         const stored = localStorage.getItem('sim_bunda_ani_data');
         if (stored) {
           appData = JSON.parse(stored);
+          // Jika URL di storage kosong atau belum disetel, gunakan URL bawaan permanen
+          if (!appData.sheetsUrl || appData.sheetsUrl.trim() === '') {
+            appData.sheetsUrl = DEFAULT_SHEETS_URL;
+          }
         } else {
           appData = { ...DEFAULT_DATA };
+          appData.sheetsUrl = DEFAULT_SHEETS_URL;
           saveDataToStorage();
         }
       } catch (e) {
         appData = { ...DEFAULT_DATA };
+        appData.sheetsUrl = DEFAULT_SHEETS_URL;
       }
     }
 
@@ -1638,6 +1660,11 @@
       setPresensiDateToday();
       updateSheetsIndicatorStatus();
       initCodeGsContent();
+
+      // Jika URL Google Sheets telah terkonfigurasi, otomatis tarik data terbaru dari cloud
+      if (appData.sheetsUrl && appData.sheetsUrl.startsWith('http')) {
+        tarikDataDariGoogleSheets(true);
+      }
 
       // Check auto-logged session
       if (appData.currentUser) {
@@ -1763,12 +1790,108 @@
       saveDataToStorage();
       updateSheetsIndicatorStatus();
       
-      if (autoSync) {
-        showToast('URL disimpan! Mengirimkan seluruh data ke Google Spreadsheet...', 'info');
-        await syncAllDataKeSheets();
-      } else {
-        closeModalSheetsConfig();
-        showToast('Konfigurasi URL Google Sheets disimpan', 'success');
+      showToast('URL Google Sheets disimpan! Mengambil data terbaru dari Cloud...', 'info');
+      await tarikDataDariGoogleSheets(false);
+      closeModalSheetsConfig();
+    }
+
+    /**
+     * Mengambil (Pull) seluruh data terbaru dari Google Spreadsheet ke perangkat saat ini.
+     * Menjamin data di komputer, laptop, atau HP lain selalu identik dan up-to-date.
+     */
+    async function tarikDataDariGoogleSheets(silent = false) {
+      if (!appData.sheetsUrl || !appData.sheetsUrl.startsWith('http')) {
+        if (!silent) showToast('Atur URL Web App Google Sheets terlebih dahulu!', 'warning');
+        return;
+      }
+
+      const iconPull = document.getElementById('iconPullCloud');
+      if (iconPull) iconPull.classList.add('fa-spin');
+      if (!silent) showToast('Menghubungi Google Sheets untuk menyamakan data...', 'info');
+
+      try {
+        // Metode 1: Fetch langsung menggunakan parameter action=getAllData
+        const fetchUrl = appData.sheetsUrl + (appData.sheetsUrl.includes('?') ? '&' : '?') + 'action=getAllData&t=' + Date.now();
+        let cloudData = null;
+
+        try {
+          const res = await fetch(fetchUrl);
+          const json = await res.json();
+          if (json && (json.success || json.status === 'success') && json.data) {
+            cloudData = json.data;
+          }
+        } catch (fetchErr) {
+          // Metode 2: Fallback ke JSONP jika browser menerapkan proteksi redirect CORS
+          cloudData = await new Promise((resolve, reject) => {
+            const callbackName = 'cb_sim_sync_' + Date.now();
+            const script = document.createElement('script');
+            const timer = setTimeout(() => {
+              if (window[callbackName]) delete window[callbackName];
+              if (script.parentNode) script.parentNode.removeChild(script);
+              reject(new Error('Waktu tunggu koneksi (timeout) habis'));
+            }, 12000);
+
+            window[callbackName] = function(resp) {
+              clearTimeout(timer);
+              if (window[callbackName]) delete window[callbackName];
+              if (script.parentNode) script.parentNode.removeChild(script);
+              if (resp && (resp.success || resp.status === 'success') && resp.data) {
+                resolve(resp.data);
+              } else {
+                reject(new Error('Format data tidak sesuai'));
+              }
+            };
+
+            script.src = appData.sheetsUrl + (appData.sheetsUrl.includes('?') ? '&' : '?') + 'action=getAllData&callback=' + callbackName;
+            script.onerror = () => {
+              clearTimeout(timer);
+              if (window[callbackName]) delete window[callbackName];
+              if (script.parentNode) script.parentNode.removeChild(script);
+              reject(new Error('Gagal memuat skrip dari Google Sheets'));
+            };
+            document.body.appendChild(script);
+          });
+        }
+
+        if (cloudData) {
+          // Perbarui basis data lokal dengan data resmi dari Google Spreadsheet
+          if (Array.isArray(cloudData.siswa) && cloudData.siswa.length > 0) {
+            appData.siswa = cloudData.siswa;
+          }
+          if (Array.isArray(cloudData.presensi)) {
+            appData.presensi = cloudData.presensi;
+          }
+          if (Array.isArray(cloudData.spp)) {
+            appData.spp = cloudData.spp;
+          }
+          if (Array.isArray(cloudData.users) && cloudData.users.length > 0) {
+            appData.users = cloudData.users;
+          }
+
+          saveDataToStorage();
+
+          // Segarkan tampilan antarmuka aktif
+          renderTableMasterSiswa();
+          renderTableSPP();
+          renderLivePresensiLog();
+          renderTableUsers();
+          if (appData.currentUser && appData.currentUser.role === 'siswa') {
+            renderPortalSiswa();
+          }
+
+          const nowTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+          if (!silent) {
+            showToast(`Data berhasil disamakan dengan Cloud! (${appData.siswa.length} Siswa, ${appData.spp.length} SPP)`, 'success');
+            playBeep(980, 'sine', 0.2);
+          }
+          const elLast = document.getElementById('sheetsLastSyncTime');
+          if (elLast) elLast.textContent = `Sinkron terakhir: ${nowTime}`;
+        }
+      } catch (err) {
+        console.warn('Gagal menarik data cloud:', err);
+        if (!silent) showToast('Belum dapat mengambil data dari Cloud: ' + err.message, 'warning');
+      } finally {
+        if (iconPull) iconPull.classList.remove('fa-spin');
       }
     }
 
