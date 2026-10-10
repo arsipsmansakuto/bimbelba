@@ -1523,7 +1523,7 @@
        Masukkan URL Web App Anda di antara tanda kutip di bawah ini.
        Semua komputer, laptop, dan HP lain akan otomatis terhubung tanpa setting ulang!
        ========================================================================= */
-    const DEFAULT_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbw7gEBFwdkpLrKXSvUMKVe_7mCcMonRIY_c66G0eCA5y1Mh-MH3kuNnFvHoa2EK91I/exec';
+    const DEFAULT_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyxrRlVx4y-WeCj2uj4dDqqcabV30PKnT4T96yayxI4fRUGqzBt5NjMlvJL4eKE_2x_/exec';
 
     /* =========================================================================
        AUDIO TONE SYNTHESIZER FOR SCANNER & FEEDBACK
@@ -1849,6 +1849,8 @@
               if (script.parentNode) script.parentNode.removeChild(script);
               if (resp && (resp.success || resp.status === 'success') && resp.data) {
                 resolve(resp.data);
+              } else if (resp && resp.error) {
+                reject(new Error(resp.error));
               } else {
                 reject(new Error('Format data tidak sesuai'));
               }
@@ -1866,10 +1868,10 @@
         }
 
         if (cloudData) {
-          // Perbarui basis data lokal dengan data resmi dari Google Spreadsheet
-          // Jika di Cloud terdapat array siswa (bahkan jika berbeda dari data awal perangkat ini)
+          // Perbarui basis data lokal dengan data resmi dari Google Spreadsheet (Akun Utama)
           if (Array.isArray(cloudData.siswa)) {
-            if (cloudData.siswa.length > 0 || appData._isNewDevice) {
+            // Selalu gantikan data siswa lokal dengan data dari spreadsheet jika cloud memiliki data
+            if (cloudData.siswa.length > 0) {
               appData.siswa = cloudData.siswa;
             }
           }
@@ -1893,6 +1895,14 @@
           renderTableUsers();
           if (appData.currentUser && appData.currentUser.role === 'siswa') {
             renderPortalSiswa();
+          }
+
+          // Perbarui indikator badge sinkronisasi di Master Data Siswa
+          const syncBadge = document.getElementById('badgeCloudSyncSiswa');
+          if (syncBadge) {
+            syncBadge.innerHTML = `<i class="fa-solid fa-cloud-arrow-down mr-1"></i> Tersinkron (${appData.siswa.length} Siswa)`;
+            syncBadge.classList.remove('hidden');
+            syncBadge.classList.add('flex');
           }
 
           const nowTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
