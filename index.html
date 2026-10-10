@@ -1563,11 +1563,11 @@
 
   <script>
     /* =========================================================================
-       KONFIGURASI PERMANEN GOOGLE APPS SCRIPT
-       Masukkan URL Web App Anda di antara tanda kutip di bawah ini.
-       Semua komputer, laptop, dan HP lain akan otomatis terhubung tanpa setting ulang!
+       DATABASE UTAMA GOOGLE APPS SCRIPT (PERMANEN LINTAS PERANGKAT & AKUN)
+       Semua komputer, laptop, dan HP akan otomatis mengambil data dari alamat ini!
        ========================================================================= */
-    const DEFAULT_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzsbeLG4f1LnYPMMMqPjpPI0DWzqERwkjgnw1XObyWUnPxkSLlc81R5gHTC5wl04GkL/exec';
+    const MASTER_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzsbeLG4f1LnYPMMMqPjpPI0DWzqERwkjgnw1XObyWUnPxkSLlc81R5gHTC5wl04GkL/exec';
+    const DEFAULT_SHEETS_URL = MASTER_SHEETS_URL;
 
     /* Audio Tone Synthesizer for scanner feedback */
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1677,31 +1677,28 @@
         const stored = localStorage.getItem('sim_bunda_ani_data');
         if (stored) {
           appData = JSON.parse(stored);
-          if (!appData.sheetsUrl || appData.sheetsUrl.trim() === '') {
-            appData.sheetsUrl = DEFAULT_SHEETS_URL;
+          // Selalu pastikan URL yang dipakai adalah URL Master resmi Anda
+          if (!appData.sheetsUrl || 
+              appData.sheetsUrl.includes('XXXXX-GANTI-DENGAN') || 
+              !appData.sheetsUrl.startsWith('http')) {
+            appData.sheetsUrl = MASTER_SHEETS_URL;
           }
         } else {
           appData = { ...DEFAULT_DATA };
-          appData.sheetsUrl = DEFAULT_SHEETS_URL;
+          appData.sheetsUrl = MASTER_SHEETS_URL;
           appData._isNewDevice = true;
           saveDataToStorage();
         }
       } catch (e) {
         appData = { ...DEFAULT_DATA };
-        appData.sheetsUrl = DEFAULT_SHEETS_URL;
+        appData.sheetsUrl = MASTER_SHEETS_URL;
         appData._isNewDevice = true;
       }
 
-      // Deteksi otomatis jika link dibuka dari tautan berbagi lintas komputer (?sheetsUrl=...)
-      try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const paramSheets = urlParams.get('sheets') || urlParams.get('sheetsUrl');
-        if (paramSheets && paramSheets.startsWith('http')) {
-          appData.sheetsUrl = decodeURIComponent(paramSheets);
-          delete appData._isNewDevice;
-          saveDataToStorage();
-        }
-      } catch (err) {}
+      // Pastikan URL selalu menggunakan Master URL resmi
+      if (!appData.sheetsUrl || appData.sheetsUrl.trim() === '') {
+        appData.sheetsUrl = MASTER_SHEETS_URL;
+      }
     }
 
     function saveDataToStorage() {
@@ -1717,8 +1714,6 @@
       setPresensiDateToday();
       updateSheetsIndicatorStatus();
       initCodeGsContent();
-
-      const hasValid = hasValidSheetsUrl();
 
       // Tampilkan view sesuai sesi login jika ada
       if (appData.currentUser) {
@@ -1736,24 +1731,19 @@
         showView('login');
       }
 
-      // Tarik data otomatis pertama kali saat aplikasi dibuka
-      if (hasValid) {
-        tarikDataDariGoogleSheets(true);
-      }
+      // TARIK DATA OTOMATIS SEKETIKA DARI GOOGLE SPREADSHEET UTAMA
+      // Tanpa perlu klik manual di perangkat atau akun mana pun
+      await tarikDataDariGoogleSheets(true);
 
-      // SINKRONISASI REAL-TIME OTOMATIS:
-      // 1. Sinkronisasi berkala di latar belakang setiap 15 detik
+      // SINKRONISASI REAL-TIME OTOMATIS DI LATAR BELAKANG:
+      // 1. Setiap 15 detik sistem otomatis mengambil perubahan terbaru
       setInterval(() => {
-        if (hasValidSheetsUrl()) {
-          tarikDataDariGoogleSheets(true);
-        }
+        tarikDataDariGoogleSheets(true);
       }, 15000);
 
-      // 2. Sinkronisasi otomatis seketika saat pengguna kembali ke tab browser ini
+      // 2. Setiap kali tab browser dibuka / difokuskan kembali
       window.addEventListener('focus', () => {
-        if (hasValidSheetsUrl()) {
-          tarikDataDariGoogleSheets(true);
-        }
+        tarikDataDariGoogleSheets(true);
       });
     });
 
