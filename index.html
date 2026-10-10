@@ -1523,7 +1523,7 @@
        Masukkan URL Web App Anda di antara tanda kutip di bawah ini.
        Semua komputer, laptop, dan HP lain akan otomatis terhubung tanpa setting ulang!
        ========================================================================= */
-    const DEFAULT_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxZ8G_E_El1vfmj8o5aNprWHjo46jnIKgryFj8Nw6eXP1aBNtILK192yMUJgy8vWWIe/exec';
+    const DEFAULT_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbw7gEBFwdkpLrKXSvUMKVe_7mCcMonRIY_c66G0eCA5y1Mh-MH3kuNnFvHoa2EK91I/exec';
 
     /* =========================================================================
        AUDIO TONE SYNTHESIZER FOR SCANNER & FEEDBACK
@@ -1639,11 +1639,14 @@
         } else {
           appData = { ...DEFAULT_DATA };
           appData.sheetsUrl = DEFAULT_SHEETS_URL;
+          // Tandai bahwa ini perangkat baru yang belum pernah sinkron dari Cloud
+          appData._isNewDevice = true;
           saveDataToStorage();
         }
       } catch (e) {
         appData = { ...DEFAULT_DATA };
         appData.sheetsUrl = DEFAULT_SHEETS_URL;
+        appData._isNewDevice = true;
       }
     }
 
@@ -1655,18 +1658,18 @@
       }
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', async () => {
       loadDataFromStorage();
       setPresensiDateToday();
       updateSheetsIndicatorStatus();
       initCodeGsContent();
 
-      // Jika URL Google Sheets telah terkonfigurasi, otomatis tarik data terbaru dari cloud
-      if (appData.sheetsUrl && appData.sheetsUrl.startsWith('http')) {
-        tarikDataDariGoogleSheets(true);
-      }
+      // Cek apakah ada URL Google Sheets yang valid
+      const hasValidSheetsUrl = appData.sheetsUrl && 
+                                appData.sheetsUrl.startsWith('http') && 
+                                !appData.sheetsUrl.includes('XXXXX-GANTI-DENGAN');
 
-      // Check auto-logged session
+      // Tampilkan view sesuai sesi login jika ada
       if (appData.currentUser) {
         if (appData.currentUser.role === 'siswa') {
           showView('portalSiswa');
@@ -1680,6 +1683,15 @@
         }
       } else {
         showView('login');
+      }
+
+      // Jika URL Google Sheets telah terkonfigurasi, otomatis tarik data terbaru dari cloud
+      if (hasValidSheetsUrl) {
+        // Jika perangkat baru, beri notifikasi bahwa data sedang disinkronkan dari cloud
+        if (appData._isNewDevice) {
+          showToast('Menghubungkan ke Cloud & mengambil Master Data Siswa...', 'info');
+        }
+        await tarikDataDariGoogleSheets(true);
       }
     });
 
@@ -1800,8 +1812,8 @@
      * Menjamin data di komputer, laptop, atau HP lain selalu identik dan up-to-date.
      */
     async function tarikDataDariGoogleSheets(silent = false) {
-      if (!appData.sheetsUrl || !appData.sheetsUrl.startsWith('http')) {
-        if (!silent) showToast('Atur URL Web App Google Sheets terlebih dahulu!', 'warning');
+      if (!appData.sheetsUrl || !appData.sheetsUrl.startsWith('http') || appData.sheetsUrl.includes('XXXXX-GANTI-DENGAN')) {
+        if (!silent) showToast('Atur URL Web App Google Sheets Anda terlebih dahulu!', 'warning');
         return;
       }
 
@@ -1855,8 +1867,11 @@
 
         if (cloudData) {
           // Perbarui basis data lokal dengan data resmi dari Google Spreadsheet
-          if (Array.isArray(cloudData.siswa) && cloudData.siswa.length > 0) {
-            appData.siswa = cloudData.siswa;
+          // Jika di Cloud terdapat array siswa (bahkan jika berbeda dari data awal perangkat ini)
+          if (Array.isArray(cloudData.siswa)) {
+            if (cloudData.siswa.length > 0 || appData._isNewDevice) {
+              appData.siswa = cloudData.siswa;
+            }
           }
           if (Array.isArray(cloudData.presensi)) {
             appData.presensi = cloudData.presensi;
@@ -1868,6 +1883,7 @@
             appData.users = cloudData.users;
           }
 
+          delete appData._isNewDevice;
           saveDataToStorage();
 
           // Segarkan tampilan antarmuka aktif
@@ -2095,22 +2111,20 @@
         }
       });
 
-      if (tabName === 'scanner') renderLivePresensiLog();
-      else if (tabName === 'siswa') renderTableMasterSiswa();
-      else if (tabName === 'spp') renderTableSPP();
-      else if (tabName === 'laporan') applyFilterLaporan();
-      else if (tabName === 'users') renderTableUsers();
-    }
-
-    function togglePassVisibility(inputId, iconId) {
-      const input = document.getElementById(inputId);
-      const icon = document.getElementById(iconId);
-      if (input.type === 'password') {
-        input.type = 'text';
-        icon.className = 'fa-solid fa-eye-slash';
-      } else {
-        input.type = 'password';
-        icon.className = 'fa-solid fa-eye';
+      if (tabName === 'scanner') {
+        renderLivePresensiLog();
+      } else if (tabName === 'siswa') {
+        renderTableMasterSiswa();
+        // Otomatis sinkronkan dan tarik data terbaru dari cloud saat membuka tab Master Data Siswa
+        if (appData.sheetsUrl && appData.sheetsUrl.startsWith('http') && !appData.sheetsUrl.includes('XXXXX-GANTI-DENGAN')) {
+          tarikDataDariGoogleSheets(true);
+        }
+      } else if (tabName === 'spp') {
+        renderTableSPP();
+      } else if (tabName === 'laporan') {
+        applyFilterLaporan();
+      } else if (tabName === 'users') {
+        renderTableUsers();
       }
     }
 
