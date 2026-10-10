@@ -1555,10 +1555,11 @@
         return { success: false, message: 'URL Google Sheets belum diatur' };
       }
       try {
-        const response = await fetch(appData.sheetsUrl, {
+        // Menggunakan text/plain agar browser tidak memblokir payload dengan preflight CORS
+        await fetch(appData.sheetsUrl, {
           method: 'POST',
           mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         });
         return { success: true, message: 'Terkirim ke Google Sheets' };
@@ -1583,6 +1584,28 @@
     function openModalSheetsConfig() {
       document.getElementById('inputSheetsUrl').value = appData.sheetsUrl || '';
       document.getElementById('sheetsTestResult').className = 'hidden';
+      
+      // Hitung dan perbarui angka statistik data real-time
+      const sCount = appData.siswa ? appData.siswa.length : 0;
+      const pCount = appData.presensi ? appData.presensi.length : 0;
+      const spCount = appData.spp ? appData.spp.length : 0;
+      const uCount = appData.users ? appData.users.length : 0;
+      
+      const elS = document.getElementById('syncStatSiswa');
+      const elP = document.getElementById('syncStatPresensi');
+      const elSp = document.getElementById('syncStatSPP');
+      const elU = document.getElementById('syncStatUsers');
+      if (elS) elS.textContent = sCount;
+      if (elP) elP.textContent = pCount;
+      if (elSp) elSp.textContent = spCount;
+      if (elU) elU.textContent = uCount;
+
+      const lastSync = localStorage.getItem('sim_last_sheets_sync');
+      const elLast = document.getElementById('sheetsLastSyncTime');
+      if (elLast) {
+        elLast.textContent = lastSync ? `Sinkron terakhir: ${lastSync}` : 'Belum pernah sinkron';
+      }
+
       document.getElementById('modalSheetsConfig').classList.remove('hidden');
     }
 
@@ -1590,23 +1613,39 @@
       document.getElementById('modalSheetsConfig').classList.add('hidden');
     }
 
-    function simpanConfigSheets() {
-      appData.sheetsUrl = document.getElementById('inputSheetsUrl').value.trim();
+    async function simpanConfigSheets(autoSync = false) {
+      const newUrl = document.getElementById('inputSheetsUrl').value.trim();
+      if (!newUrl) {
+        showToast('Masukkan URL Web App Google Apps Script terlebih dahulu!', 'warning');
+        return;
+      }
+      if (!newUrl.startsWith('http')) {
+        showToast('Format URL tidak valid! Harus diawali dengan https://', 'error');
+        return;
+      }
+
+      appData.sheetsUrl = newUrl;
       saveDataToStorage();
       updateSheetsIndicatorStatus();
-      closeModalSheetsConfig();
-      showToast('Konfigurasi URL Google Sheets disimpan', 'success');
+      
+      if (autoSync) {
+        showToast('URL disimpan! Mengirimkan seluruh data ke Google Spreadsheet...', 'info');
+        await syncAllDataKeSheets();
+      } else {
+        closeModalSheetsConfig();
+        showToast('Konfigurasi URL Google Sheets disimpan', 'success');
+      }
     }
 
     async function testKoneksiSheets() {
       const url = document.getElementById('inputSheetsUrl').value.trim();
       const resBox = document.getElementById('sheetsTestResult');
       resBox.className = 'p-3 rounded-xl border text-xs bg-slate-100 text-slate-700 block';
-      resBox.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Menghubungi Google Spreadsheet...';
+      resBox.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Menghubungi Google Apps Script...';
 
-      if (!url) {
+      if (!url || !url.startsWith('http')) {
         resBox.className = 'p-3 rounded-xl border text-xs bg-rose-50 border-rose-200 text-rose-700 block';
-        resBox.innerHTML = '<i class="fa-solid fa-circle-xmark mr-1"></i> Mohon masukkan Web App URL Google Sheets';
+        resBox.innerHTML = '<i class="fa-solid fa-circle-xmark mr-1"></i> Masukkan URL Web App Google Apps Script yang valid (https://...)';
         return;
       }
 
@@ -1614,11 +1653,11 @@
         await fetch(url, {
           method: 'POST',
           mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({ action: 'ping' })
         });
         resBox.className = 'p-3 rounded-xl border text-xs bg-emerald-50 border-emerald-200 text-emerald-700 block';
-        resBox.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Berhasil mengirim sinyal ke Google Apps Script!';
+        resBox.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> <b>Koneksi Berhasil!</b> Google Apps Script aktif dan siap menerima data.';
       } catch (e) {
         resBox.className = 'p-3 rounded-xl border text-xs bg-rose-50 border-rose-200 text-rose-700 block';
         resBox.innerHTML = '<i class="fa-solid fa-circle-xmark mr-1"></i> Gagal menghubungi URL: ' + e.message;
@@ -1626,21 +1665,51 @@
     }
 
     async function syncAllDataKeSheets() {
-      if (!appData.sheetsUrl) {
-        showToast('Atur URL Web App Google Sheets terlebih dahulu', 'warning');
+      const targetUrl = document.getElementById('inputSheetsUrl').value.trim() || appData.sheetsUrl;
+      if (!targetUrl || !targetUrl.startsWith('http')) {
+        showToast('Masukkan URL Web App Google Sheets terlebih dahulu', 'warning');
         return;
       }
+      
+      appData.sheetsUrl = targetUrl;
+      saveDataToStorage();
+      updateSheetsIndicatorStatus();
+
+      const resBox = document.getElementById('sheetsTestResult');
+      if (resBox) {
+        resBox.className = 'p-3 rounded-xl border text-xs bg-indigo-50 border-indigo-200 text-indigo-700 block';
+        resBox.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Sedang mengirim database lengkap (Siswa, Presensi, SPP, Users)...';
+      }
+
       showToast('Memulai sinkronisasi seluruh database ke Google Sheets...', 'info');
       const payload = {
         action: 'syncAllData',
-        siswa: appData.siswa,
-        presensi: appData.presensi,
-        spp: appData.spp,
-        users: appData.users
+        siswa: appData.siswa || [],
+        presensi: appData.presensi || [],
+        spp: appData.spp || [],
+        users: appData.users || []
       };
-      await sendDataToGoogleSheets(payload);
-      showToast('Seluruh data berhasil disinkronkan ke Google Sheets!', 'success');
-      playBeep(980, 'sine', 0.2);
+
+      const result = await sendDataToGoogleSheets(payload);
+      const timestamp = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      localStorage.setItem('sim_last_sheets_sync', timestamp);
+
+      if (result.success) {
+        if (resBox) {
+          resBox.className = 'p-3 rounded-xl border text-xs bg-emerald-50 border-emerald-200 text-emerald-700 block';
+          resBox.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> <b>Sukses!</b> Seluruh database (${payload.siswa.length} Siswa, ${payload.presensi.length} Presensi, ${payload.spp.length} SPP, ${payload.users.length} Petugas) berhasil dikirim ke Google Spreadsheet pada pukul ${timestamp}.`;
+        }
+        showToast('Seluruh data berhasil disinkronkan ke Google Spreadsheet!', 'success');
+        playBeep(980, 'sine', 0.2);
+        const elLast = document.getElementById('sheetsLastSyncTime');
+        if (elLast) elLast.textContent = `Sinkron terakhir: ${timestamp}`;
+      } else {
+        if (resBox) {
+          resBox.className = 'p-3 rounded-xl border text-xs bg-rose-50 border-rose-200 text-rose-700 block';
+          resBox.innerHTML = '<i class="fa-solid fa-circle-xmark mr-1"></i> Gagal sinkronisasi: ' + (result.error || result.message);
+        }
+        showToast('Gagal mengirim data ke Google Sheets', 'error');
+      }
     }
 
     function switchLoginTab(mode) {
@@ -3048,32 +3117,56 @@
     }
 
     /* Google Apps Script Code.gs Template */
-    const CODE_GS_SCRIPT = `function onOpen() {
-  SpreadsheetApp.getUi().createMenu('🚀 SIM Presensi')
-    .addItem('⚡ Buat & Tata Tabel Otomatis', 'setupDatabaseOtomatis')
-    .addToUi();
+    const CODE_GS_SCRIPT = `function getSpreadsheet() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) {
+    throw new Error("Spreadsheet tidak ditemukan! Pastikan skrip ini dibuat melalui menu 'Ekstensi > Apps Script' di Google Spreadsheet Anda.");
+  }
+  return ss;
+}
+
+function onOpen() {
+  try {
+    SpreadsheetApp.getUi().createMenu('🚀 SIM Presensi')
+      .addItem('⚡ Buat & Tata Tabel Otomatis', 'setupDatabaseOtomatis')
+      .addItem('🔍 Uji Koneksi Database', 'testSetupDatabase')
+      .addToUi();
+  } catch (err) {}
 }
 
 function doGet(e) {
-  var action = (e && e.parameter) ? e.parameter.action : '';
-  if (action === 'setup') {
-    setupDatabaseOtomatis();
-    return ContentService.createTextOutput(JSON.stringify({ success: true, message: 'Database dibuat otomatis' })).setMimeType(ContentService.MimeType.JSON);
+  try {
+    var action = (e && e.parameter && e.parameter.action) ? e.parameter.action : '';
+    if (action === 'setup') {
+      setupDatabaseOtomatis();
+      return ContentService.createTextOutput(JSON.stringify({ success: true, message: 'Database dibuat otomatis' })).setMimeType(ContentService.MimeType.JSON);
+    }
+    return ContentService.createTextOutput(JSON.stringify({ status: 'success', message: 'API SIM Presensi & SPP Bunda Ani Aktif' })).setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ success: false, error: err.message })).setMimeType(ContentService.MimeType.JSON);
   }
-  return ContentService.createTextOutput(JSON.stringify({ status: 'success', message: 'API SIM Presensi & SPP Bunda Ani Aktif' })).setMimeType(ContentService.MimeType.JSON);
 }
 
 function doPost(e) {
   try {
-    var contents = e.postData ? e.postData.contents : '';
+    if (!e) {
+      return ContentService.createTextOutput(JSON.stringify({ success: false, message: 'doPost dipanggil tanpa event' })).setMimeType(ContentService.MimeType.JSON);
+    }
+    var contents = (e.postData && e.postData.contents) ? e.postData.contents : ((e.parameter && e.parameter.data) ? e.parameter.data : '');
     if (!contents) return ContentService.createTextOutput(JSON.stringify({ success: false, message: 'No payload' })).setMimeType(ContentService.MimeType.JSON);
-    var data = JSON.parse(contents);
-    var action = data.action;
+    
+    var data = {};
+    try { data = JSON.parse(contents); } catch (pe) { return ContentService.createTextOutput(JSON.stringify({ success: false, error: pe.message })).setMimeType(ContentService.MimeType.JSON); }
+    if (!data || typeof data !== 'object') data = {};
+    var action = data.action || '';
 
     if (action === 'simpanPresensi') return apiSimpanPresensi(data);
     if (action === 'simpanSPP') return apiSimpanSPP(data);
-    if (action === 'tambahSiswa') return apiTambahSiswa(data);
+    if (action === 'tambahSiswa' || action === 'updateSiswa') return apiTambahSiswa(data);
+    if (action === 'hapusSiswa') return apiHapusSiswa(data);
     if (action === 'tambahSiswaBatch') return apiTambahSiswaBatch(data);
+    if (action === 'simpanUser') return apiSimpanUser(data);
+    if (action === 'hapusUser') return apiHapusUser(data);
     if (action === 'syncAllData') return apiSyncAllData(data);
     if (action === 'ping') return ContentService.createTextOutput(JSON.stringify({ status: 'success', message: 'Pong!' })).setMimeType(ContentService.MimeType.JSON);
 
@@ -3084,70 +3177,151 @@ function doPost(e) {
 }
 
 function apiSimpanPresensi(data) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  data = data || {};
+  var ss = getSpreadsheet();
   var sheet = ss.getSheetByName('Presensi') || ss.insertSheet('Presensi');
   if (sheet.getLastRow() === 0) setupSheetPresensi(ss);
-  sheet.appendRow([data.id, data.tanggal, data.waktu, data.nis, data.nama, data.kelas, data.status, data.keterangan || '-']);
+  sheet.appendRow([data.id || ('PRS-' + Date.now()), data.tanggal || '', data.waktu || '', data.nis || data.username || '', data.nama || '', data.kelas || '', data.status || 'Hadir', data.keterangan || '-']);
   return ContentService.createTextOutput(JSON.stringify({ success: true })).setMimeType(ContentService.MimeType.JSON);
 }
 
 function apiSimpanSPP(data) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  data = data || {};
+  var ss = getSpreadsheet();
   var sheet = ss.getSheetByName('SPP') || ss.insertSheet('SPP');
   if (sheet.getLastRow() === 0) setupSheetSPP(ss);
-  sheet.appendRow([data.id, data.tanggal, data.nis, data.nama, data.kelas, data.bulan, data.tahun, data.nominal, data.metode, data.status || 'Lunas', data.petugas || 'Admin']);
+  sheet.appendRow([data.id || ('SPP-' + Date.now()), data.tanggal || '', data.nis || data.username || '', data.nama || '', data.kelas || '', data.bulan || '', data.tahun || '', Number(data.nominal || 0), data.metode || 'Tunai', data.status || 'Lunas', data.petugas || 'Admin']);
   return ContentService.createTextOutput(JSON.stringify({ success: true })).setMimeType(ContentService.MimeType.JSON);
 }
 
 function apiTambahSiswa(data) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  data = data || {};
+  var ss = getSpreadsheet();
   var sheet = ss.getSheetByName('Siswa') || ss.insertSheet('Siswa');
   if (sheet.getLastRow() === 0) setupSheetSiswa(ss);
-  sheet.appendRow([data.username, data.password || '123', data.nama, data.kelas, data.alamat || '-', data.sekolah_asal || '-', data.hobi || '-', data.kategori_bimbingan || 'BIMBEL', data.nama_ortu || '-', data.no_telp || '-', data.status_akun || 'Aktif']);
+  var rowData = [data.username || '', data.password || '123', data.nama || '', data.kelas || '', data.alamat || '-', data.sekolah_asal || '-', data.hobi || '-', data.kategori_bimbingan || 'BIMBEL', data.nama_ortu || '-', data.no_telp || '-', data.status_akun || 'Aktif'];
+  var lastRow = sheet.getLastRow();
+  if (lastRow > 1 && data.username) {
+    var values = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
+    for (var i = 0; i < values.length; i++) {
+      if (values[i] && values[i][0] == data.username) {
+        sheet.getRange(i + 2, 1, 1, rowData.length).setValues([rowData]);
+        return ContentService.createTextOutput(JSON.stringify({ success: true })).setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+  }
+  sheet.appendRow(rowData);
+  return ContentService.createTextOutput(JSON.stringify({ success: true })).setMimeType(ContentService.MimeType.JSON);
+}
+
+function apiHapusSiswa(data) {
+  data = data || {};
+  var ss = getSpreadsheet();
+  var sheet = ss.getSheetByName('Siswa');
+  if (!sheet) return ContentService.createTextOutput(JSON.stringify({ success: false })).setMimeType(ContentService.MimeType.JSON);
+  var lastRow = sheet.getLastRow();
+  if (lastRow > 1 && data.username) {
+    var values = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
+    for (var i = values.length - 1; i >= 0; i--) {
+      if (values[i] && values[i][0] == data.username) { sheet.deleteRow(i + 2); break; }
+    }
+  }
+  return ContentService.createTextOutput(JSON.stringify({ success: true })).setMimeType(ContentService.MimeType.JSON);
+}
+
+function apiSimpanUser(data) {
+  data = data || {};
+  var ss = getSpreadsheet();
+  var sheet = ss.getSheetByName('Users') || ss.insertSheet('Users');
+  if (sheet.getLastRow() === 0) setupSheetUsers(ss);
+  var rowData = [data.nama || '', data.username || '', data.password || '123', data.role || 'petugas', data.status || 'Aktif'];
+  var lastRow = sheet.getLastRow();
+  if (lastRow > 1 && data.username) {
+    var values = sheet.getRange(2, 2, lastRow - 1, 1).getValues();
+    for (var i = 0; i < values.length; i++) {
+      if (values[i] && values[i][0] == data.username) {
+        sheet.getRange(i + 2, 1, 1, rowData.length).setValues([rowData]);
+        return ContentService.createTextOutput(JSON.stringify({ success: true })).setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+  }
+  sheet.appendRow(rowData);
+  return ContentService.createTextOutput(JSON.stringify({ success: true })).setMimeType(ContentService.MimeType.JSON);
+}
+
+function apiHapusUser(data) {
+  data = data || {};
+  var ss = getSpreadsheet();
+  var sheet = ss.getSheetByName('Users');
+  if (!sheet) return ContentService.createTextOutput(JSON.stringify({ success: false })).setMimeType(ContentService.MimeType.JSON);
+  var lastRow = sheet.getLastRow();
+  if (lastRow > 1 && data.username) {
+    var values = sheet.getRange(2, 2, lastRow - 1, 1).getValues();
+    for (var i = values.length - 1; i >= 0; i--) {
+      if (values[i] && values[i][0] == data.username) { sheet.deleteRow(i + 2); break; }
+    }
+  }
   return ContentService.createTextOutput(JSON.stringify({ success: true })).setMimeType(ContentService.MimeType.JSON);
 }
 
 function apiTambahSiswaBatch(data) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  data = data || {};
+  var ss = getSpreadsheet();
   var sheet = ss.getSheetByName('Siswa') || ss.insertSheet('Siswa');
   if (sheet.getLastRow() === 0) setupSheetSiswa(ss);
   var list = data.siswaList || [];
   for (var i = 0; i < list.length; i++) {
-    var s = list[i];
-    sheet.appendRow([s.username, s.password || '123', s.nama, s.kelas, s.alamat || '-', s.sekolah_asal || '-', s.hobi || '-', s.kategori_bimbingan || 'BIMBEL', s.nama_ortu || '-', s.no_telp || '-', s.status_akun || 'Aktif']);
+    var s = list[i] || {};
+    sheet.appendRow([s.username || '', s.password || '123', s.nama || '', s.kelas || '', s.alamat || '-', s.sekolah_asal || '-', s.hobi || '-', s.kategori_bimbingan || 'BIMBEL', s.nama_ortu || '-', s.no_telp || '-', s.status_akun || 'Aktif']);
   }
   return ContentService.createTextOutput(JSON.stringify({ success: true, count: list.length })).setMimeType(ContentService.MimeType.JSON);
 }
 
 function apiSyncAllData(data) {
+  data = data || {};
   setupDatabaseOtomatis();
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  if (data.siswa && data.siswa.length > 0) {
-    var sSheet = ss.getSheetByName('Siswa');
+  var ss = getSpreadsheet();
+  if (data.siswa && Array.isArray(data.siswa) && data.siswa.length > 0) {
+    var sSheet = ss.getSheetByName('Siswa') || ss.insertSheet('Siswa');
+    var rowsSiswa = [];
     for (var i = 0; i < data.siswa.length; i++) {
-      var s = data.siswa[i];
-      sSheet.appendRow([s.username, s.password || '123', s.nama, s.kelas, s.alamat || '-', s.sekolah_asal || '-', s.hobi || '-', s.kategori_bimbingan || 'BIMBEL', s.nama_ortu || '-', s.no_telp || '-', s.status_akun || 'Aktif']);
+      var s = data.siswa[i] || {};
+      rowsSiswa.push([s.username || '', s.password || '123', s.nama || '', s.kelas || '', s.alamat || '-', s.sekolah_asal || '-', s.hobi || '-', s.kategori_bimbingan || 'BIMBEL', s.nama_ortu || '-', s.no_telp || '-', s.status_akun || 'Aktif']);
     }
+    if (rowsSiswa.length > 0) sSheet.getRange(2, 1, rowsSiswa.length, 11).setValues(rowsSiswa);
   }
-  if (data.presensi && data.presensi.length > 0) {
-    var pSheet = ss.getSheetByName('Presensi');
+  if (data.presensi && Array.isArray(data.presensi) && data.presensi.length > 0) {
+    var pSheet = ss.getSheetByName('Presensi') || ss.insertSheet('Presensi');
+    var rowsPresensi = [];
     for (var j = 0; j < data.presensi.length; j++) {
-      var p = data.presensi[j];
-      pSheet.appendRow([p.id, p.tanggal, p.waktu, p.nis, p.nama, p.kelas, p.status, p.keterangan || '-']);
+      var p = data.presensi[j] || {};
+      rowsPresensi.push([p.id || ('PRS-' + (j + 1)), p.tanggal || '', p.waktu || '', p.nis || p.username || '', p.nama || '', p.kelas || '', p.status || 'Hadir', p.keterangan || '-']);
     }
+    if (rowsPresensi.length > 0) pSheet.getRange(2, 1, rowsPresensi.length, 8).setValues(rowsPresensi);
   }
-  if (data.spp && data.spp.length > 0) {
-    var spSheet = ss.getSheetByName('SPP');
+  if (data.spp && Array.isArray(data.spp) && data.spp.length > 0) {
+    var spSheet = ss.getSheetByName('SPP') || ss.insertSheet('SPP');
+    var rowsSPP = [];
     for (var k = 0; k < data.spp.length; k++) {
-      var sp = data.spp[k];
-      spSheet.appendRow([sp.id, sp.tanggal, sp.nis, sp.nama, sp.kelas, sp.bulan, sp.tahun, sp.nominal, sp.metode, sp.status || 'Lunas', sp.petugas || 'Admin']);
+      var sp = data.spp[k] || {};
+      rowsSPP.push([sp.id || ('SPP-' + (k + 1)), sp.tanggal || '', sp.nis || sp.username || '', sp.nama || '', sp.kelas || '', sp.bulan || '', sp.tahun || '', Number(sp.nominal || 0), sp.metode || 'Tunai', sp.status || 'Lunas', sp.petugas || 'Admin']);
     }
+    if (rowsSPP.length > 0) spSheet.getRange(2, 1, rowsSPP.length, 11).setValues(rowsSPP);
+  }
+  if (data.users && Array.isArray(data.users) && data.users.length > 0) {
+    var uSheet = ss.getSheetByName('Users') || ss.insertSheet('Users');
+    var rowsUsers = [];
+    for (var u = 0; u < data.users.length; u++) {
+      var usr = data.users[u] || {};
+      rowsUsers.push([usr.nama || '', usr.username || '', usr.password || '123', usr.role || 'petugas', usr.status || 'Aktif']);
+    }
+    if (rowsUsers.length > 0) uSheet.getRange(2, 1, rowsUsers.length, 5).setValues(rowsUsers);
   }
   return ContentService.createTextOutput(JSON.stringify({ success: true, message: 'Sinkronisasi berhasil' })).setMimeType(ContentService.MimeType.JSON);
 }
 
 function setupDatabaseOtomatis() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var ss = getSpreadsheet();
   setupSheetSiswa(ss);
   setupSheetPresensi(ss);
   setupSheetSPP(ss);
@@ -3185,6 +3359,11 @@ function setupSheetUsers(ss) {
   u.getRange(1, 1, 1, 5).setBackground('#334155').setFontColor('#ffffff').setFontWeight('bold');
   u.setFrozenRows(1);
   u.appendRow(['Bunda Ani (Admin)', 'admin', '123', 'admin', 'Aktif']);
+}
+
+function testSetupDatabase() {
+  setupDatabaseOtomatis();
+  Logger.log('Tabel database Google Sheets berhasil dibuat dan ditata!');
 }`;
 
     function initCodeGsContent() {
