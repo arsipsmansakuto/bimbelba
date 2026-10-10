@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- JsBarcode -->
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-  <!-- HTML5 QR Code Scanner -->
+  <!-- HTML2Canvas & HTML5 QR Code Scanner -->
   <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <style>
@@ -333,14 +333,23 @@
               <i class="fa-solid fa-file-export"></i>
               <span>Ekspor CSV</span>
             </button>
+            <button onclick="tarikDataDariGoogleSheets(false)" class="px-3.5 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs sm:text-sm font-semibold shadow-sm transition flex items-center space-x-2" title="Tarik data siswa terbaru dari Akun Utama Google Sheets">
+              <i class="fa-solid fa-arrows-rotate"></i>
+              <span>Tarik Data Akun Utama</span>
+            </button>
           </div>
 
-          <!-- Search Input -->
-          <div class="relative w-full sm:w-64">
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-xs">
-              <i class="fa-solid fa-magnifying-glass"></i>
+          <div class="flex items-center space-x-2 w-full sm:w-auto">
+            <span id="badgeCloudSyncSiswa" class="hidden items-center px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <i class="fa-solid fa-cloud-arrow-down mr-1"></i> Cloud Aktif
             </span>
-            <input type="text" id="searchMasterSiswa" onkeyup="renderTableMasterSiswa()" placeholder="Cari nama / username / kelas..." class="w-full pl-8 pr-3 py-1.5 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            <!-- Search Input -->
+            <div class="relative w-full sm:w-64">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-xs">
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </span>
+              <input type="text" id="searchMasterSiswa" onkeyup="renderTableMasterSiswa()" placeholder="Cari nama / username / kelas..." class="w-full pl-8 pr-3 py-1.5 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            </div>
           </div>
         </div>
 
@@ -678,7 +687,6 @@
     </div>
   </main>
 
-
   <!-- MODAL: CATAT PEMBAYARAN SPP DENGAN PENCARIAN SISWA -->
   <div id="modalCatatSPP" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
@@ -938,7 +946,6 @@
   <!-- MODAL: PENDAFTARAN SISWA BARU -->
   <div id="modalTambahSiswa" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-2xl overflow-hidden flex flex-col max-h-[88vh]">
-      <!-- Header (Sticky) -->
       <div class="bg-indigo-600 px-5 py-4 text-white flex items-center justify-between sticky top-0 z-10">
         <div class="flex items-center space-x-2">
           <i class="fa-solid fa-user-plus text-indigo-200"></i>
@@ -949,7 +956,6 @@
         </button>
       </div>
 
-      <!-- Form Body with Vertical Scrolling -->
       <form onsubmit="handleSimpanSiswaBaru(event)" class="p-6 space-y-4 overflow-y-auto flex-1 custom-scrollbar">
         <!-- Akun Kredensial -->
         <div class="bg-indigo-50/60 p-3.5 rounded-xl border border-indigo-100 space-y-3">
@@ -1130,7 +1136,7 @@
       </div>
 
       <form onsubmit="handleSimpanPerubahanSiswa(event)" class="p-6 space-y-4 overflow-y-auto flex-1 custom-scrollbar">
-        <!-- Hidden Original Username for tracking -->
+        <!-- Hidden Original Username -->
         <input type="hidden" id="editOriginalUsername">
 
         <!-- Kredensial Akun -->
@@ -1263,11 +1269,32 @@
         <!-- Tab Paste Input -->
         <div id="importPanelPaste" class="hidden space-y-2">
           <label class="block text-xs font-bold text-slate-700">Salin dan Tempel Data dari Excel / Spreadsheet:</label>
-          <textarea id="importPasteText" rows="6" oninput="handlePasteInputChanged(this.value)" placeholder="Username,Nama,Kelas,Alamat,Sekolah Asal,Hobi,BIMBEL,Nama Ortu,No Telp,123,Aktif..." class="w-full text-xs font-mono border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+          <textarea id="importPasteText" rows="6" oninput="handlePasteInputChanged(this.value)" placeholder="Username,Password,Nama,Kelas,Alamat,Sekolah Asal,Hobi,BIMBEL,Nama Ortu,No Telp,Aktif..." class="w-full text-xs font-mono border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+        </div>
+
+        <!-- Mode Penanganan Impor -->
+        <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2.5 text-xs">
+          <p class="font-bold text-slate-700">Mode Penanganan Impor:</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <label class="flex items-start space-x-2 p-2 rounded-lg border border-slate-200 bg-white cursor-pointer hover:border-emerald-500">
+              <input type="radio" name="importDatabaseMode" value="append" checked onchange="toggleImportModeUI()" class="mt-0.5 text-emerald-600 focus:ring-emerald-500">
+              <div>
+                <span class="font-bold text-slate-800 block">Tambahkan / Gabungkan</span>
+                <span class="text-[11px] text-slate-500">Pertahankan data yang sudah ada, tambahkan baris baru</span>
+              </div>
+            </label>
+            <label class="flex items-start space-x-2 p-2 rounded-lg border border-slate-200 bg-white cursor-pointer hover:border-rose-500">
+              <input type="radio" name="importDatabaseMode" value="replace" onchange="toggleImportModeUI()" class="mt-0.5 text-rose-600 focus:ring-rose-500">
+              <div>
+                <span class="font-bold text-rose-700 block">Ganti Semua Data Lama</span>
+                <span class="text-[11px] text-slate-500">Hapus data siswa lama dan timpa penuh dengan file ini</span>
+              </div>
+            </label>
+          </div>
         </div>
 
         <!-- Duplicate Options -->
-        <div class="flex items-center space-x-4 text-xs text-slate-700 pt-2">
+        <div id="duplicateHandlingContainer" class="flex items-center space-x-4 text-xs text-slate-700 pt-1">
           <span class="font-bold">Jika Username Sama:</span>
           <label class="flex items-center space-x-1.5 cursor-pointer">
             <input type="radio" name="duplicateHandling" value="update" checked class="text-emerald-600 focus:ring-emerald-500">
@@ -1293,6 +1320,8 @@
                   <th class="p-2">Nama</th>
                   <th class="p-2">Kelas</th>
                   <th class="p-2">Bimbingan</th>
+                  <th class="p-2">Sekolah Asal</th>
+                  <th class="p-2">Hobi</th>
                 </tr>
               </thead>
               <tbody id="tbodyImportPreview" class="divide-y divide-slate-100"></tbody>
@@ -1331,7 +1360,19 @@
           <p class="text-[11px] text-slate-500 mt-1">Dapatkan URL ini dari menu Deploy > New deployment (Web app) di Google Spreadsheet Anda.</p>
         </div>
 
-        <div class="flex items-center space-x-2 pt-2">
+        <!-- Tombol Berbagi Cepat Lintas Perangkat -->
+        <div class="p-3 bg-indigo-50 border border-indigo-100 rounded-xl space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-indigo-900">Buka di Komputer / Laptop Lain:</span>
+            <button type="button" onclick="salinLinkBerbagiKomputerLain()" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold flex items-center space-x-1">
+              <i class="fa-solid fa-share-nodes"></i>
+              <span>Salin Link Akses Otomatis</span>
+            </button>
+          </div>
+          <p class="text-[11px] text-indigo-700 leading-tight">Link ini otomatis memuat URL Google Sheets tanpa perlu setting ulang pada perangkat lain!</p>
+        </div>
+
+        <div class="flex items-center space-x-2 pt-1">
           <button type="button" onclick="testKoneksiSheets()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold shadow-sm transition">
             <i class="fa-solid fa-plug mr-1"></i> Tes Koneksi
           </button>
@@ -1345,9 +1386,12 @@
 
         <div id="sheetsTestResult" class="hidden p-3 rounded-xl border text-xs"></div>
 
-        <div class="pt-3 border-t border-slate-100 flex items-center justify-end space-x-2">
-          <button type="button" onclick="closeModalSheetsConfig()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl">Tutup</button>
-          <button type="button" onclick="simpanConfigSheets()" class="px-5 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md transition">Simpan URL</button>
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+          <span id="sheetsLastSyncTime">Belum pernah sinkron</span>
+          <div class="space-x-2">
+            <button type="button" onclick="closeModalSheetsConfig()" class="px-3 py-1.5 font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Tutup</button>
+            <button type="button" onclick="simpanConfigSheets()" class="px-4 py-1.5 font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-sm">Simpan URL</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1519,15 +1563,13 @@
 
   <script>
     /* =========================================================================
-       KONFIGURASI PERMANEN GOOGLE APPS SCRIPT (CUKUP SETEL 1x DI SINI)
+       KONFIGURASI PERMANEN GOOGLE APPS SCRIPT
        Masukkan URL Web App Anda di antara tanda kutip di bawah ini.
        Semua komputer, laptop, dan HP lain akan otomatis terhubung tanpa setting ulang!
        ========================================================================= */
-    const DEFAULT_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyxrRlVx4y-WeCj2uj4dDqqcabV30PKnT4T96yayxI4fRUGqzBt5NjMlvJL4eKE_2x_/exec';
+    const DEFAULT_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzsbeLG4f1LnYPMMMqPjpPI0DWzqERwkjgnw1XObyWUnPxkSLlc81R5gHTC5wl04GkL/exec';
 
-    /* =========================================================================
-       AUDIO TONE SYNTHESIZER FOR SCANNER & FEEDBACK
-       ========================================================================= */
+    /* Audio Tone Synthesizer for scanner feedback */
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playBeep(freq = 880, type = 'sine', duration = 0.12) {
       try {
@@ -1543,13 +1585,11 @@
         osc.start();
         osc.stop(audioCtx.currentTime + duration);
       } catch (e) {
-        console.warn('Audio not allowed yet', e);
+        console.warn('Audio feedback blocked', e);
       }
     }
 
-    /* =========================================================================
-       DATABASE LOKAL DEFAULT (INITIAL STARTER DATA)
-       ========================================================================= */
+    /* Database Default Starter */
     const DEFAULT_DATA = {
       sheetsUrl: DEFAULT_SHEETS_URL,
       currentUser: null,
@@ -1623,23 +1663,26 @@
     let lastScanTime = 0;
     let currentLoginMode = 'petugas';
     let importParsedList = [];
+    let isSyncingCloud = false;
+    let syncCloudPromise = null;
 
-    /* =========================================================================
-       INITIALIZATION & STORAGE LOGIC
-       ========================================================================= */
+    function hasValidSheetsUrl() {
+      return !!(appData.sheetsUrl && 
+                appData.sheetsUrl.startsWith('http') && 
+                !appData.sheetsUrl.includes('XXXXX-GANTI-DENGAN'));
+    }
+
     function loadDataFromStorage() {
       try {
         const stored = localStorage.getItem('sim_bunda_ani_data');
         if (stored) {
           appData = JSON.parse(stored);
-          // Jika URL di storage kosong atau belum disetel, gunakan URL bawaan permanen
           if (!appData.sheetsUrl || appData.sheetsUrl.trim() === '') {
             appData.sheetsUrl = DEFAULT_SHEETS_URL;
           }
         } else {
           appData = { ...DEFAULT_DATA };
           appData.sheetsUrl = DEFAULT_SHEETS_URL;
-          // Tandai bahwa ini perangkat baru yang belum pernah sinkron dari Cloud
           appData._isNewDevice = true;
           saveDataToStorage();
         }
@@ -1648,6 +1691,17 @@
         appData.sheetsUrl = DEFAULT_SHEETS_URL;
         appData._isNewDevice = true;
       }
+
+      // Deteksi otomatis jika link dibuka dari tautan berbagi lintas komputer (?sheetsUrl=...)
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const paramSheets = urlParams.get('sheets') || urlParams.get('sheetsUrl');
+        if (paramSheets && paramSheets.startsWith('http')) {
+          appData.sheetsUrl = decodeURIComponent(paramSheets);
+          delete appData._isNewDevice;
+          saveDataToStorage();
+        }
+      } catch (err) {}
     }
 
     function saveDataToStorage() {
@@ -1664,10 +1718,7 @@
       updateSheetsIndicatorStatus();
       initCodeGsContent();
 
-      // Cek apakah ada URL Google Sheets yang valid
-      const hasValidSheetsUrl = appData.sheetsUrl && 
-                                appData.sheetsUrl.startsWith('http') && 
-                                !appData.sheetsUrl.includes('XXXXX-GANTI-DENGAN');
+      const hasValid = hasValidSheetsUrl();
 
       // Tampilkan view sesuai sesi login jika ada
       if (appData.currentUser) {
@@ -1685,14 +1736,25 @@
         showView('login');
       }
 
-      // Jika URL Google Sheets telah terkonfigurasi, otomatis tarik data terbaru dari cloud
-      if (hasValidSheetsUrl) {
-        // Jika perangkat baru, beri notifikasi bahwa data sedang disinkronkan dari cloud
-        if (appData._isNewDevice) {
-          showToast('Menghubungkan ke Cloud & mengambil Master Data Siswa...', 'info');
-        }
-        await tarikDataDariGoogleSheets(true);
+      // Tarik data otomatis pertama kali saat aplikasi dibuka
+      if (hasValid) {
+        tarikDataDariGoogleSheets(true);
       }
+
+      // SINKRONISASI REAL-TIME OTOMATIS:
+      // 1. Sinkronisasi berkala di latar belakang setiap 15 detik
+      setInterval(() => {
+        if (hasValidSheetsUrl()) {
+          tarikDataDariGoogleSheets(true);
+        }
+      }, 15000);
+
+      // 2. Sinkronisasi otomatis seketika saat pengguna kembali ke tab browser ini
+      window.addEventListener('focus', () => {
+        if (hasValidSheetsUrl()) {
+          tarikDataDariGoogleSheets(true);
+        }
+      });
     });
 
     function showToast(message, type = 'info') {
@@ -1729,7 +1791,6 @@
         return { success: false, message: 'URL Google Sheets belum diatur' };
       }
       try {
-        // Menggunakan text/plain agar browser tidak memblokir payload dengan preflight CORS
         await fetch(appData.sheetsUrl, {
           method: 'POST',
           mode: 'no-cors',
@@ -1746,7 +1807,7 @@
     function updateSheetsIndicatorStatus() {
       const ind = document.getElementById('sheetsStatusIndicator');
       const txt = document.getElementById('sheetsStatusText');
-      if (appData.sheetsUrl && appData.sheetsUrl.trim() !== '') {
+      if (hasValidSheetsUrl()) {
         ind.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]';
         txt.textContent = 'Sheets Terhubung';
       } else {
@@ -1758,28 +1819,11 @@
     function openModalSheetsConfig() {
       document.getElementById('inputSheetsUrl').value = appData.sheetsUrl || '';
       document.getElementById('sheetsTestResult').className = 'hidden';
-      
-      // Hitung dan perbarui angka statistik data real-time
-      const sCount = appData.siswa ? appData.siswa.length : 0;
-      const pCount = appData.presensi ? appData.presensi.length : 0;
-      const spCount = appData.spp ? appData.spp.length : 0;
-      const uCount = appData.users ? appData.users.length : 0;
-      
-      const elS = document.getElementById('syncStatSiswa');
-      const elP = document.getElementById('syncStatPresensi');
-      const elSp = document.getElementById('syncStatSPP');
-      const elU = document.getElementById('syncStatUsers');
-      if (elS) elS.textContent = sCount;
-      if (elP) elP.textContent = pCount;
-      if (elSp) elSp.textContent = spCount;
-      if (elU) elU.textContent = uCount;
-
       const lastSync = localStorage.getItem('sim_last_sheets_sync');
       const elLast = document.getElementById('sheetsLastSyncTime');
       if (elLast) {
         elLast.textContent = lastSync ? `Sinkron terakhir: ${lastSync}` : 'Belum pernah sinkron';
       }
-
       document.getElementById('modalSheetsConfig').classList.remove('hidden');
     }
 
@@ -1787,7 +1831,7 @@
       document.getElementById('modalSheetsConfig').classList.add('hidden');
     }
 
-    async function simpanConfigSheets(autoSync = false) {
+    async function simpanConfigSheets() {
       const newUrl = document.getElementById('inputSheetsUrl').value.trim();
       if (!newUrl) {
         showToast('Masukkan URL Web App Google Apps Script terlebih dahulu!', 'warning');
@@ -1807,118 +1851,121 @@
       closeModalSheetsConfig();
     }
 
-    /**
-     * Mengambil (Pull) seluruh data terbaru dari Google Spreadsheet ke perangkat saat ini.
-     * Menjamin data di komputer, laptop, atau HP lain selalu identik dan up-to-date.
-     */
     async function tarikDataDariGoogleSheets(silent = false) {
-      if (!appData.sheetsUrl || !appData.sheetsUrl.startsWith('http') || appData.sheetsUrl.includes('XXXXX-GANTI-DENGAN')) {
+      if (!hasValidSheetsUrl()) {
         if (!silent) showToast('Atur URL Web App Google Sheets Anda terlebih dahulu!', 'warning');
-        return;
+        return false;
+      }
+
+      if (isSyncingCloud && syncCloudPromise) {
+        return syncCloudPromise;
       }
 
       const iconPull = document.getElementById('iconPullCloud');
       if (iconPull) iconPull.classList.add('fa-spin');
       if (!silent) showToast('Menghubungi Google Sheets untuk menyamakan data...', 'info');
 
-      try {
-        // Metode 1: Fetch langsung menggunakan parameter action=getAllData
-        const fetchUrl = appData.sheetsUrl + (appData.sheetsUrl.includes('?') ? '&' : '?') + 'action=getAllData&t=' + Date.now();
-        let cloudData = null;
-
+      syncCloudPromise = (async () => {
+        isSyncingCloud = true;
         try {
-          const res = await fetch(fetchUrl);
-          const json = await res.json();
-          if (json && (json.success || json.status === 'success') && json.data) {
-            cloudData = json.data;
+          const fetchUrl = appData.sheetsUrl + (appData.sheetsUrl.includes('?') ? '&' : '?') + 'action=getAllData&t=' + Date.now();
+          let cloudData = null;
+
+          try {
+            const res = await fetch(fetchUrl);
+            const json = await res.json();
+            if (json && (json.success || json.status === 'success') && json.data) {
+              cloudData = json.data;
+            }
+          } catch (fetchErr) {
+            // Fallback ke JSONP jika browser menerapkan proteksi redirect CORS antar-komputer
+            cloudData = await new Promise((resolve, reject) => {
+              const callbackName = 'cb_sim_sync_' + Date.now();
+              const script = document.createElement('script');
+              const timer = setTimeout(() => {
+                if (window[callbackName]) delete window[callbackName];
+                if (script.parentNode) script.parentNode.removeChild(script);
+                reject(new Error('Waktu tunggu koneksi (timeout) habis'));
+              }, 12000);
+
+              window[callbackName] = function(resp) {
+                clearTimeout(timer);
+                if (window[callbackName]) delete window[callbackName];
+                if (script.parentNode) script.parentNode.removeChild(script);
+                if (resp && (resp.success || resp.status === 'success') && resp.data) {
+                  resolve(resp.data);
+                } else if (resp && resp.error) {
+                  reject(new Error(resp.error));
+                } else {
+                  reject(new Error('Format data tidak sesuai'));
+                }
+              };
+
+              script.src = appData.sheetsUrl + (appData.sheetsUrl.includes('?') ? '&' : '?') + 'action=getAllData&callback=' + callbackName;
+              script.onerror = () => {
+                clearTimeout(timer);
+                if (window[callbackName]) delete window[callbackName];
+                if (script.parentNode) script.parentNode.removeChild(script);
+                reject(new Error('Gagal memuat skrip dari Google Sheets'));
+              };
+              document.body.appendChild(script);
+            });
           }
-        } catch (fetchErr) {
-          // Metode 2: Fallback ke JSONP jika browser menerapkan proteksi redirect CORS
-          cloudData = await new Promise((resolve, reject) => {
-            const callbackName = 'cb_sim_sync_' + Date.now();
-            const script = document.createElement('script');
-            const timer = setTimeout(() => {
-              if (window[callbackName]) delete window[callbackName];
-              if (script.parentNode) script.parentNode.removeChild(script);
-              reject(new Error('Waktu tunggu koneksi (timeout) habis'));
-            }, 12000);
 
-            window[callbackName] = function(resp) {
-              clearTimeout(timer);
-              if (window[callbackName]) delete window[callbackName];
-              if (script.parentNode) script.parentNode.removeChild(script);
-              if (resp && (resp.success || resp.status === 'success') && resp.data) {
-                resolve(resp.data);
-              } else if (resp && resp.error) {
-                reject(new Error(resp.error));
-              } else {
-                reject(new Error('Format data tidak sesuai'));
-              }
-            };
-
-            script.src = appData.sheetsUrl + (appData.sheetsUrl.includes('?') ? '&' : '?') + 'action=getAllData&callback=' + callbackName;
-            script.onerror = () => {
-              clearTimeout(timer);
-              if (window[callbackName]) delete window[callbackName];
-              if (script.parentNode) script.parentNode.removeChild(script);
-              reject(new Error('Gagal memuat skrip dari Google Sheets'));
-            };
-            document.body.appendChild(script);
-          });
-        }
-
-        if (cloudData) {
-          // Perbarui basis data lokal dengan data resmi dari Google Spreadsheet (Akun Utama)
-          if (Array.isArray(cloudData.siswa)) {
-            // Selalu gantikan data siswa lokal dengan data dari spreadsheet jika cloud memiliki data
-            if (cloudData.siswa.length > 0) {
+          if (cloudData) {
+            if (Array.isArray(cloudData.siswa) && cloudData.siswa.length > 0) {
               appData.siswa = cloudData.siswa;
             }
-          }
-          if (Array.isArray(cloudData.presensi)) {
-            appData.presensi = cloudData.presensi;
-          }
-          if (Array.isArray(cloudData.spp)) {
-            appData.spp = cloudData.spp;
-          }
-          if (Array.isArray(cloudData.users) && cloudData.users.length > 0) {
-            appData.users = cloudData.users;
-          }
+            if (Array.isArray(cloudData.presensi)) {
+              appData.presensi = cloudData.presensi;
+            }
+            if (Array.isArray(cloudData.spp)) {
+              appData.spp = cloudData.spp;
+            }
+            if (Array.isArray(cloudData.users) && cloudData.users.length > 0) {
+              appData.users = cloudData.users;
+            }
 
-          delete appData._isNewDevice;
-          saveDataToStorage();
+            delete appData._isNewDevice;
+            saveDataToStorage();
 
-          // Segarkan tampilan antarmuka aktif
-          renderTableMasterSiswa();
-          renderTableSPP();
-          renderLivePresensiLog();
-          renderTableUsers();
-          if (appData.currentUser && appData.currentUser.role === 'siswa') {
-            renderPortalSiswa();
-          }
+            renderTableMasterSiswa();
+            renderTableSPP();
+            renderLivePresensiLog();
+            renderTableUsers();
+            if (appData.currentUser && appData.currentUser.role === 'siswa') {
+              renderPortalSiswa();
+            }
 
-          // Perbarui indikator badge sinkronisasi di Master Data Siswa
-          const syncBadge = document.getElementById('badgeCloudSyncSiswa');
-          if (syncBadge) {
-            syncBadge.innerHTML = `<i class="fa-solid fa-cloud-arrow-down mr-1"></i> Tersinkron (${appData.siswa.length} Siswa)`;
-            syncBadge.classList.remove('hidden');
-            syncBadge.classList.add('flex');
-          }
+            const syncBadge = document.getElementById('badgeCloudSyncSiswa');
+            if (syncBadge) {
+              syncBadge.innerHTML = `<i class="fa-solid fa-cloud-arrow-down mr-1"></i> Tersinkron (${appData.siswa.length} Siswa)`;
+              syncBadge.classList.remove('hidden');
+              syncBadge.classList.add('flex');
+            }
 
-          const nowTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-          if (!silent) {
-            showToast(`Data berhasil disamakan dengan Cloud! (${appData.siswa.length} Siswa, ${appData.spp.length} SPP)`, 'success');
-            playBeep(980, 'sine', 0.2);
+            const nowTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            localStorage.setItem('sim_last_sheets_sync', nowTime);
+            if (!silent) {
+              showToast(`Data berhasil disamakan dengan Cloud! (${appData.siswa.length} Siswa, ${appData.spp.length} SPP)`, 'success');
+              playBeep(980, 'sine', 0.2);
+            }
+            const elLast = document.getElementById('sheetsLastSyncTime');
+            if (elLast) elLast.textContent = `Sinkron terakhir: ${nowTime}`;
+            return true;
           }
-          const elLast = document.getElementById('sheetsLastSyncTime');
-          if (elLast) elLast.textContent = `Sinkron terakhir: ${nowTime}`;
+          return false;
+        } catch (err) {
+          console.warn('Gagal menarik data cloud:', err);
+          if (!silent) showToast('Belum dapat mengambil data dari Cloud: ' + err.message, 'warning');
+          return false;
+        } finally {
+          isSyncingCloud = false;
+          if (iconPull) iconPull.classList.remove('fa-spin');
         }
-      } catch (err) {
-        console.warn('Gagal menarik data cloud:', err);
-        if (!silent) showToast('Belum dapat mengambil data dari Cloud: ' + err.message, 'warning');
-      } finally {
-        if (iconPull) iconPull.classList.remove('fa-spin');
-      }
+      })();
+
+      return syncCloudPromise;
     }
 
     async function testKoneksiSheets() {
@@ -1962,65 +2009,109 @@
       const resBox = document.getElementById('sheetsTestResult');
       if (resBox) {
         resBox.className = 'p-3 rounded-xl border text-xs bg-indigo-50 border-indigo-200 text-indigo-700 block';
-        resBox.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Sedang mengirim database lengkap (Siswa, Presensi, SPP, Users)...';
+        resBox.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Sedang mengirim database lengkap ke Google Sheets...';
       }
 
       showToast('Memulai sinkronisasi seluruh database ke Google Sheets...', 'info');
-      const payload = {
-        action: 'syncAllData',
-        siswa: appData.siswa || [],
-        presensi: appData.presensi || [],
-        spp: appData.spp || [],
-        users: appData.users || []
-      };
 
-      const result = await sendDataToGoogleSheets(payload);
-      const timestamp = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      localStorage.setItem('sim_last_sheets_sync', timestamp);
+      try {
+        await fetch(targetUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'syncAllData',
+            siswa: appData.siswa || [],
+            presensi: appData.presensi || [],
+            spp: appData.spp || [],
+            users: appData.users || []
+          })
+        });
 
-      if (result.success) {
         if (resBox) {
           resBox.className = 'p-3 rounded-xl border text-xs bg-emerald-50 border-emerald-200 text-emerald-700 block';
-          resBox.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> <b>Sukses!</b> Seluruh database (${payload.siswa.length} Siswa, ${payload.presensi.length} Presensi, ${payload.spp.length} SPP, ${payload.users.length} Petugas) berhasil dikirim ke Google Spreadsheet pada pukul ${timestamp}.`;
+          resBox.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> <b>Sinkronisasi Berhasil!</b> Seluruh tabel di spreadsheet telah diperbarui.';
         }
-        showToast('Seluruh data berhasil disinkronkan ke Google Spreadsheet!', 'success');
-        playBeep(980, 'sine', 0.2);
-        const elLast = document.getElementById('sheetsLastSyncTime');
-        if (elLast) elLast.textContent = `Sinkron terakhir: ${timestamp}`;
-      } else {
+        showToast('Semua data berhasil disinkronkan ke Google Spreadsheet!', 'success');
+      } catch (e) {
         if (resBox) {
           resBox.className = 'p-3 rounded-xl border text-xs bg-rose-50 border-rose-200 text-rose-700 block';
-          resBox.innerHTML = '<i class="fa-solid fa-circle-xmark mr-1"></i> Gagal sinkronisasi: ' + (result.error || result.message);
+          resBox.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1"></i> Gagal mengirim data: ' + e.message;
         }
-        showToast('Gagal mengirim data ke Google Sheets', 'error');
+        showToast('Gagal mengirim data: ' + e.message, 'error');
       }
+    }
+
+    function salinLinkBerbagiKomputerLain() {
+      if (!hasValidSheetsUrl()) {
+        showToast('Atur dan simpan URL Web App Google Sheets terlebih dahulu!', 'warning');
+        return;
+      }
+      const baseUrl = window.location.origin + window.location.pathname;
+      const shareUrl = baseUrl + '?sheetsUrl=' + encodeURIComponent(appData.sheetsUrl);
+      const tempInput = document.createElement('textarea');
+      tempInput.value = shareUrl;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+      showToast('Link akses otomatis berhasil disalin! Buka link ini di komputer lain.', 'success');
     }
 
     function switchLoginTab(mode) {
       currentLoginMode = mode;
-      const btnPetugas = document.getElementById('tabBtnPetugas');
-      const btnSiswa = document.getElementById('tabBtnSiswa');
-      const formPetugas = document.getElementById('formLoginPetugas');
-      const formSiswa = document.getElementById('formLoginSiswa');
+      const bPetugas = document.getElementById('tabBtnPetugas');
+      const bSiswa = document.getElementById('tabBtnSiswa');
+      const fPetugas = document.getElementById('formLoginPetugas');
+      const fSiswa = document.getElementById('formLoginSiswa');
 
       if (mode === 'petugas') {
-        btnPetugas.className = 'py-2 text-xs font-semibold rounded-lg bg-white text-indigo-900 shadow';
-        btnSiswa.className = 'py-2 text-xs font-semibold rounded-lg text-indigo-100 hover:bg-white/10 transition';
-        formPetugas.classList.remove('hidden');
-        formSiswa.classList.add('hidden');
+        bPetugas.className = 'py-2 text-xs font-semibold rounded-lg bg-white text-indigo-900 shadow';
+        bSiswa.className = 'py-2 text-xs font-semibold rounded-lg text-indigo-100 hover:bg-white/10 transition';
+        fPetugas.classList.remove('hidden');
+        fSiswa.classList.add('hidden');
       } else {
-        btnSiswa.className = 'py-2 text-xs font-semibold rounded-lg bg-white text-indigo-900 shadow';
-        btnPetugas.className = 'py-2 text-xs font-semibold rounded-lg text-indigo-100 hover:bg-white/10 transition';
-        formSiswa.classList.remove('hidden');
-        formPetugas.classList.add('hidden');
+        bSiswa.className = 'py-2 text-xs font-semibold rounded-lg bg-white text-indigo-900 shadow';
+        bPetugas.className = 'py-2 text-xs font-semibold rounded-lg text-indigo-100 hover:bg-white/10 transition';
+        fSiswa.classList.remove('hidden');
+        fPetugas.classList.add('hidden');
       }
     }
 
-    function handleLoginPetugas(e) {
+    function togglePassVisibility(inputId, iconId) {
+      const inp = document.getElementById(inputId);
+      const ico = document.getElementById(iconId);
+      if (inp.type === 'password') {
+        inp.type = 'text';
+        ico.classList.replace('fa-eye', 'fa-eye-slash');
+      } else {
+        inp.type = 'password';
+        ico.classList.replace('fa-eye-slash', 'fa-eye');
+      }
+    }
+
+    async function handleLoginPetugas(e) {
       e.preventDefault();
       const user = document.getElementById('loginPetugasUser').value.trim();
       const pass = document.getElementById('loginPetugasPass').value;
-      const found = appData.users.find(u => u.username === user && u.password === pass);
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const origBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+
+      let found = appData.users.find(u => u.username === user && u.password === pass);
+
+      // Cek ke Cloud jika akun belum ada di perangkat lokal
+      if (!found && hasValidSheetsUrl()) {
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> <span>Mengecek data ke Cloud...</span>';
+        }
+        await tarikDataDariGoogleSheets(true);
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = origBtnHtml;
+        }
+        found = appData.users.find(u => u.username === user && u.password === pass);
+      }
 
       if (found) {
         appData.currentUser = { ...found };
@@ -2038,11 +2129,28 @@
       }
     }
 
-    function handleLoginSiswa(e) {
+    async function handleLoginSiswa(e) {
       e.preventDefault();
       const user = document.getElementById('loginSiswaUsername').value.trim();
       const pass = document.getElementById('loginSiswaPass').value;
-      const found = appData.siswa.find(s => s.username === user && s.password === pass);
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const origBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+
+      let found = appData.siswa.find(s => s.username === user && s.password === pass);
+
+      // Cek ke Cloud jika akun belum ada di perangkat lokal
+      if (!found && hasValidSheetsUrl()) {
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> <span>Mengecek data siswa ke Cloud...</span>';
+        }
+        await tarikDataDariGoogleSheets(true);
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = origBtnHtml;
+        }
+        found = appData.siswa.find(s => s.username === user && s.password === pass);
+      }
 
       if (found) {
         appData.currentUser = { ...found, role: 'siswa' };
@@ -2092,7 +2200,6 @@
     }
 
     function switchAdminTab(tabName) {
-      // Pemetaan eksplisit ID tombol dan kontainer konten setiap menu
       const tabMap = {
         'scanner': { btn: 'tabBtnScanner', content: 'tabContentScanner' },
         'siswa': { btn: 'tabBtnDataSiswa', content: 'tabContentSiswa' },
@@ -2121,14 +2228,15 @@
         }
       });
 
+      // Otomatis tarik data cloud setiap kali admin berpindah tab menu
+      if (hasValidSheetsUrl()) {
+        tarikDataDariGoogleSheets(true);
+      }
+
       if (tabName === 'scanner') {
         renderLivePresensiLog();
       } else if (tabName === 'siswa') {
         renderTableMasterSiswa();
-        // Otomatis sinkronkan dan tarik data terbaru dari cloud saat membuka tab Master Data Siswa
-        if (appData.sheetsUrl && appData.sheetsUrl.startsWith('http') && !appData.sheetsUrl.includes('XXXXX-GANTI-DENGAN')) {
-          tarikDataDariGoogleSheets(true);
-        }
       } else if (tabName === 'spp') {
         renderTableSPP();
       } else if (tabName === 'laporan') {
@@ -2155,7 +2263,6 @@
     }
 
     async function startCameraScanner() {
-      const cameraBox = document.getElementById('cameraReader');
       const placeholder = document.getElementById('cameraOffPlaceholder');
       const laser = document.getElementById('cameraLaserOverlay');
       const btnText = document.getElementById('btnToggleCameraText');
@@ -2166,7 +2273,6 @@
         
         let cameraId = null;
         if (cameras && cameras.length > 0) {
-          // Favor back camera
           const backCam = cameras.find(c => c.label.toLowerCase().includes('back') || c.label.toLowerCase().includes('belakang') || c.label.toLowerCase().includes('environment'));
           cameraId = backCam ? backCam.id : cameras[0].id;
         }
@@ -2218,7 +2324,7 @@
 
     function onScanSuccess(decodedText) {
       const now = Date.now();
-      if (now - lastScanTime < 1800) return; // Debounce 1.8s
+      if (now - lastScanTime < 1800) return;
       lastScanTime = now;
       playBeep(880, 'sine', 0.15);
       prosesPencatatanPresensi(decodedText.trim());
@@ -2293,7 +2399,6 @@
       const val = document.getElementById('inputScanManual').value.trim();
       if (!val) return;
 
-      // Cek apakah input cocok dengan Username tepat atau Nama Siswa
       let targetSiswa = appData.siswa.find(s => s.username.toLowerCase() === val.toLowerCase());
       if (!targetSiswa) {
         targetSiswa = appData.siswa.find(s => s.nama.toLowerCase() === val.toLowerCase());
@@ -2305,14 +2410,12 @@
       if (targetSiswa) {
         prosesPencatatanPresensi(targetSiswa.username);
       } else {
-        // Fallback untuk barcode scanner eksternal
         prosesPencatatanPresensi(val);
       }
 
       clearScanManualSearch();
     }
 
-    // Menutup popup dropdown pencarian jika klik di luar input
     document.addEventListener('click', (e) => {
       const searchBox = document.getElementById('scanManualSearchResults');
       const input = document.getElementById('inputScanManual');
@@ -2351,7 +2454,6 @@
       playBeep(1046, 'sine', 0.2);
       showToast(`Presensi ${status} berhasil: ${siswa.nama}`, 'success');
 
-      // Sync Real-Time to Google Sheets
       sendDataToGoogleSheets({
         action: 'simpanPresensi',
         ...newRecord
@@ -2455,9 +2557,6 @@
       }).join('');
     }
 
-    /* =========================================================================
-       MODAL DETAIL & EDIT DATA SISWA
-       ========================================================================= */
     let currentDetailUsername = null;
 
     function bukaDetailSiswa(username) {
@@ -2531,7 +2630,6 @@
       const origUsername = document.getElementById('editOriginalUsername').value;
       const newUsername = document.getElementById('editUsername').value.trim();
 
-      // Jika ganti username, cek duplikasi
       if (newUsername !== origUsername) {
         const exist = appData.siswa.some(s => s.username === newUsername);
         if (exist) {
@@ -2557,7 +2655,6 @@
         alamat: document.getElementById('editAlamat').value.trim() || '-'
       };
 
-      // Perbarui referensi username di presensi dan SPP jika username berubah
       if (newUsername !== origUsername) {
         appData.presensi.forEach(p => {
           if (p.nis === origUsername) {
@@ -2573,12 +2670,10 @@
             sp.kelas = updatedSiswa.kelas;
           }
         });
-        // Jika sedang login sebagai siswa ini
         if (appData.currentUser && appData.currentUser.username === origUsername) {
           appData.currentUser = { ...updatedSiswa, role: 'siswa' };
         }
       } else {
-        // Perbarui nama & kelas di riwayat presensi/SPP
         appData.presensi.forEach(p => {
           if (p.nis === newUsername) {
             p.nama = updatedSiswa.nama;
@@ -2603,7 +2698,6 @@
       playBeep(880, 'sine', 0.15);
       showToast(`Data siswa "${updatedSiswa.nama}" berhasil diperbarui`, 'success');
 
-      // Sinkronkan ke Google Sheets Real-Time
       sendDataToGoogleSheets({
         action: 'updateSiswa',
         ...updatedSiswa
@@ -2648,7 +2742,6 @@
       playBeep(880, 'sine', 0.15);
       showToast(`Siswa "${newSiswa.nama}" berhasil didaftarkan`, 'success');
 
-      // Sync to Google Sheets
       sendDataToGoogleSheets({
         action: 'tambahSiswa',
         ...newSiswa
@@ -2664,7 +2757,6 @@
         renderTableMasterSiswa();
         showToast('Data siswa berhasil dihapus', 'info');
 
-        // Sinkronkan Hapus Siswa ke Google Sheets Real-Time
         sendDataToGoogleSheets({
           action: 'hapusSiswa',
           username: username
@@ -2672,7 +2764,6 @@
       }
     }
 
-    // Export CSV Siswa
     function handleExportSiswaCSV() {
       if (appData.siswa.length === 0) {
         showToast('Belum ada data siswa untuk diekspor', 'warning');
@@ -2705,7 +2796,6 @@
       showToast('Data siswa berhasil diekspor ke CSV', 'success');
     }
 
-    // Modal Import Siswa Logic
     function openModalImportSiswa() {
       importParsedList = [];
       document.getElementById('importPreviewContainer').classList.add('hidden');
@@ -2801,7 +2891,6 @@
         return;
       }
 
-      // Detect delimiter
       const firstLine = lines[0];
       let delim = ',';
       if (firstLine.includes(';') && !firstLine.includes(',')) delim = ';';
@@ -2853,6 +2942,8 @@
             <td class="p-2 font-medium text-slate-800">${item.nama}</td>
             <td class="p-2 text-slate-600">${item.kelas}</td>
             <td class="p-2 text-slate-600">${item.kategori_bimbingan}</td>
+            <td class="p-2 text-slate-500">${item.sekolah_asal}</td>
+            <td class="p-2 text-slate-500">${item.hobi}</td>
           </tr>
         `).join('');
         
@@ -2895,11 +2986,9 @@
       let skipped = 0;
 
       if (mode === 'replace') {
-        // MODE GANTI SEMUA: Menggantikan total seluruh data siswa yang lama
         appData.siswa = [...importParsedList];
         added = importParsedList.length;
       } else {
-        // MODE TAMBAHKAN / GABUNGKAN: Pertahankan data siswa yang sudah ada
         importParsedList.forEach(item => {
           const idx = appData.siswa.findIndex(s => s.username === item.username);
           if (idx >= 0) {
@@ -2923,7 +3012,6 @@
 
       if (mode === 'replace') {
         showToast(`Seluruh data lama diganti! Total ${added} siswa baru tersimpan.`, 'warning');
-        // Sinkronkan seluruh database siswa baru ke Google Sheets
         sendDataToGoogleSheets({
           action: 'syncAllData',
           siswa: appData.siswa || [],
@@ -2933,7 +3021,6 @@
         });
       } else {
         showToast(`Impor berhasil! Ditambahkan: ${added}, Diperbarui: ${updated}${skipped > 0 ? ', Dilewati: ' + skipped : ''}`, 'success');
-        // Kirim batch data baru ke Google Sheets
         sendDataToGoogleSheets({
           action: 'tambahSiswaBatch',
           siswaList: importParsedList
@@ -3007,9 +3094,6 @@
       document.getElementById('modalCatatSPP').classList.add('hidden');
     }
 
-    /* =========================================================================
-       EDIT & HAPUS TRANSAKSI PEMBAYARAN SPP
-       ========================================================================= */
     let sppIdPendingDelete = null;
 
     function bukaEditSPP(id) {
@@ -3062,7 +3146,6 @@
       playBeep(880, 'sine', 0.15);
       showToast(`Transaksi SPP ${updatedSPP.id} berhasil diperbarui`, 'success');
 
-      // Sinkronkan ke Google Sheets Real-Time
       sendDataToGoogleSheets({
         action: 'updateSPP',
         ...updatedSPP
@@ -3096,7 +3179,6 @@
       playBeep(440, 'sine', 0.15);
       showToast(`Transaksi ${id} berhasil dihapus`, 'info');
 
-      // Sinkronkan Hapus SPP ke Google Sheets Real-Time
       sendDataToGoogleSheets({
         action: 'hapusSPP',
         id: id
@@ -3123,7 +3205,7 @@
         resultsBox.innerHTML = `<div class="p-3 text-xs text-slate-400 text-center">Siswa tidak ditemukan</div>`;
       } else {
         resultsBox.innerHTML = matched.map(s => `
-          <div onclick="selectSppSiswa('${s.username}')" class="p-2.5 hover:bg-indigo-50 cursor-pointer transition flex items-center justify-between text-xs">
+          <div onclick="selectSppSiswa('${s.username.replace(/'/g, "\\'")}')" class="p-2.5 hover:bg-indigo-50 cursor-pointer transition flex items-center justify-between text-xs">
             <div>
               <p class="font-bold text-slate-800">${s.nama}</p>
               <p class="text-[11px] text-slate-500 font-mono">${s.username} &bull; ${s.kelas}</p>
@@ -3192,7 +3274,6 @@
       playBeep(880, 'sine', 0.15);
       showToast(`Transaksi SPP ${newSPP.status} berhasil disimpan`, 'success');
 
-      // Sync to Google Sheets
       sendDataToGoogleSheets({
         action: 'simpanSPP',
         ...newSPP
@@ -3207,7 +3288,6 @@
       document.getElementById('portalSiswaInfo').textContent = `Username: ${student.username} | Kelas: ${student.kelas}`;
       document.getElementById('portalSiswaBadgeKategori').textContent = student.kategori_bimbingan || 'BIMBEL';
 
-      // Attendance Metrics
       const myPresensi = appData.presensi.filter(p => p.nis === student.username);
       const hadirCount = myPresensi.filter(p => p.status === 'Hadir').length;
       const pulangCount = myPresensi.filter(p => p.status === 'Pulang').length;
@@ -3217,12 +3297,10 @@
       document.getElementById('portalStatPulang').textContent = pulangCount;
       document.getElementById('portalStatIzin').textContent = izinCount;
 
-      // SPP Metrics
       const mySPP = appData.spp.filter(s => s.nis === student.username && s.status === 'Lunas');
       const totalBayar = mySPP.reduce((sum, item) => sum + Number(item.nominal || 0), 0);
       document.getElementById('portalStatTotalSPP').textContent = 'Rp ' + totalBayar.toLocaleString('id-ID');
 
-      // Render Attendance Table
       const tbPresensi = document.getElementById('tbodyPortalPresensi');
       if (myPresensi.length === 0) {
         tbPresensi.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-400">Belum ada riwayat presensi tercatat.</td></tr>`;
@@ -3237,7 +3315,6 @@
         `).join('');
       }
 
-      // Render SPP Table
       const allMySPP = appData.spp.filter(s => s.nis === student.username);
       const tbSPP = document.getElementById('tbodyPortalSPP');
       if (allMySPP.length === 0) {
@@ -3258,7 +3335,6 @@
         `).join('');
       }
 
-      // Render Profile Biodata
       document.getElementById('profilViewUsername').textContent = student.username;
       document.getElementById('profilViewNama').textContent = student.nama;
       document.getElementById('profilViewKelas').textContent = student.kelas;
@@ -3311,7 +3387,6 @@
       document.getElementById('kartuViewKategori').textContent = s.kategori_bimbingan || 'BIMBEL';
       document.getElementById('kartuBarcodeText').textContent = s.username;
 
-      // Render SVG Barcode (CODE128)
       try {
         JsBarcode("#kartuBarcodeSvg", s.username, {
           format: "CODE128",
@@ -3338,7 +3413,7 @@
 
       try {
         const canvas = await html2canvas(cardEl, {
-          scale: 3, // High-DPI Output
+          scale: 3,
           useCORS: true,
           backgroundColor: '#1e1b4b'
         });
@@ -3555,7 +3630,6 @@
       playBeep(880, 'sine', 0.15);
       showToast(`Petugas "${newUser.nama}" berhasil ditambahkan`, 'success');
 
-      // Sinkronkan User Baru ke Google Sheets Real-Time
       sendDataToGoogleSheets({
         action: 'simpanUser',
         ...newUser
@@ -3569,7 +3643,6 @@
         renderTableUsers();
         showToast('Pengguna berhasil dihapus', 'info');
 
-        // Sinkronkan Hapus User ke Google Sheets Real-Time
         sendDataToGoogleSheets({
           action: 'hapusUser',
           username: user
@@ -3596,23 +3669,34 @@ function onOpen() {
 }
 
 function doGet(e) {
+  var callback = (e && e.parameter && e.parameter.callback) ? e.parameter.callback : '';
   try {
     var action = (e && e.parameter && e.parameter.action) ? e.parameter.action : '';
     if (action === 'setup') {
       setupDatabaseOtomatis();
-      return ContentService.createTextOutput(JSON.stringify({ success: true, message: 'Database dibuat otomatis' })).setMimeType(ContentService.MimeType.JSON);
+      var setupResp = JSON.stringify({ success: true, message: 'Database dibuat otomatis' });
+      if (callback) return ContentService.createTextOutput(callback + '(' + setupResp + ')').setMimeType(ContentService.MimeType.JAVASCRIPT);
+      return ContentService.createTextOutput(setupResp).setMimeType(ContentService.MimeType.JSON);
     }
-    return ContentService.createTextOutput(JSON.stringify({ status: 'success', message: 'API SIM Presensi & SPP Bunda Ani Aktif' })).setMimeType(ContentService.MimeType.JSON);
+    if (action === 'getAllData') {
+      var allData = apiGetAllData();
+      var jsonResponse = JSON.stringify({ status: 'success', success: true, data: allData });
+      if (callback) return ContentService.createTextOutput(callback + '(' + jsonResponse + ')').setMimeType(ContentService.MimeType.JAVASCRIPT);
+      return ContentService.createTextOutput(jsonResponse).setMimeType(ContentService.MimeType.JSON);
+    }
+    var defaultResp = JSON.stringify({ status: 'success', message: 'API SIM Presensi & SPP Bunda Ani Aktif' });
+    if (callback) return ContentService.createTextOutput(callback + '(' + defaultResp + ')').setMimeType(ContentService.MimeType.JAVASCRIPT);
+    return ContentService.createTextOutput(defaultResp).setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ success: false, error: err.message })).setMimeType(ContentService.MimeType.JSON);
+    var errResp = JSON.stringify({ success: false, error: err.message });
+    if (callback) return ContentService.createTextOutput(callback + '(' + errResp + ')').setMimeType(ContentService.MimeType.JAVASCRIPT);
+    return ContentService.createTextOutput(errResp).setMimeType(ContentService.MimeType.JSON);
   }
 }
 
 function doPost(e) {
   try {
-    if (!e) {
-      return ContentService.createTextOutput(JSON.stringify({ success: false, message: 'doPost dipanggil tanpa event' })).setMimeType(ContentService.MimeType.JSON);
-    }
+    if (!e) return ContentService.createTextOutput(JSON.stringify({ success: false, message: 'doPost dipanggil tanpa event' })).setMimeType(ContentService.MimeType.JSON);
     var contents = (e.postData && e.postData.contents) ? e.postData.contents : ((e.parameter && e.parameter.data) ? e.parameter.data : '');
     if (!contents) return ContentService.createTextOutput(JSON.stringify({ success: false, message: 'No payload' })).setMimeType(ContentService.MimeType.JSON);
     
@@ -3636,6 +3720,115 @@ function doPost(e) {
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({ success: false, error: err.message })).setMimeType(ContentService.MimeType.JSON);
   }
+}
+
+function apiGetAllData() {
+  var ss = getSpreadsheet();
+  var siswaList = [];
+  var sSheet = ss.getSheetByName('Siswa');
+  if (sSheet && sSheet.getLastRow() > 1) {
+    var maxRows = sSheet.getLastRow() - 1;
+    var maxCols = Math.max(11, sSheet.getLastColumn());
+    var sValues = sSheet.getRange(2, 1, maxRows, Math.min(11, maxCols)).getValues();
+    for (var i = 0; i < sValues.length; i++) {
+      var sRow = sValues[i];
+      var rawUsername = sRow[0] ? String(sRow[0]).trim() : '';
+      if (rawUsername !== '') {
+        siswaList.push({
+          username: rawUsername,
+          password: String(sRow[1] || '123'),
+          nama: String(sRow[2] || ''),
+          kelas: String(sRow[3] || ''),
+          alamat: String(sRow[4] || '-'),
+          sekolah_asal: String(sRow[5] || '-'),
+          hobi: String(sRow[6] || '-'),
+          kategori_bimbingan: String(sRow[7] || 'BIMBEL'),
+          nama_ortu: String(sRow[8] || '-'),
+          no_telp: String(sRow[9] || '-'),
+          status_akun: String(sRow[10] || 'Aktif')
+        });
+      }
+    }
+  }
+
+  var presensiList = [];
+  var pSheet = ss.getSheetByName('Presensi');
+  if (pSheet && pSheet.getLastRow() > 1) {
+    var pValues = pSheet.getRange(2, 1, pSheet.getLastRow() - 1, 8).getValues();
+    for (var j = 0; j < pValues.length; j++) {
+      var pRow = pValues[j];
+      if (pRow[0] && String(pRow[0]).trim() !== '') {
+        var tgl = pRow[1];
+        if (tgl instanceof Date) {
+          var y = tgl.getFullYear();
+          var m = String(tgl.getMonth() + 1).padStart(2, '0');
+          var d = String(tgl.getDate()).padStart(2, '0');
+          tgl = y + '-' + m + '-' + d;
+        }
+        presensiList.push({
+          id: String(pRow[0]),
+          tanggal: String(tgl || ''),
+          waktu: String(pRow[2] || ''),
+          nis: String(pRow[3] || ''),
+          nama: String(pRow[4] || ''),
+          kelas: String(pRow[5] || ''),
+          status: String(pRow[6] || 'Hadir'),
+          keterangan: String(pRow[7] || '-')
+        });
+      }
+    }
+  }
+
+  var sppList = [];
+  var spSheet = ss.getSheetByName('SPP');
+  if (spSheet && spSheet.getLastRow() > 1) {
+    var spValues = spSheet.getRange(2, 1, spSheet.getLastRow() - 1, 11).getValues();
+    for (var k = 0; k < spValues.length; k++) {
+      var spRow = spValues[k];
+      if (spRow[0] && String(spRow[0]).trim() !== '') {
+        var spTgl = spRow[1];
+        if (spTgl instanceof Date) {
+          var sy = spTgl.getFullYear();
+          var sm = String(spTgl.getMonth() + 1).padStart(2, '0');
+          var sd = String(spTgl.getDate()).padStart(2, '0');
+          spTgl = sy + '-' + sm + '-' + sd;
+        }
+        sppList.push({
+          id: String(spRow[0]),
+          tanggal: String(spTgl || ''),
+          nis: String(spRow[2] || ''),
+          nama: String(spRow[3] || ''),
+          kelas: String(spRow[4] || ''),
+          bulan: String(spRow[5] || ''),
+          tahun: String(spRow[6] || ''),
+          nominal: Number(spRow[7] || 0),
+          metode: String(spRow[8] || 'Tunai'),
+          status: String(spRow[9] || 'Lunas'),
+          petugas: String(spRow[10] || 'Admin')
+        });
+      }
+    }
+  }
+
+  var usersList = [];
+  var uSheet = ss.getSheetByName('Users');
+  if (uSheet && uSheet.getLastRow() > 1) {
+    var uValues = uSheet.getRange(2, 1, uSheet.getLastRow() - 1, 5).getValues();
+    for (var u = 0; u < uValues.length; u++) {
+      var uRow = uValues[u];
+      if (uRow[1] && String(uRow[1]).trim() !== '') {
+        usersList.push({
+          nama: String(uRow[0] || ''),
+          username: String(uRow[1]).trim(),
+          password: String(uRow[2] || '123'),
+          role: String(uRow[3] || 'petugas'),
+          status: String(uRow[4] || 'Aktif')
+        });
+      }
+    }
+  }
+
+  return { siswa: siswaList, presensi: presensiList, spp: sppList, users: usersList };
 }
 
 function apiSimpanPresensi(data) {
