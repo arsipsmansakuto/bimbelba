@@ -794,6 +794,141 @@
     </div>
   </div>
 
+  <!-- MODAL: EDIT TRANSAKSI PEMBAYARAN SPP -->
+  <div id="modalEditSPP" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="bg-amber-600 px-5 py-4 text-white flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <i class="fa-solid fa-pen-to-square text-amber-200"></i>
+          <h3 class="font-bold text-sm sm:text-base">Edit Pembayaran SPP</h3>
+        </div>
+        <button onclick="closeModalEditSPP()" class="text-amber-200 hover:text-white text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form onsubmit="handleSimpanEditSPP(event)" class="p-5 space-y-4 overflow-y-auto flex-1 custom-scrollbar">
+        <!-- Hidden ID Transaksi -->
+        <input type="hidden" id="editSppId">
+
+        <!-- Informasi Siswa (Readonly) -->
+        <div class="p-3 bg-amber-50/60 rounded-xl border border-amber-200/80 text-xs space-y-1">
+          <div class="flex items-center justify-between">
+            <span class="text-amber-900 font-bold" id="editSppNamaSiswa">Nama Siswa</span>
+            <span class="font-mono text-[11px] text-amber-700 font-bold" id="editSppNoKuitansi">SPP-000</span>
+          </div>
+          <p class="text-[11px] text-slate-600" id="editSppDetailSiswa">Username: - | Kelas: -</p>
+        </div>
+
+        <!-- Tanggal Pembayaran -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Tanggal Transaksi *</label>
+          <input type="date" id="editSppTanggal" required class="w-full text-xs border border-slate-300 rounded-xl p-2 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+        </div>
+
+        <!-- Periode Bulan & Tahun -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Periode Bulan *</label>
+            <select id="editSppBulan" required class="w-full text-xs border border-slate-300 rounded-xl p-2 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+              <option value="Januari">Januari</option>
+              <option value="Februari">Februari</option>
+              <option value="Maret">Maret</option>
+              <option value="April">April</option>
+              <option value="Mei">Mei</option>
+              <option value="Juni">Juni</option>
+              <option value="Juli">Juli</option>
+              <option value="Agustus">Agustus</option>
+              <option value="September">September</option>
+              <option value="Oktober">Oktober</option>
+              <option value="November">November</option>
+              <option value="Desember">Desember</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Tahun *</label>
+            <input type="number" id="editSppTahun" required class="w-full text-xs border border-slate-300 rounded-xl p-2 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+          </div>
+        </div>
+
+        <!-- Nominal & Quick Preset -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Nominal Pembayaran (Rp) *</label>
+          <div class="relative mb-2">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500 text-xs font-bold">Rp</span>
+            <input type="number" id="editSppNominal" required class="w-full pl-10 pr-3 py-2 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none font-bold text-slate-800">
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-[11px] text-slate-500 font-semibold">Preset Cepat:</span>
+            <button type="button" onclick="setNominalEditSppPreset(80000)" class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-amber-50 hover:text-amber-700 border border-slate-200 rounded-lg font-semibold transition">
+              80.000
+            </button>
+            <button type="button" onclick="setNominalEditSppPreset(110000)" class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-amber-50 hover:text-amber-700 border border-slate-200 rounded-lg font-semibold transition">
+              110.000
+            </button>
+          </div>
+        </div>
+
+        <!-- Status Pembayaran -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Status Pembayaran *</label>
+          <select id="editSppStatus" required class="w-full text-xs border border-slate-300 rounded-xl p-2 focus:ring-2 focus:ring-amber-500 focus:outline-none font-medium">
+            <option value="Lunas">Lunas</option>
+            <option value="Belum Bayar">Belum Bayar</option>
+          </select>
+        </div>
+
+        <!-- Metode Pembayaran -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Metode Pembayaran</label>
+          <select id="editSppMetode" class="w-full text-xs border border-slate-300 rounded-xl p-2 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+            <option value="Tunai">Tunai (Cash)</option>
+            <option value="Transfer Bank">Transfer Bank</option>
+            <option value="QRIS / E-Wallet">QRIS / E-Wallet</option>
+          </select>
+        </div>
+
+        <!-- Modal Actions -->
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-end space-x-2">
+          <button type="button" onclick="closeModalEditSPP()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl">Batal</button>
+          <button type="submit" class="px-5 py-2 text-xs font-semibold bg-amber-600 hover:bg-amber-700 text-white rounded-xl shadow-md transition">Simpan Perubahan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: KONFIRMASI HAPUS SPP -->
+  <div id="modalKonfirmasiHapusSPP" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-sm overflow-hidden flex flex-col">
+      <div class="p-5 text-center">
+        <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-3 text-xl">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h4 class="text-sm font-bold text-slate-800">Hapus Transaksi SPP?</h4>
+        <p class="text-xs text-slate-500 mt-1">Data pembayaran yang dihapus tidak dapat dipulihkan kembali.</p>
+        
+        <div class="mt-3 p-3 bg-slate-50 rounded-xl border border-slate-100 text-left text-xs space-y-1">
+          <div class="flex justify-between">
+            <span class="text-slate-400">No. Kuitansi:</span>
+            <span id="hapusSppKuitansi" class="font-bold text-slate-800 font-mono">-</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Siswa:</span>
+            <span id="hapusSppNama" class="font-semibold text-slate-800">-</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Nominal:</span>
+            <span id="hapusSppNominal" class="font-bold text-rose-600 font-mono">-</span>
+          </div>
+        </div>
+      </div>
+      <div class="px-5 pb-5 flex items-center justify-end space-x-2">
+        <button type="button" onclick="closeModalKonfirmasiHapusSPP()" class="flex-1 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl">Batal</button>
+        <button type="button" onclick="eksekusiHapusSPP()" class="flex-1 py-2 text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white rounded-xl shadow-md transition">Ya, Hapus</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: PENDAFTARAN SISWA BARU -->
   <div id="modalTambahSiswa" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-2xl overflow-hidden flex flex-col max-h-[88vh]">
@@ -2488,6 +2623,30 @@
       parseCsvTextData(val);
     }
 
+    function parseCsvLine(line, delim) {
+      const result = [];
+      let cur = '';
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const c = line[i];
+        if (c === '"') {
+          if (inQuotes && line[i + 1] === '"') {
+            cur += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (c === delim && !inQuotes) {
+          result.push(cur.trim());
+          cur = '';
+        } else {
+          cur += c;
+        }
+      }
+      result.push(cur.trim());
+      return result;
+    }
+
     function parseCsvTextData(text) {
       const lines = text.trim().split(/\r\n|\n/).filter(l => l.trim().length > 0);
       if (lines.length < 2) {
@@ -2510,10 +2669,12 @@
       const oIdx = headers.findIndex(h => h.includes('ortu') || h.includes('wali'));
       const tIdx = headers.findIndex(h => h.includes('telp') || h.includes('wa') || h.includes('hp'));
       const aIdx = headers.findIndex(h => h.includes('alamat'));
+      const sIdx = headers.findIndex(h => h.includes('sekolah') || h.includes('asal'));
+      const hIdx = headers.findIndex(h => h.includes('hobi') || h.includes('minat') || h.includes('hobby'));
 
       importParsedList = [];
       for (let i = 1; i < lines.length; i++) {
-        const parts = lines[i].split(delim).map(p => p.replace(/^["']|["']$/g, '').trim());
+        const parts = parseCsvLine(lines[i], delim);
         if (parts.length < 2) continue;
         const username = parts[uIdx >= 0 ? uIdx : 0] || ('Siswa_' + (Date.now() + i));
         const nama = parts[nIdx >= 0 ? nIdx : 2] || parts[1] || 'Siswa Tanpa Nama';
@@ -2527,6 +2688,8 @@
           kelas: kelas,
           kategori_bimbingan: ['BIMBA', 'PRIVAT'].includes(kat.toUpperCase()) ? kat.toUpperCase() : 'BIMBEL',
           alamat: parts[aIdx >= 0 ? aIdx : 4] || '-',
+          sekolah_asal: parts[sIdx >= 0 ? sIdx : 5] || '-',
+          hobi: parts[hIdx >= 0 ? hIdx : 6] || '-',
           nama_ortu: parts[oIdx >= 0 ? oIdx : 8] || '-',
           no_telp: parts[tIdx >= 0 ? tIdx : 9] || '-',
           status_akun: 'Aktif'
@@ -2545,43 +2708,90 @@
             <td class="p-2 text-slate-600">${item.kategori_bimbingan}</td>
           </tr>
         `).join('');
-        document.getElementById('btnEksekusiImport').disabled = false;
-        document.getElementById('btnEksekusiImport').textContent = `Mulai Impor (${importParsedList.length} Siswa)`;
+        
+        toggleImportModeUI();
       } else {
         showToast('Tidak ada data valid yang dapat diproses', 'error');
       }
     }
 
+    function toggleImportModeUI() {
+      const mode = document.querySelector('input[name="importDatabaseMode"]:checked')?.value || 'append';
+      const dupContainer = document.getElementById('duplicateHandlingContainer');
+      const btn = document.getElementById('btnEksekusiImport');
+      const count = importParsedList.length;
+
+      if (mode === 'replace') {
+        if (dupContainer) dupContainer.classList.add('hidden');
+        if (btn) {
+          btn.disabled = count === 0;
+          btn.className = 'px-5 py-2 text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white rounded-xl shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed';
+          btn.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i> Ganti Semua Data (${count} Siswa)`;
+        }
+      } else {
+        if (dupContainer) dupContainer.classList.remove('hidden');
+        if (btn) {
+          btn.disabled = count === 0;
+          btn.className = 'px-5 py-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed';
+          btn.innerHTML = `<i class="fa-solid fa-plus-circle mr-1"></i> Tambahkan / Gabungkan (${count} Siswa)`;
+        }
+      }
+    }
+
     function executeImportSiswa() {
       if (importParsedList.length === 0) return;
+      const mode = document.querySelector('input[name="importDatabaseMode"]:checked')?.value || 'append';
       const dupHandling = document.querySelector('input[name="duplicateHandling"]:checked')?.value || 'update';
+      
       let added = 0;
       let updated = 0;
+      let skipped = 0;
 
-      importParsedList.forEach(item => {
-        const idx = appData.siswa.findIndex(s => s.username === item.username);
-        if (idx >= 0) {
-          if (dupHandling === 'update') {
-            appData.siswa[idx] = { ...appData.siswa[idx], ...item };
-            updated++;
+      if (mode === 'replace') {
+        // MODE GANTI SEMUA: Menggantikan total seluruh data siswa yang lama
+        appData.siswa = [...importParsedList];
+        added = importParsedList.length;
+      } else {
+        // MODE TAMBAHKAN / GABUNGKAN: Pertahankan data siswa yang sudah ada
+        importParsedList.forEach(item => {
+          const idx = appData.siswa.findIndex(s => s.username === item.username);
+          if (idx >= 0) {
+            if (dupHandling === 'update') {
+              appData.siswa[idx] = { ...appData.siswa[idx], ...item };
+              updated++;
+            } else {
+              skipped++;
+            }
+          } else {
+            appData.siswa.push(item);
+            added++;
           }
-        } else {
-          appData.siswa.push(item);
-          added++;
-        }
-      });
+        });
+      }
 
       saveDataToStorage();
       renderTableMasterSiswa();
       closeModalImportSiswa();
       playBeep(980, 'sine', 0.2);
-      showToast(`Impor selesai! Ditambahkan: ${added}, Diperbarui: ${updated}`, 'success');
 
-      // Sync batch to Google Sheets
-      sendDataToGoogleSheets({
-        action: 'tambahSiswaBatch',
-        siswaList: importParsedList
-      });
+      if (mode === 'replace') {
+        showToast(`Seluruh data lama diganti! Total ${added} siswa baru tersimpan.`, 'warning');
+        // Sinkronkan seluruh database siswa baru ke Google Sheets
+        sendDataToGoogleSheets({
+          action: 'syncAllData',
+          siswa: appData.siswa || [],
+          presensi: appData.presensi || [],
+          spp: appData.spp || [],
+          users: appData.users || []
+        });
+      } else {
+        showToast(`Impor berhasil! Ditambahkan: ${added}, Diperbarui: ${updated}${skipped > 0 ? ', Dilewati: ' + skipped : ''}`, 'success');
+        // Kirim batch data baru ke Google Sheets
+        sendDataToGoogleSheets({
+          action: 'tambahSiswaBatch',
+          siswaList: importParsedList
+        });
+      }
     }
 
     function renderTableSPP() {
@@ -2622,9 +2832,17 @@
               </span>
             </td>
             <td class="py-3 px-4 text-center">
-              <button onclick="previewKuitansiSPP('${item.id}')" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg font-bold text-[11px]" title="Lihat Kuitansi">
-                <i class="fa-solid fa-receipt mr-1"></i> Kuitansi
-              </button>
+              <div class="flex items-center justify-center space-x-1.5">
+                <button onclick="previewKuitansiSPP('${item.id}')" class="p-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg transition" title="Lihat Kuitansi">
+                  <i class="fa-solid fa-receipt"></i>
+                </button>
+                <button onclick="bukaEditSPP('${item.id}')" class="p-1.5 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-lg transition" title="Edit Transaksi SPP">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button onclick="konfirmasiHapusSPP('${item.id}')" class="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg transition" title="Hapus Transaksi SPP">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
             </td>
           </tr>
         `;
@@ -2640,6 +2858,102 @@
 
     function closeModalCatatSPP() {
       document.getElementById('modalCatatSPP').classList.add('hidden');
+    }
+
+    /* =========================================================================
+       EDIT & HAPUS TRANSAKSI PEMBAYARAN SPP
+       ========================================================================= */
+    let sppIdPendingDelete = null;
+
+    function bukaEditSPP(id) {
+      const item = appData.spp.find(s => s.id === id);
+      if (!item) return;
+
+      document.getElementById('editSppId').value = item.id;
+      document.getElementById('editSppNamaSiswa').textContent = item.nama;
+      document.getElementById('editSppNoKuitansi').textContent = item.id;
+      document.getElementById('editSppDetailSiswa').textContent = `Username: ${item.nis} | Kelas: ${item.kelas}`;
+      document.getElementById('editSppTanggal').value = item.tanggal || new Date().toISOString().split('T')[0];
+      document.getElementById('editSppBulan').value = item.bulan || 'Januari';
+      document.getElementById('editSppTahun').value = item.tahun || 2026;
+      document.getElementById('editSppNominal').value = item.nominal || 0;
+      document.getElementById('editSppStatus').value = item.status || 'Lunas';
+      document.getElementById('editSppMetode').value = item.metode || 'Tunai';
+
+      document.getElementById('modalEditSPP').classList.remove('hidden');
+    }
+
+    function closeModalEditSPP() {
+      document.getElementById('modalEditSPP').classList.add('hidden');
+    }
+
+    function setNominalEditSppPreset(val) {
+      document.getElementById('editSppNominal').value = val;
+    }
+
+    function handleSimpanEditSPP(e) {
+      e.preventDefault();
+      const id = document.getElementById('editSppId').value;
+      const idx = appData.spp.findIndex(s => s.id === id);
+      if (idx === -1) return;
+
+      const updatedSPP = {
+        ...appData.spp[idx],
+        tanggal: document.getElementById('editSppTanggal').value,
+        bulan: document.getElementById('editSppBulan').value,
+        tahun: document.getElementById('editSppTahun').value,
+        nominal: Number(document.getElementById('editSppNominal').value) || 0,
+        status: document.getElementById('editSppStatus').value,
+        metode: document.getElementById('editSppMetode').value,
+        petugas: appData.currentUser?.nama || 'Admin'
+      };
+
+      appData.spp[idx] = updatedSPP;
+      saveDataToStorage();
+      renderTableSPP();
+      closeModalEditSPP();
+      playBeep(880, 'sine', 0.15);
+      showToast(`Transaksi SPP ${updatedSPP.id} berhasil diperbarui`, 'success');
+
+      // Sinkronkan ke Google Sheets Real-Time
+      sendDataToGoogleSheets({
+        action: 'updateSPP',
+        ...updatedSPP
+      });
+    }
+
+    function konfirmasiHapusSPP(id) {
+      const item = appData.spp.find(s => s.id === id);
+      if (!item) return;
+
+      sppIdPendingDelete = id;
+      document.getElementById('hapusSppKuitansi').textContent = item.id;
+      document.getElementById('hapusSppNama').textContent = item.nama;
+      document.getElementById('hapusSppNominal').textContent = 'Rp ' + Number(item.nominal).toLocaleString('id-ID');
+
+      document.getElementById('modalKonfirmasiHapusSPP').classList.remove('hidden');
+    }
+
+    function closeModalKonfirmasiHapusSPP() {
+      sppIdPendingDelete = null;
+      document.getElementById('modalKonfirmasiHapusSPP').classList.add('hidden');
+    }
+
+    function eksekusiHapusSPP() {
+      if (!sppIdPendingDelete) return;
+      const id = sppIdPendingDelete;
+      appData.spp = appData.spp.filter(s => s.id !== id);
+      saveDataToStorage();
+      renderTableSPP();
+      closeModalKonfirmasiHapusSPP();
+      playBeep(440, 'sine', 0.15);
+      showToast(`Transaksi ${id} berhasil dihapus`, 'info');
+
+      // Sinkronkan Hapus SPP ke Google Sheets Real-Time
+      sendDataToGoogleSheets({
+        action: 'hapusSPP',
+        id: id
+      });
     }
 
     function handleSppSearchInput(query) {
@@ -3161,7 +3475,8 @@ function doPost(e) {
     var action = data.action || '';
 
     if (action === 'simpanPresensi') return apiSimpanPresensi(data);
-    if (action === 'simpanSPP') return apiSimpanSPP(data);
+    if (action === 'simpanSPP' || action === 'updateSPP') return apiSimpanSPP(data);
+    if (action === 'hapusSPP') return apiHapusSPP(data);
     if (action === 'tambahSiswa' || action === 'updateSiswa') return apiTambahSiswa(data);
     if (action === 'hapusSiswa') return apiHapusSiswa(data);
     if (action === 'tambahSiswaBatch') return apiTambahSiswaBatch(data);
@@ -3190,8 +3505,37 @@ function apiSimpanSPP(data) {
   var ss = getSpreadsheet();
   var sheet = ss.getSheetByName('SPP') || ss.insertSheet('SPP');
   if (sheet.getLastRow() === 0) setupSheetSPP(ss);
-  sheet.appendRow([data.id || ('SPP-' + Date.now()), data.tanggal || '', data.nis || data.username || '', data.nama || '', data.kelas || '', data.bulan || '', data.tahun || '', Number(data.nominal || 0), data.metode || 'Tunai', data.status || 'Lunas', data.petugas || 'Admin']);
-  return ContentService.createTextOutput(JSON.stringify({ success: true })).setMimeType(ContentService.MimeType.JSON);
+  var rowData = [data.id || ('SPP-' + Date.now()), data.tanggal || '', data.nis || data.username || '', data.nama || '', data.kelas || '', data.bulan || '', data.tahun || '', Number(data.nominal || 0), data.metode || 'Tunai', data.status || 'Lunas', data.petugas || 'Admin'];
+  var lastRow = sheet.getLastRow();
+  if (lastRow > 1 && data.id) {
+    var values = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
+    for (var i = 0; i < values.length; i++) {
+      if (values[i] && values[i][0] == data.id) {
+        sheet.getRange(i + 2, 1, 1, rowData.length).setValues([rowData]);
+        return ContentService.createTextOutput(JSON.stringify({ success: true, message: 'SPP berhasil diperbarui' })).setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+  }
+  sheet.appendRow(rowData);
+  return ContentService.createTextOutput(JSON.stringify({ success: true, message: 'SPP berhasil dicatat' })).setMimeType(ContentService.MimeType.JSON);
+}
+
+function apiHapusSPP(data) {
+  data = data || {};
+  var ss = getSpreadsheet();
+  var sheet = ss.getSheetByName('SPP');
+  if (!sheet) return ContentService.createTextOutput(JSON.stringify({ success: false })).setMimeType(ContentService.MimeType.JSON);
+  var lastRow = sheet.getLastRow();
+  if (lastRow > 1 && data.id) {
+    var values = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
+    for (var i = values.length - 1; i >= 0; i--) {
+      if (values[i] && values[i][0] == data.id) {
+        sheet.deleteRow(i + 2);
+        break;
+      }
+    }
+  }
+  return ContentService.createTextOutput(JSON.stringify({ success: true, message: 'SPP berhasil dihapus' })).setMimeType(ContentService.MimeType.JSON);
 }
 
 function apiTambahSiswa(data) {
