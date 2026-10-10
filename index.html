@@ -1568,6 +1568,7 @@
        ========================================================================= */
     const MASTER_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzsbeLG4f1LnYPMMMqPjpPI0DWzqERwkjgnw1XObyWUnPxkSLlc81R5gHTC5wl04GkL/exec';
     const DEFAULT_SHEETS_URL = MASTER_SHEETS_URL;
+    const DB_VERSION = 'v2_clean_sync_2026';
 
     /* Audio Tone Synthesizer for scanner feedback */
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1589,67 +1590,14 @@
       }
     }
 
-    /* Database Default Starter */
+    /* Database Default Starter (MURNI DARI SPREADSHEET - TANPA DATA SISWA DUMMY) */
     const DEFAULT_DATA = {
-      sheetsUrl: DEFAULT_SHEETS_URL,
+      _dbVersion: DB_VERSION,
+      sheetsUrl: MASTER_SHEETS_URL,
       currentUser: null,
-      siswa: [
-        {
-          username: 'Alya_01',
-          password: '123',
-          nama: 'Alya Putri Ramadhani',
-          kelas: 'Kelas 4 SD',
-          alamat: 'Jl. Merpati No. 12, Jakarta',
-          sekolah_asal: 'SDN 01 Pagi',
-          hobi: 'Menggambar & Membaca',
-          kategori_bimbingan: 'BIMBEL',
-          nama_ortu: 'Bpk. Hendra',
-          no_telp: '081234567890',
-          status_akun: 'Aktif'
-        },
-        {
-          username: 'Budi_02@',
-          password: '123',
-          nama: 'Budi Santoso',
-          kelas: 'TK B',
-          alamat: 'Jl. Kenanga No. 45',
-          sekolah_asal: 'TK Pertiwi',
-          hobi: 'Mewarnai',
-          kategori_bimbingan: 'BIMBA',
-          nama_ortu: 'Ibu Ratna',
-          no_telp: '085678901234',
-          status_akun: 'Aktif'
-        },
-        {
-          username: 'Dimas_03#',
-          password: '123',
-          nama: 'Dimas Kurniawan',
-          kelas: 'Kelas 8 SMP',
-          alamat: 'Perumahan Asri Blok C-2',
-          sekolah_asal: 'SMP Negeri 2',
-          hobi: 'Robotika & Sains',
-          kategori_bimbingan: 'PRIVAT',
-          nama_ortu: 'Bpk. Agus',
-          no_telp: '087812345678',
-          status_akun: 'Aktif'
-        }
-      ],
+      siswa: [],
       presensi: [],
-      spp: [
-        {
-          id: 'SPP-2026-001',
-          tanggal: '2026-05-02',
-          nis: 'Alya_01',
-          nama: 'Alya Putri Ramadhani',
-          kelas: 'Kelas 4 SD',
-          bulan: 'Mei',
-          tahun: '2026',
-          nominal: 80000,
-          metode: 'Tunai',
-          status: 'Lunas',
-          petugas: 'Admin'
-        }
-      ],
+      spp: [],
       users: [
         { nama: 'Bunda Ani (Admin)', username: 'admin', password: '123', role: 'admin', status: 'Aktif' },
         { nama: 'Petugas Presensi', username: 'petugas', password: '123', role: 'petugas', status: 'Aktif' }
@@ -1677,28 +1625,26 @@
         const stored = localStorage.getItem('sim_bunda_ani_data');
         if (stored) {
           appData = JSON.parse(stored);
-          // Selalu pastikan URL yang dipakai adalah URL Master resmi Anda
-          if (!appData.sheetsUrl || 
-              appData.sheetsUrl.includes('XXXXX-GANTI-DENGAN') || 
-              !appData.sheetsUrl.startsWith('http')) {
-            appData.sheetsUrl = MASTER_SHEETS_URL;
+
+          // PEMBERSIHAN DATA BAWAAN / DUMMY PADA PERANGKAT LAIN:
+          // Jika di browser perangkat lain masih tersimpan siswa demo lama (Alya_01, dll) atau versi lama
+          if (appData._dbVersion !== DB_VERSION || (appData.siswa && appData.siswa.some(s => s.username === 'Alya_01' || s.username === 'Budi_02@'))) {
+            // Bersihkan data dummy bawaan agar murni terisi dari Google Spreadsheet
+            appData.siswa = (appData.siswa || []).filter(s => s.username !== 'Alya_01' && s.username !== 'Budi_02@' && s.username !== 'Dimas_03#');
+            appData.spp = (appData.spp || []).filter(sp => sp.id !== 'SPP-2026-001');
+            appData._dbVersion = DB_VERSION;
           }
         } else {
           appData = { ...DEFAULT_DATA };
-          appData.sheetsUrl = MASTER_SHEETS_URL;
-          appData._isNewDevice = true;
-          saveDataToStorage();
         }
       } catch (e) {
         appData = { ...DEFAULT_DATA };
-        appData.sheetsUrl = MASTER_SHEETS_URL;
-        appData._isNewDevice = true;
       }
 
-      // Pastikan URL selalu menggunakan Master URL resmi
-      if (!appData.sheetsUrl || appData.sheetsUrl.trim() === '') {
-        appData.sheetsUrl = MASTER_SHEETS_URL;
-      }
+      // KUNCI PERMANEN: Selalu gunakan URL Master resmi yang valid di semua perangkat
+      appData.sheetsUrl = MASTER_SHEETS_URL;
+      appData._dbVersion = DB_VERSION;
+      saveDataToStorage();
     }
 
     function saveDataToStorage() {
@@ -1715,7 +1661,7 @@
       updateSheetsIndicatorStatus();
       initCodeGsContent();
 
-      // Tampilkan view sesuai sesi login jika ada
+      // Render tampilan awal
       if (appData.currentUser) {
         if (appData.currentUser.role === 'siswa') {
           showView('portalSiswa');
@@ -1731,17 +1677,16 @@
         showView('login');
       }
 
-      // TARIK DATA OTOMATIS SEKETIKA DARI GOOGLE SPREADSHEET UTAMA
-      // Tanpa perlu klik manual di perangkat atau akun mana pun
+      // SINKRONISASI PRIORITAS TINGGI: Tarik seluruh data riil dari Google Spreadsheet seketika
       await tarikDataDariGoogleSheets(true);
 
       // SINKRONISASI REAL-TIME OTOMATIS DI LATAR BELAKANG:
-      // 1. Setiap 15 detik sistem otomatis mengambil perubahan terbaru
+      // 1. Setiap 15 detik sistem otomatis memeriksa perubahan data terbaru dari Google Spreadsheet
       setInterval(() => {
         tarikDataDariGoogleSheets(true);
       }, 15000);
 
-      // 2. Setiap kali tab browser dibuka / difokuskan kembali
+      // 2. Setiap kali tab browser dibuka / difokuskan kembali di perangkat mana pun
       window.addEventListener('focus', () => {
         tarikDataDariGoogleSheets(true);
       });
@@ -1903,7 +1848,8 @@
           }
 
           if (cloudData) {
-            if (Array.isArray(cloudData.siswa) && cloudData.siswa.length > 0) {
+            // GANTI SELURUH DATA SISWA DENGAN DATA DARI CLOUD GOOGLE SPREADSHEET
+            if (Array.isArray(cloudData.siswa)) {
               appData.siswa = cloudData.siswa;
             }
             if (Array.isArray(cloudData.presensi)) {
@@ -2503,7 +2449,11 @@
 
       counter.textContent = `Total: ${filtered.length} Siswa`;
       if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" class="text-center py-8 text-slate-400">Tidak ada data siswa ditemukan.</td></tr>`;
+        if (isSyncingCloud && appData.siswa.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="9" class="text-center py-8 text-indigo-600 font-semibold"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengambil data siswa dari Google Spreadsheet...</td></tr>`;
+        } else {
+          tbody.innerHTML = `<tr><td colspan="9" class="text-center py-8 text-slate-400">Tidak ada data siswa ditemukan di Google Spreadsheet.</td></tr>`;
+        }
         return;
       }
 
