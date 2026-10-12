@@ -2092,7 +2092,7 @@
     /* =========================================================================
        DATABASE UTAMA GOOGLE APPS SCRIPT (PERMANEN LINTAS PERANGKAT & AKUN)
        ========================================================================= */
-    const MASTER_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxSfwRG2NdsghV4_fQ55_m7RypTbmMytHP2M59Uz-RLHqRPQaB_IS4meae3WUuCTGf5/exec';
+    const MASTER_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyZqKQ1fR2mAvcx036Vo-KvGBwhCQ3DnFLbaYgAvojvPVL7mLzkKaHLNFOs86MyAgrT/exec';
     const DEFAULT_SHEETS_URL = MASTER_SHEETS_URL;
     const DB_VERSION = 'v2_clean_sync_2026';
 
@@ -2816,21 +2816,25 @@
     }
 
     async function startCameraScanner(preferredCameraId = null) {
-      const placeholder = document.getElementById('cameraOffPlaceholder');
       const laser = document.getElementById('cameraLaserOverlay');
       const btnText = document.getElementById('btnToggleCameraText');
       const selectCam = document.getElementById('cameraSourceSelect');
 
       try {
-        html5QrScanner = new Html5Qrcode("cameraReader");
-        const cameras = await Html5Qrcode.getCameras();
+        html5QrScanner = new Html5Qrcode("cameraReader", { verbose: false });
+        let cameras = [];
+        try {
+          cameras = await Html5Qrcode.getCameras();
+        } catch (camErr) {
+          console.warn('Gagal memuat list kamera secara eksplisit:', camErr);
+        }
         
         let cameraId = preferredCameraId;
         if (!cameraId && cameras && cameras.length > 0) {
-          // Prioritaskan kamera belakang (environment)
+          // Cari kamera belakang (rear/environment) untuk HP, atau kamera pertama untuk Laptop
           const backCam = cameras.find(c => {
             const lbl = (c.label || '').toLowerCase();
-            return lbl.includes('back') || lbl.includes('belakang') || lbl.includes('environment') || lbl.includes('rear');
+            return lbl.includes('back') || lbl.includes('belakang') || lbl.includes('environment') || lbl.includes('rear') || lbl.includes('facing back');
           });
           cameraId = backCam ? backCam.id : cameras[0].id;
 
@@ -2845,13 +2849,14 @@
           }
         }
 
+        // Pengaturan scanning dengan area pengambilan luas (wide detection)
         const config = {
-          fps: 20,
+          fps: 25,
           qrbox: (viewfinderWidth, viewfinderHeight) => {
-            // Kotak pindai barcode melebar menyesuaikan bingkai laser
-            const width = Math.floor(viewfinderWidth * 0.85);
-            const height = Math.floor(Math.min(220, viewfinderHeight * 0.65));
-            return { width: width, height: height };
+            // Area pengambilan luas mencakup 90% lebar dan 75% tinggi viewfinder
+            const width = Math.floor(viewfinderWidth * 0.90);
+            const height = Math.floor(Math.min(viewfinderHeight * 0.75, 280));
+            return { width: Math.max(width, 220), height: Math.max(height, 160) };
           },
           aspectRatio: undefined,
           experimentalFeatures: {
@@ -2859,18 +2864,19 @@
           }
         };
 
+        const cameraSource = cameraId ? cameraId : { facingMode: "environment" };
+
         await html5QrScanner.start(
-          cameraId ? cameraId : { facingMode: "environment" },
+          cameraSource,
           config,
           onScanSuccess,
           (err) => {}
         );
 
         isCameraActive = true;
-        placeholder.classList.add('hidden');
-        laser.classList.remove('hidden');
-        btnText.textContent = 'Matikan Kamera';
-        showToast('Kamera pemindai aktif & disesuaikan', 'info');
+        if (laser) laser.classList.remove('hidden');
+        if (btnText) btnText.textContent = 'Matikan Kamera';
+        showToast('Kamera aktif! Arahkan barcode ke area scanner.', 'info');
       } catch (err) {
         console.error('Camera start error', err);
         showToast('Gagal mengakses kamera: ' + (err.message || err), 'error');
@@ -2886,9 +2892,10 @@
         html5QrScanner = null;
       }
       isCameraActive = false;
-      document.getElementById('cameraOffPlaceholder').classList.remove('hidden');
-      document.getElementById('cameraLaserOverlay').classList.add('hidden');
-      document.getElementById('btnToggleCameraText').textContent = 'Aktifkan Kamera';
+      const laser = document.getElementById('cameraLaserOverlay');
+      const btnText = document.getElementById('btnToggleCameraText');
+      if (laser) laser.classList.add('hidden');
+      if (btnText) btnText.textContent = 'Aktifkan Kamera';
     }
 
     function onScanSuccess(decodedText) {
