@@ -2092,7 +2092,7 @@
     /* =========================================================================
        DATABASE UTAMA GOOGLE APPS SCRIPT (PERMANEN LINTAS PERANGKAT & AKUN)
        ========================================================================= */
-    const MASTER_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbzkXsWNLrbrteYAuhypsU9Q3L7D3WwfEFXzve1w05ClgYu8vDhXMKwQHGpfI38bNBLW/exec';
+    const MASTER_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxSfwRG2NdsghV4_fQ55_m7RypTbmMytHP2M59Uz-RLHqRPQaB_IS4meae3WUuCTGf5/exec';
     const DEFAULT_SHEETS_URL = MASTER_SHEETS_URL;
     const DB_VERSION = 'v2_clean_sync_2026';
 
@@ -2806,29 +2806,54 @@
       }
     }
 
-    async function startCameraScanner() {
+    async function changeCameraSource() {
+      const select = document.getElementById('cameraSourceSelect');
+      if (!select || !select.value) return;
+      if (isCameraActive) {
+        await stopCameraScanner();
+        await startCameraScanner(select.value);
+      }
+    }
+
+    async function startCameraScanner(preferredCameraId = null) {
       const placeholder = document.getElementById('cameraOffPlaceholder');
       const laser = document.getElementById('cameraLaserOverlay');
       const btnText = document.getElementById('btnToggleCameraText');
+      const selectCam = document.getElementById('cameraSourceSelect');
 
       try {
         html5QrScanner = new Html5Qrcode("cameraReader");
         const cameras = await Html5Qrcode.getCameras();
         
-        let cameraId = null;
-        if (cameras && cameras.length > 0) {
-          const backCam = cameras.find(c => c.label.toLowerCase().includes('back') || c.label.toLowerCase().includes('belakang') || c.label.toLowerCase().includes('environment'));
+        let cameraId = preferredCameraId;
+        if (!cameraId && cameras && cameras.length > 0) {
+          // Prioritaskan kamera belakang (environment)
+          const backCam = cameras.find(c => {
+            const lbl = (c.label || '').toLowerCase();
+            return lbl.includes('back') || lbl.includes('belakang') || lbl.includes('environment') || lbl.includes('rear');
+          });
           cameraId = backCam ? backCam.id : cameras[0].id;
+
+          // Isi opsi pilihan kamera jika terdapat lebih dari 1 kamera
+          if (selectCam) {
+            selectCam.innerHTML = cameras.map((c, i) => `
+              <option value="${c.id}" ${c.id === cameraId ? 'selected' : ''}>${c.label || 'Kamera ' + (i + 1)}</option>
+            `).join('');
+            if (cameras.length > 1) {
+              selectCam.classList.remove('hidden');
+            }
+          }
         }
 
         const config = {
-          fps: 15,
+          fps: 20,
           qrbox: (viewfinderWidth, viewfinderHeight) => {
-            return {
-              width: Math.floor(viewfinderWidth * 0.85),
-              height: Math.min(220, Math.floor(viewfinderHeight * 0.65))
-            };
+            // Kotak pindai barcode melebar menyesuaikan bingkai laser
+            const width = Math.floor(viewfinderWidth * 0.85);
+            const height = Math.floor(Math.min(220, viewfinderHeight * 0.65));
+            return { width: width, height: height };
           },
+          aspectRatio: undefined,
           experimentalFeatures: {
             useBarCodeDetectorIfSupported: true
           }
@@ -2845,10 +2870,10 @@
         placeholder.classList.add('hidden');
         laser.classList.remove('hidden');
         btnText.textContent = 'Matikan Kamera';
-        showToast('Kamera pemindai aktif', 'info');
+        showToast('Kamera pemindai aktif & disesuaikan', 'info');
       } catch (err) {
         console.error('Camera start error', err);
-        showToast('Gagal mengakses kamera: ' + err, 'error');
+        showToast('Gagal mengakses kamera: ' + (err.message || err), 'error');
         stopCameraScanner();
       }
     }
