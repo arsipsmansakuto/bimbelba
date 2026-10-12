@@ -234,20 +234,13 @@
             </div>
 
             <!-- Extended Camera Viewfinder Frame -->
-            <div class="relative bg-slate-900 rounded-xl overflow-hidden min-h-[340px] sm:min-h-[390px] flex items-center justify-center border-2 border-dashed border-slate-700 mb-4 shadow-inner">
+            <div id="cameraViewportContainer" class="relative bg-slate-900 rounded-xl overflow-hidden min-h-[380px] sm:min-h-[440px] w-full flex items-center justify-center border-2 border-slate-700 mb-4 shadow-inner">
               <div id="cameraReader" class="w-full h-full"></div>
-              
-              <!-- Placeholder when camera is off -->
-              <div id="cameraOffPlaceholder" class="text-center p-6 text-slate-400">
-                <i class="fa-solid fa-camera-retro text-4xl mb-3 text-slate-500"></i>
-                <p class="text-xs sm:text-sm font-medium">Kamera scanner belum aktif</p>
-                <p class="text-[11px] text-slate-500 mt-1">Klik tombol "Aktifkan Kamera" di atas atau ketik manual di bawah.</p>
-              </div>
 
-              <!-- Animated Laser line overlay -->
-              <div id="cameraLaserOverlay" class="hidden pointer-events-none absolute inset-0">
-                <div class="absolute inset-x-8 top-1/2 -translate-y-1/2 border-2 border-indigo-400/80 rounded-xl h-44 shadow-[0_0_15px_rgba(99,102,241,0.5)] flex items-center justify-center">
-                  <div class="w-full h-0.5 bg-rose-500 shadow-[0_0_8px_#f43f5e] animate-laser absolute"></div>
+              <!-- Animated Laser line overlay selaras penuh dengan frame -->
+              <div id="cameraLaserOverlay" class="hidden pointer-events-none absolute inset-0 z-10">
+                <div class="absolute inset-4 sm:inset-6 border-2 border-indigo-400/70 rounded-xl shadow-[0_0_15px_rgba(99,102,241,0.4)] flex items-center justify-center overflow-hidden">
+                  <div class="w-full h-0.5 bg-rose-500 shadow-[0_0_10px_#f43f5e] animate-laser absolute"></div>
                 </div>
               </div>
             </div>
@@ -2092,7 +2085,7 @@
     /* =========================================================================
        DATABASE UTAMA GOOGLE APPS SCRIPT (PERMANEN LINTAS PERANGKAT & AKUN)
        ========================================================================= */
-    const MASTER_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyZqKQ1fR2mAvcx036Vo-KvGBwhCQ3DnFLbaYgAvojvPVL7mLzkKaHLNFOs86MyAgrT/exec';
+    const MASTER_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbx7WiYOFPRNBrVumxjw4-CULhtlHx0zq_W6A8ZjhPsEkfrhn24NAHo8Wi6UY2HXD5T0/exec';
     const DEFAULT_SHEETS_URL = MASTER_SHEETS_URL;
     const DB_VERSION = 'v2_clean_sync_2026';
 
@@ -2819,6 +2812,7 @@
       const laser = document.getElementById('cameraLaserOverlay');
       const btnText = document.getElementById('btnToggleCameraText');
       const selectCam = document.getElementById('cameraSourceSelect');
+      const container = document.getElementById('cameraViewportContainer');
 
       try {
         html5QrScanner = new Html5Qrcode("cameraReader", { verbose: false });
@@ -2849,14 +2843,17 @@
           }
         }
 
-        // Pengaturan scanning dengan area pengambilan luas (wide detection)
+        // Ukuran qrbox diselaraskan persis dengan dimensi frame kontainer hitam
+        const cWidth = container ? container.clientWidth : 400;
+        const cHeight = container ? container.clientHeight : 400;
+
         const config = {
           fps: 25,
           qrbox: (viewfinderWidth, viewfinderHeight) => {
-            // Area pengambilan luas mencakup 90% lebar dan 75% tinggi viewfinder
-            const width = Math.floor(viewfinderWidth * 0.90);
-            const height = Math.floor(Math.min(viewfinderHeight * 0.75, 280));
-            return { width: Math.max(width, 220), height: Math.max(height, 160) };
+            // Pengambilan gambar lebar penuh sesuai frame kotak kamera
+            const w = Math.floor(viewfinderWidth * 0.94);
+            const h = Math.floor(viewfinderHeight * 0.88);
+            return { width: Math.max(w, 240), height: Math.max(h, 200) };
           },
           aspectRatio: undefined,
           experimentalFeatures: {
@@ -2876,7 +2873,18 @@
         isCameraActive = true;
         if (laser) laser.classList.remove('hidden');
         if (btnText) btnText.textContent = 'Matikan Kamera';
-        showToast('Kamera aktif! Arahkan barcode ke area scanner.', 'info');
+
+        // Pastikan video elemen kamera menyesuaikan 100% ukuran frame
+        setTimeout(() => {
+          const v = document.querySelector('#cameraReader video');
+          if (v) {
+            v.style.width = '100%';
+            v.style.height = '100%';
+            v.style.objectFit = 'cover';
+          }
+        }, 150);
+
+        showToast('Kamera aktif! Arahkan barcode ke area frame scanner.', 'info');
       } catch (err) {
         console.error('Camera start error', err);
         showToast('Gagal mengakses kamera: ' + (err.message || err), 'error');
