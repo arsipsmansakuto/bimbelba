@@ -2085,7 +2085,7 @@
     /* =========================================================================
        DATABASE UTAMA GOOGLE APPS SCRIPT (PERMANEN LINTAS PERANGKAT & AKUN)
        ========================================================================= */
-    const MASTER_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbx7WiYOFPRNBrVumxjw4-CULhtlHx0zq_W6A8ZjhPsEkfrhn24NAHo8Wi6UY2HXD5T0/exec';
+    const MASTER_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwpFu6DwNVhcusH2Cq1QOw_GajdqH1LYxhnaHmMLqy39OlhO5ohZjHHCjAcZb2exSKq/exec';
     const DEFAULT_SHEETS_URL = MASTER_SHEETS_URL;
     const DB_VERSION = 'v2_clean_sync_2026';
 
@@ -5770,6 +5770,11 @@ function testSetupDatabase() {
     /* =========================================================================
        EKSEKUSI PENCATATAN PRESENSI & CEK ANTI-GANDA
        ========================================================================= */
+    function closeModalPresensiBerhasil() {
+      const modal = document.getElementById('modalPresensiBerhasil');
+      if (modal) modal.classList.add('hidden');
+    }
+
     function closeModalPeringatanSudahPresensi() {
       const modal = document.getElementById('modalPeringatanSudahPresensi');
       if (modal) modal.classList.add('hidden');
@@ -5803,6 +5808,7 @@ function testSetupDatabase() {
         return matchTgl && (matchNama || matchNis);
       });
 
+      // JIKA SUDAH LEBIH DARI 1X DENGAN TANGGAL & SISWA YANG SAMA (BAIK VIA SCAN MAUPUN MANUAL)
       if (sudahPresensi) {
         playBeep(260, 'sawtooth', 0.35);
         speakText('Anda sudah presensi hari ini');
@@ -5821,6 +5827,7 @@ function testSetupDatabase() {
         return;
       }
 
+      // JIKA SCAN BARU PERTAMA (BELUM ADA PRESENSI PADA TANGGAL INI)
       const jenis = document.getElementById('presensiJenis')?.value || 'Hadir';
       const catatan = document.getElementById('presensiKeterangan')?.value.trim() || '-';
       const now = new Date();
@@ -5829,10 +5836,12 @@ function testSetupDatabase() {
       // Hitung kelipatan 12x pertemuan untuk paket selesai
       let totalHadirSebelumnya = (appData.presensi || []).filter(p => p.nis === targetSiswa.username && p.status === 'Hadir').length;
       let keteranganTambahan = catatan;
+      let isPaketSelesaiTriggered = false;
 
       if (jenis === 'Hadir') {
         const totalHadirBaru = totalHadirSebelumnya + 1;
         if (totalHadirBaru % 12 === 0) {
+          isPaketSelesaiTriggered = true;
           const paketKe = totalHadirBaru / 12;
           keteranganTambahan = catatan !== '-' ? `${catatan} [Paket ke-${paketKe} Selesai]` : `[Paket ke-${paketKe} Selesai (12 Pertemuan)]`;
 
@@ -5866,8 +5875,27 @@ function testSetupDatabase() {
       appData.presensi.unshift(newPresensi);
       saveDataToStorage();
       renderLivePresensiLog();
+
+      // BUKA POP-UP PERINGATAN HIJAU "PRESENSI ANDA TERCATAT" JIKA BUKAN CELEBRATION PAKET
+      if (!isPaketSelesaiTriggered) {
+        const mNama = document.getElementById('modalBerhasilNama');
+        const mNis = document.getElementById('modalBerhasilNis');
+        const mKelas = document.getElementById('modalBerhasilKelas');
+        const mTgl = document.getElementById('modalBerhasilTanggal');
+        const mWaktu = document.getElementById('modalBerhasilWaktu');
+
+        if (mNama) mNama.textContent = targetSiswa.nama;
+        if (mNis) mNis.textContent = targetSiswa.username;
+        if (mKelas) mKelas.textContent = targetSiswa.kelas || '-';
+        if (mTgl) mTgl.textContent = tglFormatted;
+        if (mWaktu) mWaktu.textContent = `${waktuStr} WIB`;
+
+        const modalBerhasil = document.getElementById('modalPresensiBerhasil');
+        if (modalBerhasil) modalBerhasil.classList.remove('hidden');
+      }
+
       playBeep(880, 'sine', 0.15);
-      showToast(`Presensi ${jenis} tercatat: ${targetSiswa.nama}`, 'success');
+      showToast(`Presensi Anda tercatat: ${targetSiswa.nama}`, 'success');
 
       sendDataToGoogleSheets({
         action: 'simpanPresensi',
