@@ -1450,7 +1450,7 @@
     const defaultData = {
       appVersion: APP_VERSION,
       settings: {
-        apiUrl: 'https://script.google.com/macros/s/AKfycby80F_yUPBV3S4c_yzPK_ERNlKRR_w3UJkYYMgBuyRsYw3fiRt4KF0pueWUlMvKQnWg/exec',
+        apiUrl: 'https://script.google.com/macros/s/AKfycbxtKmOwwjpeMCQis8rECPNBSO0jgrp07NieIrXW-cvRqNYP9_GkHXNTbYSRSJs5jTPB/exec',
         spreadsheetId: GOOGLE_SPREADSHEET_ID,
         sheetGid: GOOGLE_SHEET_GID
       },
@@ -1553,6 +1553,21 @@
         return `${parts[2]}-${parts[1]}-${parts[0]}`;
       }
       return tglStr;
+    }
+
+    /* FORMAT NOMOR TELEPON DENGAN AWALAN 0 */
+    function formatNoTelp(val) {
+      if (!val) return '-';
+      let str = String(val).trim();
+      if (str === '' || str === '-') return '-';
+      let clean = str.replace(/[^0-9]/g, '');
+      if (!clean) return str;
+      if (clean.startsWith('62')) {
+        clean = '0' + clean.slice(2);
+      } else if (!clean.startsWith('0')) {
+        clean = '0' + clean;
+      }
+      return clean;
     }
 
     /* AUDIO & SPEECH SYNTHESIS ENGINE */
@@ -1737,7 +1752,7 @@
           hobi: '-',
           kategori_bimbingan: (idxKategori >= 0 && row[idxKategori]) ? row[idxKategori] : 'BIMBEL',
           nama_ortu: (idxOrtu >= 0 && row[idxOrtu]) ? row[idxOrtu] : '-',
-          no_telp: (idxTelp >= 0 && row[idxTelp]) ? row[idxTelp] : '-',
+          no_telp: (idxTelp >= 0 && row[idxTelp]) ? formatNoTelp(row[idxTelp]) : '-',
           status_akun: 'Aktif'
         });
       }
@@ -2455,7 +2470,7 @@
               ${escapeHtml(s.kategori_bimbingan || 'BIMBEL')}
             </span>
           </td>
-          <td class="py-2.5 px-3 text-slate-600">${escapeHtml(s.no_telp || '-')} (${escapeHtml(s.nama_ortu || '-')})</td>
+          <td class="py-2.5 px-3 text-slate-600">${escapeHtml(formatNoTelp(s.no_telp || '-'))} (${escapeHtml(s.nama_ortu || '-')})</td>
           <td class="py-2.5 px-3">
             <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800">
               ${escapeHtml(s.status_akun || 'Aktif')}
@@ -2490,6 +2505,120 @@
       document.getElementById('modalFormSiswa').classList.remove('hidden');
     }
 
+    /* MODAL & LOGIKA EXPORT / IMPORT DATA SISWA */
+    function openModalExportImportSiswa() {
+      const modal = document.getElementById('modalExportImportSiswa');
+      if (modal) {
+        const fileInput = document.getElementById('inputCsvSiswaFile');
+        if (fileInput) fileInput.value = '';
+        const prev = document.getElementById('csvFileInfoPreview');
+        if (prev) prev.classList.add('hidden');
+        modal.classList.remove('hidden');
+      }
+    }
+
+    function closeModalExportImportSiswa() {
+      document.getElementById('modalExportImportSiswa')?.classList.add('hidden');
+    }
+
+    async function jalankanImportGoogleSheets() {
+      showToast('Menghubungkan ke Google Spreadsheet...', 'info');
+      await fetchSiswaDirectFromGoogleSheets();
+      closeModalExportImportSiswa();
+    }
+
+    let selectedCsvContent = '';
+
+    function handleCsvFileSelected(event) {
+      const file = event.target.files?.[0];
+      const preview = document.getElementById('csvFileInfoPreview');
+      const textPreview = document.getElementById('csvFileNamePreview');
+
+      if (!file) {
+        selectedCsvContent = '';
+        if (preview) preview.classList.add('hidden');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        selectedCsvContent = e.target.result;
+        if (preview && textPreview) {
+          textPreview.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB) siap diimpor`;
+          preview.classList.remove('hidden');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function prosesImportFileCSV() {
+      if (!selectedCsvContent || selectedCsvContent.trim() === '') {
+        showToast('Pilih berkas CSV terlebih dahulu!', 'warning');
+        return;
+      }
+
+      const parsedList = parseGoogleSheetCSV(selectedCsvContent);
+      if (!parsedList || parsedList.length === 0) {
+        showToast('Gagal membaca data dari berkas CSV. Periksa format berkas!', 'error');
+        return;
+      }
+
+      let countNew = 0;
+      let countUpdated = 0;
+
+      if (!Array.isArray(appData.siswa)) appData.siswa = [];
+
+      parsedList.forEach(s => {
+        s.no_telp = formatNoTelp(s.no_telp);
+        const existingIdx = appData.siswa.findIndex(x => x.username && x.username.toLowerCase() === s.username.toLowerCase());
+        if (existingIdx !== -1) {
+          appData.siswa[existingIdx] = { ...appData.siswa[existingIdx], ...s };
+          countUpdated++;
+        } else {
+          appData.siswa.push(s);
+          countNew++;
+        }
+      });
+
+      saveDataToStorage();
+      renderTableMasterSiswa();
+      updateSyncStatsUI();
+      closeModalExportImportSiswa();
+
+      showToast(`Import selesai: ${countNew} siswa baru, ${countUpdated} diperbarui!`, 'success');
+      addSyncLog(`Import CSV lokal berhasil (${countNew} baru, ${countUpdated} update).`, 'success');
+
+      sendDataToGoogleSheets({
+        action: 'tambahSiswaBatch',
+        siswaList: parsedList
+      });
+    }
+
+    function downloadTemplateSiswaCSV() {
+      const header = 'Username,Password,Nama Lengkap,Kelas,Alamat,Sekolah Asal,Hobi,Kategori Bimbingan,Nama Ortu,No Telp,Status Akun\n';
+      const sample = '202601,123,Ahmad Faiz,4 SD,Jl. Melati No. 5,SDN 1,Membaca,BIMBEL,Bpk. Hendra,08123456789,Aktif\n202602,123,Clarissa Putri,5 SD,Jl. Mawar No. 8,SDN 2,Menulis,BIMBA,Ibu Ratna,08129876543,Aktif\n';
+      const blob = new Blob([header + sample], { type: 'text/csv;charset=utf-8;' });
+      safeFileDownload(blob, 'Template_Master_Data_Siswa_BIMBEL_BA.csv');
+      showToast('Template CSV berhasil diunduh!', 'success');
+    }
+
+    function exportDataSiswaCSV() {
+      const list = appData.siswa || [];
+      if (list.length === 0) {
+        showToast('Tidak ada data siswa untuk diekspor!', 'warning');
+        return;
+      }
+
+      let csv = 'Username,Password,Nama Lengkap,Kelas,Alamat,Sekolah Asal,Hobi,Kategori Bimbingan,Nama Ortu,No Telp,Status Akun\n';
+      list.forEach(s => {
+        csv += `"${s.username || ''}","${s.password || '123'}","${s.nama || ''}","${s.kelas || '-'}","${s.alamat || '-'}","${s.sekolah_asal || '-'}","${s.hobi || '-'}","${s.kategori_bimbingan || 'BIMBEL'}","${s.nama_ortu || '-'}","${formatNoTelp(s.no_telp || '-')}","${s.status_akun || 'Aktif'}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      safeFileDownload(blob, `Master_Data_Siswa_BIMBEL_BA_${getTodayDdMmYyyy().replace(/\//g, '-')}.csv`);
+      showToast(`${list.length} data siswa berhasil diekspor ke CSV!`, 'success');
+    }
+
     function editDataSiswa(username) {
       const s = (appData.siswa || []).find(x => x.username === username);
       if (!s) return;
@@ -2518,7 +2647,7 @@
       const kelas = document.getElementById('siswaFormKelas').value.trim();
       const kategori = document.getElementById('siswaFormKategori').value;
       const ortu = document.getElementById('siswaFormOrtu').value.trim();
-      const telp = document.getElementById('siswaFormTelp').value.trim();
+      const telp = formatNoTelp(document.getElementById('siswaFormTelp').value.trim());
 
       if (!username || !nama) {
         showToast('Username dan Nama Siswa wajib diisi!', 'warning');
@@ -3323,7 +3452,7 @@
       setEl('portalProfilKelas', siswaObj.kelas);
       setEl('portalProfilKategori', siswaObj.kategori_bimbingan || 'BIMBEL');
       setEl('portalProfilOrtu', siswaObj.nama_ortu);
-      setEl('portalProfilTelp', siswaObj.no_telp);
+      setEl('portalProfilTelp', formatNoTelp(siswaObj.no_telp));
       setEl('portalProfilSekolah', siswaObj.sekolah_asal);
       setEl('portalProfilAlamat', siswaObj.alamat);
       setEl('portalProfilHobi', siswaObj.hobi);
