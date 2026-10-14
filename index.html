@@ -74,7 +74,6 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
 
-  <!-- HEADER & NAVBAR UTAMA -->
   <header class="bg-indigo-900 text-white shadow-md sticky top-0 z-40 border-b border-indigo-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
       <div class="flex items-center space-x-3 cursor-pointer" onclick="pindahTab('scanner')">
@@ -86,12 +85,11 @@
             SIM BIMBEL BA
             <span class="text-xs bg-amber-400 text-slate-900 font-semibold px-2 py-0.5 rounded-full uppercase">v3.2</span>
           </h1>
-          <p class="text-xs text-indigo-200">Sistem Informasi Presensi & SPP Terpadu</p>
+          <p class="text-xs text-indigo-200">Sistem Informasi Presensi & SPP Terpadu Cloud</p>
         </div>
       </div>
 
       <div class="flex items-center space-x-3">
-        <!-- Info Sesi Login Aktif -->
         <div id="userInfoHeader" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-indigo-800 text-xs">
           <i class="fa-solid fa-circle-user text-amber-400 text-base"></i>
           <div>
@@ -107,7 +105,6 @@
       </div>
     </div>
 
-    <!-- MENU TABS NAVIGASI ADMIN -->
     <nav id="adminNavTabs" class="bg-indigo-950/60 border-t border-indigo-800/60 overflow-x-auto no-scrollbar">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 flex space-x-1 sm:space-x-2 py-2">
         <button id="btnTabScanner" onclick="pindahTab('scanner')" class="nav-tab-btn flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-indigo-600 text-white shadow-sm whitespace-nowrap">
@@ -138,18 +135,17 @@
   <!-- KONTEN UTAMA APLIKASI -->
   <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
 
-    <!-- TAB 1: SCANNER & PRESENSI -->
     <section id="tabContentScanner" class="space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
-        <!-- SCANNER KAMERA LAPANG & LUAS -->
+        <!-- Pemindai Kamera Barcode -->
         <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-4">
           <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
               <h2 class="text-base font-bold text-slate-800 flex items-center gap-2 font-brand">
                 <i class="fa-solid fa-camera text-indigo-600"></i> Kamera Scanner Barcode
               </h2>
-              <p class="text-xs text-slate-500">Scan kartu barcode / QR code siswa secara cepat (28 FPS)</p>
+              <p class="text-xs text-slate-500">Scan kartu barcode / QR code siswa otomatis tersinkron ke Cloud Sheets</p>
             </div>
             <div class="flex gap-2">
               <button id="btnToggleCamera" onclick="toggleCameraScanner()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-sm transition">
@@ -160,7 +156,6 @@
             </div>
           </div>
 
-          <!-- BINGKAI KAMERA HITAM LAPANG -->
           <div class="relative w-full h-[360px] sm:h-[420px] bg-slate-950 rounded-2xl overflow-hidden border-2 border-slate-800 shadow-inner flex items-center justify-center">
             <div id="cameraReader"></div>
             <div id="cameraLaserOverlay" class="hidden absolute inset-0 pointer-events-none z-20">
@@ -173,12 +168,11 @@
           </div>
 
           <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-3 flex items-center gap-3 text-xs text-indigo-900">
-            <i class="fa-solid fa-circle-info text-indigo-600 text-base"></i>
-            <span>Arahkan barcode siswa ke dalam bingkai. Sistem akan memutar nada lonceng sukses & suara vokal otomatis saat scan berhasil.</span>
+            <i class="fa-solid fa-cloud-check text-emerald-600 text-base"></i>
+            <span>Setiap scan yang berhasil otomatis dicatat di sistem lokal dan langsung dikirim ke tabel Presensi di Google Spreadsheet.</span>
           </div>
         </div>
 
-        <!-- FORM INPUT PRESENSI MANUAL -->
         <div class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-4">
           <div class="border-b border-slate-100 pb-3">
             <h2 class="text-base font-bold text-slate-800 flex items-center gap-2 font-brand">
@@ -212,7 +206,6 @@
               <input type="hidden" id="selectedManualStudentQuery" value="">
             </div>
 
-            <!-- Jenis Presensi (Hanya Hadir Masuk) -->
             <div>
               <label class="block text-xs font-semibold text-slate-700 mb-1">Jenis Presensi</label>
               <select id="presensiJenis" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-emerald-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
@@ -225,15 +218,13 @@
               <input type="text" id="presensiKeterangan" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-xs text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Catatan singkat (opsional)">
             </div>
 
-            <!-- Tombol Submit Presensi Wajib Klik -->
-            <button type="submit" class="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2">
-              <i class="fa-solid fa-check-circle text-sm"></i> Submit Presensi
+            <button type="submit" class="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:teal-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-check-circle text-sm"></i> Submit Presensi & Kirim Cloud
             </button>
           </form>
         </div>
       </div>
 
-      <!-- TABEL LOG PRESENSI HARI INI -->
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
           <div class="flex items-center gap-2">
@@ -268,7 +259,6 @@
       </div>
     </section>
 
-    <!-- TAB 2: MASTER DATA SISWA -->
     <section id="tabContentSiswa" class="hidden space-y-6">
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-4">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-4">
@@ -280,13 +270,16 @@
           </div>
           <div class="flex flex-wrap items-center gap-2">
             <button onclick="fetchSiswaDirectFromGoogleSheets()" class="px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition" title="Tarik langsung dari link spreadsheet">
-              <i class="fa-solid fa-rotate"></i> Tarik Siswa dari Sheets
+              <i class="fa-solid fa-rotate"></i> Tarik dari Sheets
             </button>
             <button onclick="openModalTambahSiswa()" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
               <i class="fa-solid fa-user-plus"></i> Tambah Siswa
             </button>
+            <button onclick="openModalExportImportSiswa()" class="px-3 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+              <i class="fa-solid fa-file-import"></i> Export / Import CSV
+            </button>
             <button onclick="openModalDownloadSemuaKartu()" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
-              <i class="fa-solid fa-id-card"></i> Download / Cetak Semua Kartu
+              <i class="fa-solid fa-id-card"></i> Unduh Semua Kartu (ZIP)
             </button>
           </div>
         </div>
@@ -316,11 +309,10 @@
       </div>
     </section>
 
-    <!-- TAB 3: PEMBAYARAN SPP -->
     <section id="tabContentSpp" class="hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
-        <!-- FORM CATAT SPP -->
+        <!-- Form Catat SPP -->
         <div class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-4">
           <div class="border-b border-slate-100 pb-3">
             <h2 class="text-base font-bold text-slate-800 font-brand flex items-center gap-2">
@@ -407,12 +399,12 @@
             </div>
 
             <button type="submit" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2">
-              <i class="fa-solid fa-receipt"></i> Simpan Transaksi SPP
+              <i class="fa-solid fa-receipt"></i> Simpan Transaksi & Kirim Cloud
             </button>
           </form>
         </div>
 
-        <!-- RIWAYAT TRANSAKSI SPP -->
+        <!-- Riwayat Transaksi SPP -->
         <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-4">
           <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
@@ -447,7 +439,6 @@
       </div>
     </section>
 
-    <!-- TAB 4: REKAP LAPORAN KEHADIRAN -->
     <section id="tabContentLaporan" class="hidden space-y-6">
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-5">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-4">
@@ -458,20 +449,21 @@
             <p class="text-xs text-slate-500">Laporan data presensi siswa dan rekap paket 12 pertemuan</p>
           </div>
           <div class="flex items-center gap-2">
+            <button onclick="kirimRekapPresensiKeSheets()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition" title="Kirim data rekap kehadiran ini ke Google Sheets">
+              <i class="fa-solid fa-cloud-arrow-up"></i> Kirim ke Sheets
+            </button>
             <button onclick="cetakLaporanPresensiPDF()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
               <i class="fa-solid fa-print"></i> Cetak PDF
             </button>
-            <button onclick="downloadLaporanPresensiCSV()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+            <button onclick="downloadLaporanPresensiCSV()" class="px-3.5 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
               <i class="fa-solid fa-file-excel"></i> Download CSV
             </button>
           </div>
         </div>
 
-        <!-- PANEL FILTER REKAP LAPORAN KEHADIRAN -->
+        <!-- Panel Filter Rekap Laporan Kehadiran -->
         <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 space-y-3">
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            
-            <!-- Filter by Name -->
             <div class="relative">
               <label class="block text-[11px] font-semibold text-slate-700 mb-1">Filter by Name (Siswa)</label>
               <div class="relative">
@@ -484,7 +476,6 @@
               <div id="dropdownLapSiswa" class="hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-xl z-30 divide-y divide-slate-100"></div>
             </div>
 
-            <!-- Periode Bulan -->
             <div>
               <label class="block text-[11px] font-semibold text-slate-700 mb-1">Periode Bulan</label>
               <select id="lapFilterBulan" class="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-2 text-xs text-slate-800 focus:outline-none">
@@ -504,13 +495,11 @@
               </select>
             </div>
 
-            <!-- Tahun -->
             <div>
               <label class="block text-[11px] font-semibold text-slate-700 mb-1">Tahun</label>
               <input type="number" id="lapFilterTahun" placeholder="Contoh: 2026" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
             </div>
 
-            <!-- Status Kehadiran -->
             <div>
               <label class="block text-[11px] font-semibold text-slate-700 mb-1">Status Kehadiran</label>
               <select id="lapFilterStatus" class="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-2 text-xs text-slate-800 focus:outline-none">
@@ -519,19 +508,16 @@
               </select>
             </div>
 
-            <!-- Tanggal Mulai -->
             <div>
               <label class="block text-[11px] font-semibold text-slate-700 mb-1">Tanggal Mulai (dd/mm/yyyy)</label>
               <input type="text" id="lapFilterTglMulai" placeholder="dd/mm/yyyy" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none cursor-pointer" readonly>
             </div>
 
-            <!-- Tanggal Sampai -->
             <div>
               <label class="block text-[11px] font-semibold text-slate-700 mb-1">Tanggal Sampai (dd/mm/yyyy)</label>
               <input type="text" id="lapFilterTglSampai" placeholder="dd/mm/yyyy" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none cursor-pointer" readonly>
             </div>
 
-            <!-- Tombol Aksi Filter -->
             <div class="sm:col-span-2 flex items-end gap-2">
               <button type="button" onclick="terapkanFilterKehadiran()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
                 <i class="fa-solid fa-filter"></i> Terapkan Filter
@@ -543,7 +529,7 @@
           </div>
         </div>
 
-        <!-- METRIK KEHADIRAN & REKAP PAKET 12X MERAH MENYALA -->
+        <!-- Metrik Kehadiran & Rekap Paket 12x -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div class="bg-indigo-50/70 border border-indigo-100 rounded-xl p-4 flex items-center gap-3">
             <div class="w-10 h-10 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-lg">
@@ -565,7 +551,6 @@
             </div>
           </div>
 
-          <!-- KARTU REKAP PAKET 12X MERAH MENYALA -->
           <div class="bg-rose-50/80 border-2 border-rose-200 rounded-xl p-4 flex items-center gap-3 shadow-sm">
             <div class="w-10 h-10 rounded-lg bg-rose-600 text-white flex items-center justify-center text-lg">
               <i class="fa-solid fa-award"></i>
@@ -579,7 +564,7 @@
           </div>
         </div>
 
-        <!-- TABEL REKAP KEHADIRAN -->
+        <!-- Tabel Rekap Kehadiran -->
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs text-slate-700 divide-y divide-slate-200">
             <thead class="bg-slate-50 text-slate-600 font-semibold uppercase text-[10px]">
@@ -601,7 +586,6 @@
       </div>
     </section>
 
-    <!-- TAB 5: REKAP LAPORAN SPP -->
     <section id="tabContentRekapSPP" class="hidden space-y-6">
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-5">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-4">
@@ -612,10 +596,13 @@
             <p class="text-xs text-slate-500">Laporan pemasukan dan rekapitulasi pembayaran SPP siswa</p>
           </div>
           <div class="flex items-center gap-2">
+            <button onclick="kirimRekapSPPKeSheets()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition" title="Kirim seluruh transaksi SPP ke Google Sheets">
+              <i class="fa-solid fa-cloud-arrow-up"></i> Kirim ke Sheets
+            </button>
             <button onclick="cetakRekapSPPPDF()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
               <i class="fa-solid fa-print"></i> Cetak PDF
             </button>
-            <button onclick="downloadRekapSPPCSV()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+            <button onclick="downloadRekapSPPCSV()" class="px-3.5 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
               <i class="fa-solid fa-file-excel"></i> Download CSV
             </button>
           </div>
@@ -722,7 +709,6 @@
       </div>
     </section>
 
-    <!-- TAB 6: MANAJEMEN PENGGUNA -->
     <section id="tabContentUsers" class="hidden space-y-6">
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
@@ -755,7 +741,6 @@
       </div>
     </section>
 
-    <!-- TAB 7: PENGATURAN GOOGLE SHEETS -->
     <section id="tabContentSettings" class="hidden space-y-6">
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-5">
         <div class="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -823,6 +808,9 @@
             <button onclick="setupOtomatisCloudSheets()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-semibold transition">
               Tata Tabel Sheets Otomatis
             </button>
+            <button onclick="openModalAppsScriptCode()" class="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-semibold transition flex items-center gap-1.5">
+              <i class="fa-solid fa-code"></i> Salin Script Google (Code.gs)
+            </button>
           </div>
 
           <!-- Log Riwayat Sinkronisasi -->
@@ -832,14 +820,13 @@
               <span id="syncTimestamp">Siap</span>
             </div>
             <div id="syncLogTerminal" class="max-h-24 overflow-y-auto space-y-0.5 text-slate-400">
-              <div>[SYSTEM] Sistem sinkronisasi siap digunakan.</div>
+              <div>[SYSTEM] Sistem sinkronisasi cloud siap digunakan.</div>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- PORTAL SISWA MANDIRI -->
     <section id="portalSiswaSection" class="hidden space-y-6">
       <div class="bg-gradient-to-r from-indigo-700 to-indigo-900 rounded-3xl p-6 text-white shadow-lg space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -864,7 +851,7 @@
           </button>
         </div>
 
-        <!-- PROGRESS PAKET (12X PERTEMUAN) -->
+        <!-- Progress Paket 12 Pertemuan -->
         <div class="bg-indigo-950/60 rounded-2xl p-4 border border-indigo-500/30 space-y-2">
           <div class="flex items-center justify-between text-xs font-bold">
             <span class="text-amber-300 uppercase tracking-wide">Progres Paket Bimbingan Belajar</span>
@@ -876,7 +863,7 @@
         </div>
       </div>
 
-      <!-- NAVIGASI 3 SUB-TAB PORTAL SISWA -->
+      <!-- Navigasi Sub Tab Portal Siswa -->
       <div class="bg-white rounded-2xl p-2 shadow-sm border border-slate-200 flex flex-wrap gap-2">
         <button id="btnPortalTabPresensi" onclick="switchPortalTab('presensi')" class="portal-tab-btn flex-1 min-w-[130px] py-2.5 px-4 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 bg-indigo-600 text-white shadow-sm">
           <i class="fa-solid fa-clipboard-user"></i> Riwayat Presensi & Kehadiran Saya
@@ -889,7 +876,7 @@
         </button>
       </div>
 
-      <!-- KONTEN SUB-TAB 1: RIWAYAT PRESENSI & KEHADIRAN SAYA -->
+      <!-- Konten Sub Tab 1: Presensi Siswa -->
       <div id="portalSubTabPresensi" class="space-y-4">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex items-center gap-4">
@@ -932,7 +919,7 @@
         </div>
       </div>
 
-      <!-- KONTEN SUB-TAB 2: REKAP PEMBAYARAN SPP -->
+      <!-- Konten Sub Tab 2: SPP Siswa -->
       <div id="portalSubTabSpp" class="hidden space-y-4">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex items-center gap-4">
@@ -979,7 +966,7 @@
         </div>
       </div>
 
-      <!-- KONTEN SUB-TAB 3: PROFIL SISWA LENGKAP -->
+      <!-- Konten Sub Tab 3: Profil Siswa -->
       <div id="portalSubTabProfil" class="hidden space-y-4">
         <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4 max-w-3xl">
           <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
@@ -997,50 +984,25 @@
               <span class="text-slate-500 block text-[11px]">Nama Lengkap Siswa</span>
               <span id="portalProfilNama" class="font-bold text-slate-800 text-sm">-</span>
             </div>
-
             <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
               <span class="text-slate-500 block text-[11px]">Username</span>
               <span id="portalProfilUsername" class="font-bold font-mono text-indigo-700 text-sm">-</span>
             </div>
-
             <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
               <span class="text-slate-500 block text-[11px]">Kelas & Tingkat</span>
               <span id="portalProfilKelas" class="font-bold text-slate-800">-</span>
             </div>
-
             <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
               <span class="text-slate-500 block text-[11px]">Kategori Bimbingan</span>
               <span id="portalProfilKategori" class="font-bold text-slate-800">-</span>
             </div>
-
             <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
               <span class="text-slate-500 block text-[11px]">Nama Orang Tua / Wali</span>
               <span id="portalProfilOrtu" class="font-bold text-slate-800">-</span>
             </div>
-
             <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
               <span class="text-slate-500 block text-[11px]">No. Telepon / WhatsApp</span>
               <span id="portalProfilTelp" class="font-bold text-slate-800">-</span>
-            </div>
-
-            <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
-              <span class="text-slate-500 block text-[11px]">Sekolah Asal</span>
-              <span id="portalProfilSekolah" class="font-bold text-slate-800">-</span>
-            </div>
-
-            <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
-              <span class="text-slate-500 block text-[11px]">Alamat Domisili</span>
-              <span id="portalProfilAlamat" class="font-bold text-slate-800">-</span>
-            </div>
-
-            <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
-              <span class="text-slate-500 block text-[11px]">Hobi / Minat</span>
-              <span id="portalProfilHobi" class="font-bold text-slate-800">-</span>
-            </div>
-
-            <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
-              <span class="text-slate-500 block text-[11px]">Status Akun</span>
-              <span id="portalProfilStatusAkun" class="font-bold text-emerald-700">-</span>
             </div>
           </div>
         </div>
@@ -1049,7 +1011,8 @@
 
   </main>
 
-  <!-- MODAL 1: LOGIN -->
+
+  <!-- MODAL: LOGIN PENGGUNA -->
   <div id="modalLogin" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4">
     <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-5 border border-slate-100">
       <div class="text-center space-y-2">
@@ -1083,7 +1046,7 @@
     </div>
   </div>
 
-  <!-- MODAL 2: NOTIFIKASI BERHASIL PRESENSI PERTAMA -->
+  <!-- MODAL: NOTIFIKASI PRESENSI BERHASIL -->
   <div id="modalPresensiBerhasil" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
     <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border-2 border-emerald-500">
       <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl mx-auto shadow-md ring-8 ring-emerald-50">
@@ -1126,7 +1089,7 @@
     </div>
   </div>
 
-  <!-- MODAL 3: PERINGATAN SUDAH PRESENSI HARI INI -->
+  <!-- MODAL: PERINGATAN SUDAH PRESENSI HARI INI -->
   <div id="modalPeringatanSudahPresensi" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
     <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border-2 border-rose-500">
       <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-3xl mx-auto ring-8 ring-rose-50">
@@ -1161,7 +1124,7 @@
     </div>
   </div>
 
-  <!-- MODAL 4: NOTIFIKASI PAKET SELESAI (12X) -->
+  <!-- MODAL: NOTIFIKASI PAKET SELESAI (12X) -->
   <div id="modalNotifikasiPaket" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4">
     <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border-2 border-amber-400">
       <div class="w-16 h-16 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-3xl mx-auto shadow-md">
@@ -1189,7 +1152,7 @@
     </div>
   </div>
 
-  <!-- MODAL KUITANSI SPP RESMI SIAP CETAK -->
+  <!-- MODAL: KUITANSI SPP RESMI SIAP CETAK -->
   <div id="modalKuitansiSPP" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4">
     <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 space-y-4 border border-slate-100">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -1263,7 +1226,7 @@
     </div>
   </div>
 
-  <!-- MODAL 5: TAMBAH / EDIT SISWA -->
+  <!-- MODAL: TAMBAH / EDIT DATA SISWA -->
   <div id="modalFormSiswa" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 overflow-y-auto">
     <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 space-y-4 my-8">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -1279,33 +1242,43 @@
           <input type="text" id="siswaFormUsername" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
         </div>
         <div>
-          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Password Login</label>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Password</label>
           <input type="text" id="siswaFormPassword" value="123" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
         </div>
         <div>
-          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Nama Lengkap Siswa</label>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Nama Lengkap</label>
           <input type="text" id="siswaFormNama" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
         </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Kelas</label>
-            <input type="text" id="siswaFormKelas" placeholder="Contoh: 4 SD" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
-          </div>
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Kategori Bimbingan</label>
-            <select id="siswaFormKategori" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-2 text-xs text-slate-800 focus:outline-none">
-              <option value="BIMBEL">BIMBEL</option>
-              <option value="BIMBA">BIMBA</option>
-              <option value="PRIVAT">PRIVAT</option>
-            </select>
-          </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Kelas</label>
+          <input type="text" id="siswaFormKelas" placeholder="Contoh: 4 SD" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
         </div>
         <div>
-          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Nama Orang Tua</label>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Alamat</label>
+          <textarea id="siswaFormAlamat" rows="2" placeholder="Contoh: Jl. Melati No. 12, RT 02/05..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none resize-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Sekolah Asal</label>
+          <input type="text" id="siswaFormSekolah" placeholder="Contoh: SDN 1 Melati" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Hobi</label>
+          <input type="text" id="siswaFormHobi" placeholder="Contoh: Menggambar" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Kategori Bimbingan</label>
+          <select id="siswaFormKategori" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-2 text-xs text-slate-800 focus:outline-none">
+            <option value="BIMBEL">BIMBEL</option>
+            <option value="BIMBA">BIMBA</option>
+            <option value="PRIVAT">PRIVAT</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Nama Ortu</label>
           <input type="text" id="siswaFormOrtu" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
         </div>
         <div>
-          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">No. Telp / WhatsApp</label>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">No Telp</label>
           <input type="text" id="siswaFormTelp" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
         </div>
 
@@ -1313,7 +1286,7 @@
 
         <div class="flex gap-2 pt-2">
           <button type="submit" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition">
-            Simpan Data
+            Simpan & Kirim ke Sheets
           </button>
           <button type="button" onclick="closeModalFormSiswa()" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-xs rounded-xl transition">
             Batal
@@ -1323,7 +1296,7 @@
     </div>
   </div>
 
-  <!-- MODAL 6: EDIT / TAMBAH PENGGUNA -->
+  <!-- MODAL: EDIT / TAMBAH PENGGUNA -->
   <div id="modalEditUser" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
     <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -1378,7 +1351,7 @@
     </div>
   </div>
 
-  <!-- MODAL 7: PREVIEW KARTU BARCODE SISWA -->
+  <!-- MODAL: PREVIEW KARTU BARCODE SISWA -->
   <div id="modalPreviewKartu" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4">
     <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-2">
@@ -1428,6 +1401,117 @@
     </div>
   </div>
 
+  <!-- MODAL: EXPORT & IMPORT DATA SISWA CSV -->
+  <div id="modalExportImportSiswa" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-sm font-bold text-slate-800 font-brand">Export & Import Data Siswa</h3>
+        <button onclick="closeModalExportImportSiswa()" class="text-slate-400 hover:text-slate-600 text-xs">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+          <div class="font-bold text-slate-800">1. Unduh Cadangan / Ekspor CSV</div>
+          <p class="text-slate-500 text-[11px]">Unduh seluruh data siswa dalam format berkas CSV.</p>
+          <div class="flex gap-2 pt-1">
+            <button onclick="exportDataSiswaCSV()" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold flex items-center gap-1.5 transition">
+              <i class="fa-solid fa-download"></i> Unduh Data Siswa (CSV)
+            </button>
+            <button onclick="downloadTemplateSiswaCSV()" class="px-3.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg font-semibold transition">
+              Unduh Template
+            </button>
+          </div>
+        </div>
+
+        <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+          <div class="font-bold text-slate-800">2. Impor Data dari Berkas CSV</div>
+          <p class="text-slate-500 text-[11px]">Pilih berkas CSV untuk mengimpor atau memperbarui data siswa.</p>
+          <input type="file" id="inputCsvSiswaFile" accept=".csv" onchange="handleCsvFileSelected(event)" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+          <div id="csvFileInfoPreview" class="hidden text-[11px] text-emerald-600 font-semibold flex items-center gap-1">
+            <i class="fa-solid fa-circle-check"></i> <span id="csvFileNamePreview">Berkas siap</span>
+          </div>
+          <button onclick="prosesImportFileCSV()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition">
+            Mulai Impor Siswa & Sync ke Sheets
+          </button>
+        </div>
+      </div>
+
+      <div class="pt-2 flex justify-end">
+        <button onclick="closeModalExportImportSiswa()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded-xl transition">
+          Tutup
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalAppsScriptCode" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-6 space-y-4 my-8 border border-slate-100">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-violet-600 text-white flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-code"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-800 font-brand">Kode Backend Google Apps Script (Code.gs)</h3>
+            <p class="text-[10px] text-slate-500">Pasang kode ini di Extensions &gt; Apps Script pada Google Spreadsheet Anda</p>
+          </div>
+        </div>
+        <button onclick="closeModalAppsScriptCode()" class="text-slate-400 hover:text-slate-600 text-xs">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <div class="space-y-2 text-xs">
+        <p class="text-slate-600">
+          Kode di bawah ini otomatis menangani dan menyimpan <b>Master Data Siswa, Presensi Kehadiran, Transaksi SPP, dan Pengguna</b> ke 4 tab lembar kerja Google Sheets secara realtime:
+        </p>
+
+        <div class="relative">
+          <pre id="codeGsSnippet" class="p-4 bg-slate-900 text-emerald-300 font-mono text-[11px] rounded-2xl max-h-72 overflow-y-auto border border-slate-800 select-all"></pre>
+          <button onclick="copyAppsScriptCode()" class="absolute top-3 right-3 px-3 py-1.5 bg-violet-600 hover:bg-violet-700 text-white rounded-lg text-xs font-semibold shadow transition flex items-center gap-1.5">
+            <i class="fa-solid fa-copy"></i> Salin Kode
+          </button>
+        </div>
+
+        <ol class="list-decimal list-inside text-[11px] text-slate-500 space-y-1 pt-1">
+          <li>Buka Google Spreadsheet Anda, klik menu <b>Ekstensi (Extensions) &gt; Apps Script</b>.</li>
+          <li>Hapus isi yang ada, lalu tempelkan (paste) kode di atas.</li>
+          <li>Klik <b>Terapkan (Deploy) &gt; Deployment Baru (New Deployment)</b>, pilih jenis <b>Aplikasi Web (Web App)</b>.</li>
+          <li>Setel <i>Siapa saja (Anyone)</i> yang memiliki akses, lalu salin URL Web App ke form pengaturan di sistem ini.</li>
+        </ol>
+      </div>
+
+      <div class="pt-2 flex justify-end">
+        <button onclick="closeModalAppsScriptCode()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-xs rounded-xl transition">
+          Tutup
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: KONFIRMASI KUSTOM (MENGGANTIKAN CONFIRM BAWAAN BROWSER) -->
+  <div id="modalCustomConfirm" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4">
+      <div class="w-14 h-14 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-2xl mx-auto shadow-sm">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <div>
+        <h3 id="customConfirmTitle" class="text-base font-bold text-slate-800 font-brand">Konfirmasi Tindakan</h3>
+        <p id="customConfirmMessage" class="text-xs text-slate-500 mt-1">Apakah Anda yakin ingin melanjutkan tindakan ini?</p>
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button id="btnCustomConfirmOk" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md transition">
+          Ya, Lanjutkan
+        </button>
+        <button id="btnCustomConfirmCancel" onclick="closeCustomConfirm()" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-xs rounded-xl transition">
+          Batal
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div id="printArea" class="hidden"></div>
 
   <!-- TOAST NOTIFIKASI -->
@@ -1450,7 +1534,7 @@
     const defaultData = {
       appVersion: APP_VERSION,
       settings: {
-        apiUrl: 'https://script.google.com/macros/s/AKfycbxtKmOwwjpeMCQis8rECPNBSO0jgrp07NieIrXW-cvRqNYP9_GkHXNTbYSRSJs5jTPB/exec',
+        apiUrl: 'https://script.google.com/macros/s/AKfycbx1IYYqDiCWFKEpBRDcenTbVJ0g68GbF08faMe7XxxjjfNrTpBCQyvPZapbbatJNb4D/exec',
         spreadsheetId: GOOGLE_SPREADSHEET_ID,
         sheetGid: GOOGLE_SHEET_GID
       },
@@ -1487,15 +1571,6 @@
           const parsed = JSON.parse(raw);
           appData = { ...defaultData, ...parsed, appVersion: APP_VERSION };
         } else {
-          const legacyRaw = localStorage.getItem('sim_bimbel_ba_v3_state');
-          if (legacyRaw) {
-            try {
-              const legacyParsed = JSON.parse(legacyRaw);
-              appData = { ...defaultData, ...legacyParsed, appVersion: APP_VERSION };
-            } catch (errOld) {
-              appData = { ...defaultData };
-            }
-          }
           saveDataToStorage();
         }
       } catch (e) {
@@ -1555,7 +1630,6 @@
       return tglStr;
     }
 
-    /* FORMAT NOMOR TELEPON DENGAN AWALAN 0 */
     function formatNoTelp(val) {
       if (!val) return '-';
       let str = String(val).trim();
@@ -1570,7 +1644,6 @@
       return clean;
     }
 
-    /* AUDIO & SPEECH SYNTHESIS ENGINE */
     function playBeep(freq = 659, type = 'sine', duration = 0.15) {
       try {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -1643,7 +1716,312 @@
       term.prepend(div);
     }
 
-    /* AMBIL DATA SISWA DARI GOOGLE SPREADSHEET */
+    /* PENGGANTI CONFIRM MODAL KUSTOM */
+    let customConfirmCallback = null;
+    function showCustomConfirm(title, message, onOk) {
+      const modal = document.getElementById('modalCustomConfirm');
+      const t = document.getElementById('customConfirmTitle');
+      const m = document.getElementById('customConfirmMessage');
+      const btnOk = document.getElementById('btnCustomConfirmOk');
+      if (!modal) return;
+
+      if (t) t.textContent = title;
+      if (m) m.textContent = message;
+      customConfirmCallback = onOk;
+
+      btnOk.onclick = () => {
+        closeCustomConfirm();
+        if (typeof customConfirmCallback === 'function') {
+          customConfirmCallback();
+        }
+      };
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeCustomConfirm() {
+      document.getElementById('modalCustomConfirm')?.classList.add('hidden');
+      customConfirmCallback = null;
+    }
+
+    function updateSyncStatsUI() {
+      const elS = document.getElementById('syncStatSiswa');
+      const elP = document.getElementById('syncStatPresensi');
+      const elSP = document.getElementById('syncStatSPP');
+      const elU = document.getElementById('syncStatUsers');
+
+      if (elS) elS.textContent = (appData.siswa || []).length;
+      if (elP) elP.textContent = (appData.presensi || []).length;
+      if (elSP) elSP.textContent = (appData.spp || []).length;
+      if (elU) elU.textContent = (appData.users || []).length;
+    }
+
+    async function sendDataToGoogleSheets(payload) {
+      const url = appData.settings?.apiUrl;
+      if (!url || url.includes('YourDeploymentId')) {
+        addSyncLog(`[Lokal] Data tersimpan di memori. Tambahkan URL Web App Sheets untuk sinkronisasi cloud.`, 'info');
+        return;
+      }
+
+      addSyncLog(`Mengirim aksi [${payload.action}] ke Google Spreadsheet...`, 'info');
+
+      try {
+        await fetch(url, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+
+        addSyncLog(`Aksi [${payload.action}] berhasil dikirim ke Google Sheets.`, 'success');
+        showToast('Data otomatis tersinkron ke Google Sheets!', 'success');
+      } catch (e) {
+        console.warn('Network send error:', e);
+        addSyncLog(`Peringatan pengiriman cloud: ${e.message}`, 'error');
+      }
+    }
+
+    function kirimRekapPresensiKeSheets() {
+      const data = appData.presensi || [];
+      if (data.length === 0) {
+        showToast('Tidak ada data kehadiran untuk dikirim!', 'warning');
+        return;
+      }
+      showToast('Mengirim seluruh data laporan kehadiran ke Google Sheets...', 'info');
+      sendDataToGoogleSheets({
+        action: 'syncPresensiBatch',
+        presensi: data
+      });
+    }
+
+    function kirimRekapSPPKeSheets() {
+      const data = appData.spp || [];
+      if (data.length === 0) {
+        showToast('Tidak ada transaksi SPP untuk dikirim!', 'warning');
+        return;
+      }
+      showToast('Mengirim seluruh laporan SPP ke Google Sheets...', 'info');
+      sendDataToGoogleSheets({
+        action: 'syncSppBatch',
+        spp: data
+      });
+    }
+
+    const GOOGLE_APPS_SCRIPT_CODE = `/**
+ * BACKEND SIM PRESENSI & SPP BIMBEL BA
+ * Otomatis mengelola tabel: Siswa, Presensi, SPP, Users
+ */
+
+function doPost(e) {
+  try {
+    var raw = e.postData.contents;
+    var data = JSON.parse(raw);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var action = data.action;
+
+    // 1. SETUP TABEL OTOMATIS
+    if (action === "setup") {
+      setupSheets(ss);
+      return createResponse({ status: "success", message: "Struktur 4 tabel berhasil ditata otomatis!" });
+    }
+
+    // 2. SIMPAN PRESENSI REALTIME
+    if (action === "simpanPresensi") {
+      var sheet = getOrCreateSheet(ss, "Presensi", [
+        "ID Presensi", "Tanggal", "Waktu", "Username / NIS", "Nama Siswa", "Kelas", "Status", "Keterangan / Paket"
+      ]);
+      sheet.appendRow([
+        data.id || ("PRS-" + new Date().getTime()),
+        data.tanggal || "",
+        data.waktu || "",
+        data.nis || "",
+        data.nama || "",
+        data.kelas || "",
+        data.status || "Hadir",
+        data.keterangan || "-"
+      ]);
+      return createResponse({ status: "success", message: "Presensi tercatat di Google Sheets" });
+    }
+
+    // 3. SIMPAN PEMBAYARAN SPP REALTIME
+    if (action === "simpanSPP") {
+      var sheet = getOrCreateSheet(ss, "SPP", [
+        "No Kuitansi", "Tanggal Bayar", "Username / NIS", "Nama Siswa", "Kelas", "Bulan", "Tahun", "Nominal (Rp)", "Metode Bayar", "Status", "Petugas"
+      ]);
+      sheet.appendRow([
+        data.id || ("SPP-" + new Date().getTime()),
+        data.tanggal || "",
+        data.nis || "",
+        data.nama || "",
+        data.kelas || "",
+        data.bulan || "",
+        data.tahun || "",
+        Number(data.nominal || 0),
+        data.metode || "Tunai",
+        data.status || "Lunas",
+        data.petugas || "Admin"
+      ]);
+      return createResponse({ status: "success", message: "Transaksi SPP tersimpan di Google Sheets" });
+    }
+
+    // 4. SIMPAN MASTER SISWA
+    if (action === "tambahSiswa") {
+      var sheet = getOrCreateSheet(ss, "Siswa", [
+        "Username / ID", "Password", "Nama Siswa", "Kelas", "Alamat", "Sekolah Asal", "Hobi", "Kategori", "Nama Orang Tua", "No Telp / WA", "Status Akun"
+      ]);
+      sheet.appendRow([
+        data.username || "",
+        data.password || "123",
+        data.nama || "",
+        data.kelas || "",
+        data.alamat || "-",
+        data.sekolah_asal || "-",
+        data.hobi || "-",
+        data.kategori_bimbingan || "BIMBEL",
+        data.nama_ortu || "-",
+        data.no_telp || "-",
+        data.status_akun || "Aktif"
+      ]);
+      return createResponse({ status: "success", message: "Siswa berhasil ditambahkan" });
+    }
+
+    // 5. BATCH SYNC SEMUA DATA
+    if (action === "syncAllData") {
+      if (data.siswa) overwriteSheet(ss, "Siswa", [
+        "Username / ID", "Password", "Nama Siswa", "Kelas", "Alamat", "Sekolah Asal", "Hobi", "Kategori", "Nama Orang Tua", "No Telp / WA", "Status Akun"
+      ], data.siswa.map(function(s) {
+        return [s.username, s.password||"123", s.nama, s.kelas, s.alamat||"-", s.sekolah_asal||"-", s.hobi||"-", s.kategori_bimbingan||"BIMBEL", s.nama_ortu||"-", s.no_telp||"-", s.status_akun||"Aktif"];
+      }));
+
+      if (data.presensi) overwriteSheet(ss, "Presensi", [
+        "ID Presensi", "Tanggal", "Waktu", "Username / NIS", "Nama Siswa", "Kelas", "Status", "Keterangan / Paket"
+      ], data.presensi.map(function(p) {
+        return [p.id, p.tanggal, p.waktu, p.nis, p.nama, p.kelas, p.status, p.keterangan||"-"];
+      }));
+
+      if (data.spp) overwriteSheet(ss, "SPP", [
+        "No Kuitansi", "Tanggal Bayar", "Username / NIS", "Nama Siswa", "Kelas", "Bulan", "Tahun", "Nominal (Rp)", "Metode Bayar", "Status", "Petugas"
+      ], data.spp.map(function(s) {
+        return [s.id, s.tanggal, s.nis, s.nama, s.kelas, s.bulan, s.tahun, Number(s.nominal||0), s.metode||"Tunai", s.status||"Lunas", s.petugas||"Admin"];
+      }));
+
+      return createResponse({ status: "success", message: "Seluruh database berhasil disinkronkan!" });
+    }
+
+    if (action === "syncPresensiBatch" && data.presensi) {
+      overwriteSheet(ss, "Presensi", [
+        "ID Presensi", "Tanggal", "Waktu", "Username / NIS", "Nama Siswa", "Kelas", "Status", "Keterangan / Paket"
+      ], data.presensi.map(function(p) {
+        return [p.id, p.tanggal, p.waktu, p.nis, p.nama, p.kelas, p.status, p.keterangan||"-"];
+      }));
+      return createResponse({ status: "success", message: "Rekap Presensi berhasil diperbarui!" });
+    }
+
+    if (action === "syncSppBatch" && data.spp) {
+      overwriteSheet(ss, "SPP", [
+        "No Kuitansi", "Tanggal Bayar", "Username / NIS", "Nama Siswa", "Kelas", "Bulan", "Tahun", "Nominal (Rp)", "Metode Bayar", "Status", "Petugas"
+      ], data.spp.map(function(s) {
+        return [s.id, s.tanggal, s.nis, s.nama, s.kelas, s.bulan, s.tahun, Number(s.nominal||0), s.metode||"Tunai", s.status||"Lunas", s.petugas||"Admin"];
+      }));
+      return createResponse({ status: "success", message: "Rekap SPP berhasil diperbarui!" });
+    }
+
+    return createResponse({ status: "ignored", message: "Aksi tidak dikenal" });
+  } catch (err) {
+    return createResponse({ status: "error", message: err.toString() });
+  }
+}
+
+function doGet(e) {
+  var action = e.parameter.action;
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  if (action === "ping") {
+    return createResponse({ status: "success", message: "Koneksi Google Apps Script Aktif!" });
+  }
+
+  if (action === "getAllData") {
+    return createResponse({
+      status: "success",
+      data: {
+        siswa: readSheetData(ss, "Siswa"),
+        presensi: readSheetData(ss, "Presensi"),
+        spp: readSheetData(ss, "SPP")
+      }
+    });
+  }
+
+  return createResponse({ status: "ready", message: "SIM BIMBEL BA Web App Service Siap" });
+}
+
+function getOrCreateSheet(ss, name, headers) {
+  var s = ss.getSheetByName(name);
+  if (!s) {
+    s = ss.insertSheet(name);
+    s.appendRow(headers);
+    s.getRange(1, 1, 1, headers.length).setFontWeight("bold").setBackground("#e2e8f0");
+    s.setFrozenRows(1);
+  }
+  return s;
+}
+
+function overwriteSheet(ss, name, headers, rows) {
+  var s = ss.getSheetByName(name);
+  if (s) { ss.deleteSheet(s); }
+  s = ss.insertSheet(name);
+  s.appendRow(headers);
+  s.getRange(1, 1, 1, headers.length).setFontWeight("bold").setBackground("#e2e8f0");
+  s.setFrozenRows(1);
+  if (rows && rows.length > 0) {
+    s.getRange(2, 1, rows.length, headers.length).setValues(rows);
+  }
+}
+
+function readSheetData(ss, name) {
+  var s = ss.getSheetByName(name);
+  if (!s) return [];
+  var vals = s.getDataRange().getValues();
+  if (vals.length < 2) return [];
+  return vals.slice(1);
+}
+
+function setupSheets(ss) {
+  getOrCreateSheet(ss, "Siswa", ["Username / ID", "Password", "Nama Siswa", "Kelas", "Alamat", "Sekolah Asal", "Hobi", "Kategori", "Nama Orang Tua", "No Telp / WA", "Status Akun"]);
+  getOrCreateSheet(ss, "Presensi", ["ID Presensi", "Tanggal", "Waktu", "Username / NIS", "Nama Siswa", "Kelas", "Status", "Keterangan / Paket"]);
+  getOrCreateSheet(ss, "SPP", ["No Kuitansi", "Tanggal Bayar", "Username / NIS", "Nama Siswa", "Kelas", "Bulan", "Tahun", "Nominal (Rp)", "Metode Bayar", "Status", "Petugas"]);
+  getOrCreateSheet(ss, "Users", ["Nama Pengguna", "Username", "Password", "Peran", "Status"]);
+}
+
+function createResponse(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}`;
+
+    function openModalAppsScriptCode() {
+      const codeSnippet = document.getElementById('codeGsSnippet');
+      if (codeSnippet) codeSnippet.textContent = GOOGLE_APPS_SCRIPT_CODE;
+      document.getElementById('modalAppsScriptCode')?.classList.remove('hidden');
+    }
+
+    function closeModalAppsScriptCode() {
+      document.getElementById('modalAppsScriptCode')?.classList.add('hidden');
+    }
+
+    function copyAppsScriptCode() {
+      const textToCopy = GOOGLE_APPS_SCRIPT_CODE;
+      const tempArea = document.createElement('textarea');
+      tempArea.value = textToCopy;
+      document.body.appendChild(tempArea);
+      tempArea.select();
+      try {
+        document.execCommand('copy');
+        showToast('Kode Code.gs berhasil disalin ke clipboard!', 'success');
+      } catch (err) {
+        showToast('Gagal menyalin, silakan blok dan salin manual.', 'error');
+      }
+      document.body.removeChild(tempArea);
+    }
+
     async function fetchSiswaDirectFromGoogleSheets() {
       const sId = appData.settings?.spreadsheetId || GOOGLE_SPREADSHEET_ID;
       const sGid = appData.settings?.sheetGid || GOOGLE_SHEET_GID;
@@ -1667,29 +2045,10 @@
           addSyncLog(`Berhasil memuat ${parsedList.length} siswa via GViz/CSV.`, 'success');
         } else {
           showToast('Data siswa di spreadsheet masih kosong.', 'warning');
-          addSyncLog('Spreadsheet dibaca tetapi tidak ada baris siswa yang ditemukan.', 'info');
         }
       } catch (err) {
-        console.warn('Direct CSV fetch terhalang CORS/Izin, mencoba via backend script:', err);
-        addSyncLog('Direct CSV terhalang izin, mencoba via Google Apps Script...', 'info');
-
-        const scriptUrl = appData.settings?.apiUrl;
-        if (scriptUrl && !scriptUrl.includes('YourDeploymentId')) {
-          try {
-            const res = await fetch(`${scriptUrl}?action=getSiswaFromSpecificSheet&sheetId=${sId}&gid=${sGid}`);
-            const json = await res.json();
-            if (json && json.siswa && json.siswa.length > 0) {
-              appData.siswa = json.siswa;
-              saveDataToStorage();
-              renderTableMasterSiswa();
-              updateSyncStatsUI();
-              showToast(`Berhasil memuat ${json.siswa.length} siswa dari backend Sheets!`, 'success');
-              addSyncLog(`Berhasil memuat ${json.siswa.length} siswa via Apps Script.`, 'success');
-              return;
-            }
-          } catch (e2) {}
-        }
-        showToast('Pastikan link Google Spreadsheet disetel ke "Siapa saja yang memiliki link dapat melihat".', 'warning');
+        console.warn('Direct CSV fetch terhalang izin/CORS:', err);
+        showToast('Pastikan izin spreadsheet: "Siapa saja yang memiliki link dapat melihat".', 'warning');
         addSyncLog('Gagal sinkronisasi data siswa: ' + err.message, 'error');
       }
     }
@@ -1759,7 +2118,6 @@
       return hasil;
     }
 
-    /* KAMERA BARCODE SCANNER RESPONSIF */
     let html5QrScannerInstance = null;
     let isCameraScanning = false;
 
@@ -1793,10 +2151,7 @@
         if (!html5QrScannerInstance) {
           html5QrScannerInstance = new Html5Qrcode('cameraReader', {
             formatsToSupport: formats,
-            verbose: false,
-            experimentalFeatures: {
-              useBarCodeDetectorIfSupported: true
-            }
+            verbose: false
           });
         }
 
@@ -1828,46 +2183,18 @@
         const boxWidth = Math.floor((readerEl ? readerEl.clientWidth : 350) * 0.94);
         const boxHeight = Math.floor((readerEl ? readerEl.clientHeight : 380) * 0.88);
 
-        const cameraConfig = {
-          fps: 28,
-          qrbox: { width: Math.max(boxWidth, 240), height: Math.max(boxHeight, 220) },
-          aspectRatio: 1.0,
-          videoConstraints: {
-            deviceId: { exact: cameraIdToUse },
-            focusMode: 'continuous',
-            advanced: [
-              { focusMode: 'continuous' },
-              { exposureMode: 'continuous' }
-            ],
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
-          }
-        };
-
-        try {
-          await html5QrScannerInstance.start(
-            cameraIdToUse,
-            cameraConfig,
-            (decodedText) => {
-              handleBarcodeScannedResult(decodedText);
-            },
-            (errorMessage) => {}
-          );
-        } catch (strictErr) {
-          console.warn('Fallback ke start kamera standar:', strictErr);
-          await html5QrScannerInstance.start(
-            cameraIdToUse,
-            {
-              fps: 25,
-              qrbox: { width: Math.max(boxWidth, 240), height: Math.max(boxHeight, 220) },
-              aspectRatio: 1.0
-            },
-            (decodedText) => {
-              handleBarcodeScannedResult(decodedText);
-            },
-            (errorMessage) => {}
-          );
-        }
+        await html5QrScannerInstance.start(
+          cameraIdToUse,
+          {
+            fps: 28,
+            qrbox: { width: Math.max(boxWidth, 240), height: Math.max(boxHeight, 220) },
+            aspectRatio: 1.0
+          },
+          (decodedText) => {
+            handleBarcodeScannedResult(decodedText);
+          },
+          (errorMessage) => {}
+        );
 
         isCameraScanning = true;
         if (btn) btn.className = 'px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-sm transition';
@@ -1918,7 +2245,6 @@
       prosesPencatatanPresensi(decodedText);
     }
 
-    /* LOGIKA PRESENSI & VALIDASI DUA ARAH (MANUAL ↔ BARCODE) */
     function prosesPencatatanPresensi(scannedQuery) {
       if (!scannedQuery) return;
       const q = scannedQuery.trim().toLowerCase();
@@ -1940,7 +2266,6 @@
       const namaTargetNorm = (targetSiswa.nama || '').trim().toLowerCase().replace(/\s+/g, ' ');
       const usernameTarget = (targetSiswa.username || '').trim().toLowerCase();
 
-      // VALIDASI ANTI-GANDA DUA ARAH: SCANNER BARCODE ↔ INPUT MANUAL
       const sudahPresensi = (appData.presensi || []).find(p => {
         const pIso = parseTanggalIndoKeIso(p.tanggal);
         const matchTgl = (pIso && tglIso && pIso === tglIso) || (formatTanggalIndo(p.tanggal) === tglFormatted);
@@ -1968,7 +2293,6 @@
         return;
       }
 
-      // JIKA SCAN / PRESENSI PERTAMA KALI
       const now = new Date();
       const waktuStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
       const catatan = document.getElementById('presensiKeterangan')?.value ? document.getElementById('presensiKeterangan').value.trim() : '-';
@@ -2051,7 +2375,7 @@
       });
     }
 
-    /* PRESENSI MANUAL (WAJIB SUBMIT PRESENSI) */
+    /* PRESENSI MANUAL */
     function handleManualSearchInput(query) {
       const dropdown = document.getElementById('dropdownSiswaManual');
       const btnClear = document.getElementById('btnClearScanManual');
@@ -2317,7 +2641,6 @@
       `).join('');
     }
 
-    /* REKAP LAPORAN SPP */
     function handleRekapSppSearchInput(query) {
       const dropdown = document.getElementById('dropdownRekapSppSiswa');
       const btnClear = document.getElementById('btnClearRekapSppFilterNama');
@@ -2362,7 +2685,7 @@
       const btnClear = document.getElementById('btnClearRekapSppFilterNama');
       if (input) input.value = nama;
       if (dropdown) dropdown.classList.add('hidden');
-      if (btnClear) btnClear.classList.remove('hidden');
+      if (btnClear) btnClear.classList.add('hidden');
       terapkanFilterRekapSPP();
     }
 
@@ -2442,7 +2765,6 @@
       `).join('');
     }
 
-    /* MASTER DATA SISWA & CETAK KARTU */
     function renderTableMasterSiswa() {
       const tbody = document.getElementById('tbodyMasterSiswa');
       const q = (document.getElementById('cariMasterSiswa')?.value || '').trim().toLowerCase();
@@ -2463,14 +2785,23 @@
       tbody.innerHTML = list.map(s => `
         <tr class="hover:bg-slate-50 transition">
           <td class="py-2.5 px-3 font-mono font-bold text-indigo-700">${escapeHtml(s.username)}</td>
-          <td class="py-2.5 px-3 font-bold text-slate-800">${escapeHtml(s.nama)}</td>
+          <td class="py-2.5 px-3">
+            <div class="font-bold text-slate-800">${escapeHtml(s.nama)}</div>
+            <div class="text-[10px] text-slate-400">
+              ${(s.sekolah_asal && s.sekolah_asal !== '-') ? 'Sekolah: ' + escapeHtml(s.sekolah_asal) + ' • ' : ''}
+              ${(s.hobi && s.hobi !== '-') ? 'Hobi: ' + escapeHtml(s.hobi) : ''}
+            </div>
+          </td>
           <td class="py-2.5 px-3 text-slate-600">${escapeHtml(s.kelas || '-')}</td>
           <td class="py-2.5 px-3">
             <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-indigo-100 text-indigo-800 uppercase">
               ${escapeHtml(s.kategori_bimbingan || 'BIMBEL')}
             </span>
           </td>
-          <td class="py-2.5 px-3 text-slate-600">${escapeHtml(formatNoTelp(s.no_telp || '-'))} (${escapeHtml(s.nama_ortu || '-')})</td>
+          <td class="py-2.5 px-3 text-slate-600">
+            <div>${escapeHtml(formatNoTelp(s.no_telp || '-'))} (${escapeHtml(s.nama_ortu || '-')})</div>
+            ${(s.alamat && s.alamat !== '-') ? `<div class="text-[10px] text-slate-400 truncate max-w-[180px]" title="${escapeHtml(s.alamat)}"><i class="fa-solid fa-location-dot text-[9px] mr-0.5"></i> ${escapeHtml(s.alamat)}</div>` : ''}
+          </td>
           <td class="py-2.5 px-3">
             <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800">
               ${escapeHtml(s.status_akun || 'Aktif')}
@@ -2498,14 +2829,18 @@
       document.getElementById('siswaFormIsEdit').value = '0';
       document.getElementById('siswaFormUsername').value = '';
       document.getElementById('siswaFormUsername').readOnly = false;
+      document.getElementById('siswaFormPassword').value = '123';
       document.getElementById('siswaFormNama').value = '';
       document.getElementById('siswaFormKelas').value = '';
+      if (document.getElementById('siswaFormAlamat')) document.getElementById('siswaFormAlamat').value = '';
+      if (document.getElementById('siswaFormSekolah')) document.getElementById('siswaFormSekolah').value = '';
+      if (document.getElementById('siswaFormHobi')) document.getElementById('siswaFormHobi').value = '';
+      document.getElementById('siswaFormKategori').value = 'BIMBEL';
       document.getElementById('siswaFormOrtu').value = '';
       document.getElementById('siswaFormTelp').value = '';
       document.getElementById('modalFormSiswa').classList.remove('hidden');
     }
 
-    /* MODAL & LOGIKA EXPORT / IMPORT DATA SISWA */
     function openModalExportImportSiswa() {
       const modal = document.getElementById('modalExportImportSiswa');
       if (modal) {
@@ -2519,12 +2854,6 @@
 
     function closeModalExportImportSiswa() {
       document.getElementById('modalExportImportSiswa')?.classList.add('hidden');
-    }
-
-    async function jalankanImportGoogleSheets() {
-      showToast('Menghubungkan ke Google Spreadsheet...', 'info');
-      await fetchSiswaDirectFromGoogleSheets();
-      closeModalExportImportSiswa();
     }
 
     let selectedCsvContent = '';
@@ -2629,6 +2958,9 @@
       document.getElementById('siswaFormPassword').value = s.password || '123';
       document.getElementById('siswaFormNama').value = s.nama || '';
       document.getElementById('siswaFormKelas').value = s.kelas || '';
+      if (document.getElementById('siswaFormAlamat')) document.getElementById('siswaFormAlamat').value = (s.alamat && s.alamat !== '-') ? s.alamat : '';
+      if (document.getElementById('siswaFormSekolah')) document.getElementById('siswaFormSekolah').value = (s.sekolah_asal && s.sekolah_asal !== '-') ? s.sekolah_asal : '';
+      if (document.getElementById('siswaFormHobi')) document.getElementById('siswaFormHobi').value = (s.hobi && s.hobi !== '-') ? s.hobi : '';
       document.getElementById('siswaFormKategori').value = s.kategori_bimbingan || 'BIMBEL';
       document.getElementById('siswaFormOrtu').value = s.nama_ortu || '';
       document.getElementById('siswaFormTelp').value = s.no_telp || '';
@@ -2642,9 +2974,12 @@
     function simpanDataSiswa() {
       const isEdit = document.getElementById('siswaFormIsEdit').value === '1';
       const username = document.getElementById('siswaFormUsername').value.trim();
-      const nama = document.getElementById('siswaFormNama').value.trim();
       const password = document.getElementById('siswaFormPassword').value.trim() || '123';
+      const nama = document.getElementById('siswaFormNama').value.trim();
       const kelas = document.getElementById('siswaFormKelas').value.trim();
+      const alamat = document.getElementById('siswaFormAlamat')?.value.trim() || '-';
+      const sekolah = document.getElementById('siswaFormSekolah')?.value.trim() || '-';
+      const hobi = document.getElementById('siswaFormHobi')?.value.trim() || '-';
       const kategori = document.getElementById('siswaFormKategori').value;
       const ortu = document.getElementById('siswaFormOrtu').value.trim();
       const telp = formatNoTelp(document.getElementById('siswaFormTelp').value.trim());
@@ -2659,9 +2994,9 @@
         password,
         nama,
         kelas,
-        alamat: '-',
-        sekolah_asal: '-',
-        hobi: '-',
+        alamat: alamat || '-',
+        sekolah_asal: sekolah || '-',
+        hobi: hobi || '-',
         kategori_bimbingan: kategori,
         nama_ortu: ortu || '-',
         no_telp: telp || '-',
@@ -2693,16 +3028,17 @@
     }
 
     function hapusDataSiswa(username) {
-      if (!confirm(`Hapus data siswa ${username}? Tindakan ini permanen.`)) return;
-      appData.siswa = appData.siswa.filter(s => s.username !== username);
-      saveDataToStorage();
-      renderTableMasterSiswa();
-      updateSyncStatsUI();
-      showToast(`Siswa ${username} berhasil dihapus`, 'info');
+      showCustomConfirm('Hapus Siswa', `Hapus data siswa ${username}? Tindakan ini permanen.`, () => {
+        appData.siswa = appData.siswa.filter(s => s.username !== username);
+        saveDataToStorage();
+        renderTableMasterSiswa();
+        updateSyncStatsUI();
+        showToast(`Siswa ${username} berhasil dihapus`, 'info');
 
-      sendDataToGoogleSheets({
-        action: 'hapusSiswa',
-        username: username
+        sendDataToGoogleSheets({
+          action: 'hapusSiswa',
+          username: username
+        });
       });
     }
 
@@ -2759,9 +3095,9 @@
     }
 
     function openModalDownloadSemuaKartu() {
-      if (confirm('Unduh seluruh kartu siswa menjadi berkas ZIP?')) {
+      showCustomConfirm('Unduh Seluruh Kartu', 'Unduh seluruh kartu siswa menjadi berkas ZIP?', () => {
         prosesDownloadSemuaKartuZip();
-      }
+      });
     }
 
     async function prosesDownloadSemuaKartuZip() {
@@ -2788,7 +3124,6 @@
       showToast('Berkas ZIP berhasil diunduh!', 'success');
     }
 
-    /* FORM & TRANSAKSI SPP */
     function setNominalSppPreset(nom) {
       const input = document.getElementById('sppNominal');
       if (input) input.value = nom;
@@ -2965,21 +3300,21 @@
     }
 
     function hapusTransaksiSPP(sppId) {
-      if (!confirm(`Hapus transaksi SPP ${sppId}?`)) return;
-      appData.spp = (appData.spp || []).filter(x => x.id !== sppId);
-      saveDataToStorage();
-      renderTableSPP();
-      terapkanFilterRekapSPP();
-      updateSyncStatsUI();
-      showToast('Transaksi SPP berhasil dihapus', 'info');
+      showCustomConfirm('Hapus Transaksi', `Hapus transaksi SPP ${sppId}?`, () => {
+        appData.spp = (appData.spp || []).filter(x => x.id !== sppId);
+        saveDataToStorage();
+        renderTableSPP();
+        terapkanFilterRekapSPP();
+        updateSyncStatsUI();
+        showToast('Transaksi SPP berhasil dihapus', 'info');
 
-      sendDataToGoogleSheets({
-        action: 'hapusSPP',
-        id: sppId
+        sendDataToGoogleSheets({
+          action: 'hapusSPP',
+          id: sppId
+        });
       });
     }
 
-    /* MANAJEMEN PENGGUNA */
     function renderTableUsers() {
       const tbody = document.getElementById('tbodyUsers');
       if (!tbody) return;
@@ -3101,49 +3436,21 @@
         showToast('Akun admin utama tidak boleh dihapus', 'warning');
         return;
       }
-      if (!confirm(`Hapus pengguna ${username}?`)) return;
+      showCustomConfirm('Hapus Pengguna', `Hapus akun pengguna ${username}?`, () => {
+        appData.users = appData.users.filter(x => x.username !== username);
+        saveDataToStorage();
+        renderTableUsers();
+        updateSyncStatsUI();
+        showToast('Pengguna berhasil dihapus', 'info');
 
-      appData.users = appData.users.filter(x => x.username !== username);
-      saveDataToStorage();
-      renderTableUsers();
-      updateSyncStatsUI();
-      showToast('Pengguna berhasil dihapus', 'info');
-
-      sendDataToGoogleSheets({
-        action: 'hapusUser',
-        username: username
+        sendDataToGoogleSheets({
+          action: 'hapusUser',
+          username: username
+        });
       });
     }
 
-    /* SINKRONISASI CLOUD GOOGLE SHEETS */
-    function updateSyncStatsUI() {
-      const elS = document.getElementById('syncStatSiswa');
-      const elP = document.getElementById('syncStatPresensi');
-      const elSP = document.getElementById('syncStatSPP');
-      const elU = document.getElementById('syncStatUsers');
-
-      if (elS) elS.textContent = (appData.siswa || []).length;
-      if (elP) elP.textContent = (appData.presensi || []).length;
-      if (elSP) elSP.textContent = (appData.spp || []).length;
-      if (elU) elU.textContent = (appData.users || []).length;
-    }
-
-    function sendDataToGoogleSheets(payload) {
-      const url = appData.settings?.apiUrl;
-      if (!url || url.includes('YourDeploymentId')) return;
-
-      try {
-        fetch(url, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        }).catch(err => console.warn('Pengiriman background ke Google Sheets gagal:', err));
-      } catch (e) {
-        console.warn('Network send error:', e);
-      }
-    }
-
+    /* PENGATURAN SHEETS */
     function simpanPengaturanUrl() {
       const input = document.getElementById('inputAppsScriptUrl');
       const inId = document.getElementById('inputSpreadsheetId');
@@ -3197,10 +3504,10 @@
       showToast('Mengirim seluruh data ke Google Spreadsheet...', 'info');
       addSyncLog('Mengirim backup seluruh database (Siswa, Presensi, SPP, Users) ke cloud...');
       try {
-        fetch(url, {
+        await fetch(url, {
           method: 'POST',
           mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             action: 'syncAllData',
             siswa: appData.siswa || [],
@@ -3263,7 +3570,6 @@
       }
     }
 
-    /* CETAK PDF & EKSPOR CSV */
     function cetakLaporanPresensiPDF() {
       const data = appData.presensi || [];
       const printArea = document.getElementById('printArea');
@@ -3400,7 +3706,6 @@
       }
     }
 
-    /* PORTAL SISWA MANDIRI */
     function switchPortalTab(tabKey) {
       const tabs = ['presensi', 'spp', 'profil'];
       tabs.forEach(t => {
@@ -3453,10 +3758,6 @@
       setEl('portalProfilKategori', siswaObj.kategori_bimbingan || 'BIMBEL');
       setEl('portalProfilOrtu', siswaObj.nama_ortu);
       setEl('portalProfilTelp', formatNoTelp(siswaObj.no_telp));
-      setEl('portalProfilSekolah', siswaObj.sekolah_asal);
-      setEl('portalProfilAlamat', siswaObj.alamat);
-      setEl('portalProfilHobi', siswaObj.hobi);
-      setEl('portalProfilStatusAkun', siswaObj.status_akun || 'Aktif');
 
       const uNorm = (siswaObj.username || '').toLowerCase();
       const nNorm = (siswaObj.nama || '').toLowerCase();
@@ -3544,7 +3845,6 @@
       }
     }
 
-    /* NAVIGASI TAB & OTENTIKASI */
     function pindahTab(tabId) {
       const tabs = ['scanner', 'siswa', 'spp', 'laporan', 'rekapSPP', 'users', 'settings'];
       const targetLower = String(tabId).toLowerCase();
@@ -3684,7 +3984,6 @@
         .replace(/'/g, '&#039;');
     }
 
-    /* INISIALISASI HALAMAN */
     document.addEventListener('DOMContentLoaded', () => {
       loadDataFromStorage();
 
