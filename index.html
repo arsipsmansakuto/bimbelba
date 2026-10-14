@@ -1540,7 +1540,7 @@
     const defaultData = {
       appVersion: APP_VERSION,
       settings: {
-        apiUrl: 'https://script.google.com/macros/s/AKfycbzXWJYMOxyyjIOdBMbZkkWTyYTUsTJ1A1uXsUp0HDH2UTKpdJ3W2qgy5C7qmT76mbLR/exec',
+        apiUrl: 'https://script.google.com/macros/s/AKfycby-F7rml4MUMqphR8R3B1lzQaDPx5PugDPSB1bphaTp20zJJ1C1xPDt95vO9LmuQUiY/exec',
         spreadsheetId: GOOGLE_SPREADSHEET_ID,
         sheetGid: GOOGLE_SHEET_GID
       },
@@ -1808,9 +1808,10 @@
       customConfirmCallback = onOk;
 
       btnOk.onclick = () => {
+        const actionCallback = customConfirmCallback;
         closeCustomConfirm();
-        if (typeof customConfirmCallback === 'function') {
-          customConfirmCallback();
+        if (typeof actionCallback === 'function') {
+          actionCallback();
         }
       };
 
@@ -1942,7 +1943,22 @@ function doPost(e) {
       return createResponse({ status: "success", message: "Transaksi SPP tersimpan di Google Sheets" });
     }
 
-    // 4. SIMPAN MASTER SISWA
+    // 4. HAPUS PEMBAYARAN SPP REALTIME
+    if (action === "hapusSPP") {
+      var sheet = ss.getSheetByName("SPP");
+      if (sheet) {
+        var dataVals = sheet.getDataRange().getValues();
+        for (var i = dataVals.length - 1; i >= 1; i--) {
+          if (String(dataVals[i][0]).trim() === String(data.id).trim()) {
+            sheet.deleteRow(i + 1);
+            break;
+          }
+        }
+      }
+      return createResponse({ status: "success", message: "Transaksi SPP berhasil dihapus dari Google Sheets" });
+    }
+
+    // 5. SIMPAN MASTER SISWA
     if (action === "tambahSiswa") {
       var sheet = getOrCreateSheet(ss, "Siswa", [
         "Username / ID", "Password", "Nama Siswa", "Kelas", "Alamat", "Sekolah Asal", "Hobi", "Kategori", "Nama Orang Tua", "No Telp / WA", "Status Akun"
@@ -1964,37 +1980,22 @@ function doPost(e) {
       return createResponse({ status: "success", message: "Siswa berhasil ditambahkan" });
     }
 
-    // 5. BATCH SYNC SEMUA DATA
-    if (action === "syncAllData") {
-      if (data.siswa) overwriteSheet(ss, "Siswa", [
-        "Username / ID", "Password", "Nama Siswa", "Kelas", "Alamat", "Sekolah Asal", "Hobi", "Kategori", "Nama Orang Tua", "No Telp / WA", "Status Akun"
-      ], data.siswa.map(function(s) {
-        var telpStr = s.no_telp ? ("'" + String(s.no_telp).replace(/^'+/, '')) : "'-";
-        return [s.username, s.password||"123", s.nama, s.kelas, s.alamat||"-", s.sekolah_asal||"-", s.hobi||"-", s.kategori_bimbingan||"BIMBEL", s.nama_ortu||"-", telpStr, s.status_akun||"Aktif"];
-      }));
-
-      if (data.presensi) overwriteSheet(ss, "Presensi", [
-        "ID Presensi", "Tanggal", "Waktu", "Username / NIS", "Nama Siswa", "Kelas", "Status", "Keterangan / Paket"
-      ], data.presensi.map(function(p) {
-        return [p.id, p.tanggal, p.waktu, p.nis, p.nama, p.kelas, p.status, p.keterangan||"-"];
-      }));
-
-      if (data.spp) overwriteSheet(ss, "SPP", [
-        "No Kuitansi", "Tanggal Bayar", "Username / NIS", "Nama Siswa", "Kelas", "Bulan", "Tahun", "Nominal (Rp)", "Metode Bayar", "Status", "Petugas"
-      ], data.spp.map(function(s) {
-        return [s.id, s.tanggal, s.nis, s.nama, s.kelas, s.bulan, s.tahun, Number(s.nominal||0), s.metode||"Tunai", s.status||"Lunas", s.petugas||"Admin"];
-      }));
-
-      return createResponse({ status: "success", message: "Seluruh database berhasil disinkronkan!" });
+    // 6. HAPUS MASTER SISWA
+    if (action === "hapusSiswa") {
+      var sheet = ss.getSheetByName("Siswa");
+      if (sheet) {
+        var dataVals = sheet.getDataRange().getValues();
+        for (var i = dataVals.length - 1; i >= 1; i--) {
+          if (String(dataVals[i][0]).toLowerCase().trim() === String(data.username).toLowerCase().trim()) {
+            sheet.deleteRow(i + 1);
+            break;
+          }
+        }
+      }
+      return createResponse({ status: "success", message: "Siswa berhasil dihapus dari Google Sheets" });
     }
 
-    if (action === "syncPresensiBatch" && data.presensi) {
-      overwriteSheet(ss, "Presensi", [
-        "ID Presensi", "Tanggal", "Waktu", "Username / NIS", "Nama Siswa", "Kelas", "Status", "Keterangan / Paket"
-      ], data.presensi.map(function(p) {
-        return [p.id, p.tanggal, p.waktu, p.nis, p.nama, p.kelas, p.status, p.keterangan||"-"];
-      }));
-      return createResponse({ status: "success", message: "Rekap Presensi berhasil diperbarui!" });
+    // 7. BATCH SYNC SEMUA DATA
     }
 
     if (action === "syncSppBatch" && data.spp) {
@@ -3391,13 +3392,16 @@ function createResponse(obj) {
     }
 
     function hapusTransaksiSPP(sppId) {
-      showCustomConfirm('Hapus Transaksi', `Hapus transaksi SPP ${sppId}?`, () => {
+      const sppItem = (appData.spp || []).find(x => x.id === sppId);
+      const label = sppItem ? `${sppItem.id} (${sppItem.nama} - ${sppItem.bulan} ${sppItem.tahun})` : sppId;
+
+      showCustomConfirm('Hapus Transaksi SPP', `Hapus transaksi SPP ${label}? Data yang dihapus tidak dapat dipulihkan.`, () => {
         appData.spp = (appData.spp || []).filter(x => x.id !== sppId);
         saveDataToStorage();
         renderTableSPP();
         terapkanFilterRekapSPP();
         updateSyncStatsUI();
-        showToast('Transaksi SPP berhasil dihapus', 'info');
+        showToast(`Transaksi SPP ${sppId} berhasil dihapus!`, 'info');
 
         sendDataToGoogleSheets({
           action: 'hapusSPP',
