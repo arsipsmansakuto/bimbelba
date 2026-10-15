@@ -363,6 +363,8 @@
                 </button>
               </div>
               <input type="hidden" id="sppSelectedUsername" value="">
+              <input type="hidden" id="sppSelectedNamaValue" value="">
+              <input type="hidden" id="sppSelectedKelasValue" value="">
             </div>
 
             <div class="grid grid-cols-2 gap-3">
@@ -430,7 +432,7 @@
               <h2 class="text-base font-bold text-slate-800 font-brand flex items-center gap-2">
                 <i class="fa-solid fa-clock-rotate-left text-indigo-600"></i> Riwayat Pembayaran SPP
               </h2>
-              <p class="text-xs text-slate-500">Daftar transaksi terupdate otomatis dari Google Sheets Tab SPP</p>
+              <p class="text-xs text-slate-500">Daftar transaksi tersinkronisasi realtime dengan Google Sheets Tab SPP</p>
             </div>
             <div class="flex items-center gap-1.5 text-[11px] text-slate-500 font-mono">
               <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -443,9 +445,9 @@
               <thead class="bg-slate-50 text-slate-600 font-semibold uppercase text-[10px]">
                 <tr>
                   <th class="py-2.5 px-3">No Kuitansi</th>
-                  <th class="py-2.5 px-3">Tanggal</th>
+                  <th class="py-2.5 px-3">Tanggal Bayar</th>
                   <th class="py-2.5 px-3">Nama Siswa</th>
-                  <th class="py-2.5 px-3">Bulan</th>
+                  <th class="py-2.5 px-3">Bulan / Tahun</th>
                   <th class="py-2.5 px-3">Nominal</th>
                   <th class="py-2.5 px-3">Status</th>
                   <th class="py-2.5 px-3 text-center">Aksi</th>
@@ -1681,11 +1683,11 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
     
     // Konfigurasi Master Permanen (Bila dibuka di perangkat baru/tanpa cache, tetap membaca spreadsheet ini)
     const MASTER_SPREADSHEET_ID = '1oQMV5G7fiLOxTXlENGAEHEBEs2TaC5tqA8P7b-rdmjo';
-    const MASTER_GID_SISWA = '709630193';
+    const MASTER_GID_SISWA = '1709630193';
     const MASTER_GID_PRESENSI = '526265062';
     const MASTER_GID_SPP = '2072174916';
     const MASTER_GID_USERS = '1341602880';
-    const MASTER_API_URL = 'https://script.google.com/macros/s/AKfycbxF1DmDvKjkQDM_acaYzUSHg7i2KFuC9MTZngwu_z1ghmi0MJ-SFhORV-8G2knPNZXb/exec';
+    const MASTER_API_URL = 'https://script.google.com/macros/s/AKfycbx6d9ogaw5ANTzSeQJ7b4hFY0TGVtYp7wJeETRMl0g-ThAjuius94ym_2c2A-qoHAFO/exec';
     
     const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
     let idleTimer = null;
@@ -1855,29 +1857,43 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
     /* Helper untuk membersihkan dan membedah nominal uang secara presisi dari spreadsheet */
     function parseNominalAngka(val) {
       if (val === null || val === undefined) return 0;
-      if (typeof val === 'number') return isNaN(val) ? 0 : val;
+      if (typeof val === 'number') {
+        if (isNaN(val)) return 0;
+        // Koreksi otomatis jika tidak sengaja menyimpan format tanggal numerik seperti 14102026 / 15102026
+        if (val > 10000000 && String(val).endsWith('2026')) {
+          return 0;
+        }
+        return val;
+      }
       let s = String(val).trim();
       if (!s) return 0;
+
+      // JIKA NILAI MERUPAKAN TANGGAL (misal: 14/10/2026 atau 2026-10-14), BUKAN NOMINAL
+      if (s.includes('/') || (s.includes('-') && s.length >= 8)) {
+        return 0;
+      }
 
       // Bersihkan teks mata uang 'Rp', spasi, titik, koma
       s = s.replace(/^[Rr][Pp]\.?\s*/i, '').trim();
       
       // Jika format Indonesia seperti 80.000 atau 250.000, buang titik ribuan
       if (s.includes('.') && !s.includes(',')) {
-        // Cek apakah titik merupakan pemisah ribuan (3 digit di akhir)
         if (/\.\d{3}$/.test(s)) {
           s = s.replace(/\./g, '');
         }
       } else if (s.includes(',') && s.includes('.')) {
-        // Format 1.000.000,00 -> buang titik, desimal diabaikan
         s = s.split(',')[0].replace(/\./g, '');
       } else if (s.includes(',')) {
-        // Format 80000,00
         s = s.split(',')[0];
       }
 
       const num = Number(s.replace(/[^0-9]/g, ''));
-      return isNaN(num) ? 0 : num;
+      if (isNaN(num)) return 0;
+      // Filter proteksi tanggal 14102026
+      if (num > 10000000 && String(num).endsWith('2026')) {
+        return 0;
+      }
+      return num;
     }
 
     function formatNoTelp(val) {
@@ -2211,24 +2227,56 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
           return values;
         });
 
-        const headers = rows[0].map(h => h.toLowerCase().replace(/[^a-z0-9]/g, ''));
+        const rawHeaders = rows[0].map(h => h.trim());
+        const headers = rawHeaders.map(h => h.toLowerCase().replace(/[^a-z0-9]/g, ''));
 
-        let idxId = headers.findIndex(h => h.includes('kuitansi') || h.includes('id') || h.includes('no'));
-        let idxTgl = headers.findIndex(h => h.includes('tgl') || h.includes('tanggal'));
-        let idxNis = headers.findIndex(h => h.includes('nis') || h.includes('user'));
-        let idxNama = headers.findIndex(h => h.includes('nama'));
-        let idxKelas = headers.findIndex(h => h.includes('kelas'));
-        let idxBulan = headers.findIndex(h => h.includes('bulan'));
-        let idxTahun = headers.findIndex(h => h.includes('tahun'));
-        let idxNom = headers.findIndex(h => h.includes('nominal') || h.includes('bayar') || h.includes('jumlah') || h.includes('total') || h.includes('rp'));
-        let idxMetode = headers.findIndex(h => h.includes('metode'));
-        let idxStatus = headers.findIndex(h => h.includes('status'));
-        let idxPetugas = headers.findIndex(h => h.includes('petugas') || h.includes('admin'));
+        // Deteksi indeks secara eksplisit agar kolom tanggal tidak tertukar dengan nominal
+        let idxId = headers.findIndex(h => h === 'nokuitansi' || h === 'id' || h.includes('kuitansi') || h.includes('struk'));
+        let idxTgl = headers.findIndex(h => h === 'tanggal' || h === 'tgl' || h.includes('tanggal') || h.includes('tglbayar'));
+        let idxNis = headers.findIndex(h => h === 'nis' || h === 'username' || h.includes('nis') || h.includes('user'));
+        let idxNama = headers.findIndex(h => h === 'nama' || h === 'namasiswa' || h.includes('namasiswa') || h.includes('nama'));
+        let idxKelas = headers.findIndex(h => h === 'kelas' || h.includes('kelas'));
+        let idxBulan = headers.findIndex(h => h === 'bulan' || h.includes('bulan'));
+        let idxTahun = headers.findIndex(h => h === 'tahun' || h.includes('tahun'));
+        let idxNom = headers.findIndex(h => h === 'nominal' || h === 'jumlah' || h === 'total' || h.includes('nominal') || h.includes('bayar') || h.includes('biaya'));
+        let idxMetode = headers.findIndex(h => h === 'metode' || h.includes('metode'));
+        let idxStatus = headers.findIndex(h => h === 'status' || h.includes('status'));
+        let idxPetugas = headers.findIndex(h => h === 'petugas' || h.includes('petugas') || h.includes('admin'));
+
+        // Fallback urutan kolom standar spreadsheet jika header tidak terdeteksi
+        if (idxId === -1) idxId = 0;
+        if (idxTgl === -1) idxTgl = 1;
+        if (idxNis === -1) idxNis = 2;
+        if (idxNama === -1) idxNama = 3;
+        if (idxKelas === -1) idxKelas = 4;
+        if (idxBulan === -1) idxBulan = 5;
+        if (idxTahun === -1) idxTahun = 6;
+        if (idxNom === -1) idxNom = 7;
+        if (idxMetode === -1) idxMetode = 8;
+        if (idxStatus === -1) idxStatus = 9;
+        if (idxPetugas === -1) idxPetugas = 10;
 
         const hasil = [];
         for (let r = 1; r < rows.length; r++) {
           const row = rows[r];
-          const nominalVal = (idxNom >= 0 && row[idxNom]) ? parseNominalAngka(row[idxNom]) : 0;
+          if (!row || row.length === 0 || (row.length === 1 && !row[0])) continue;
+
+          // Baca raw nominal
+          let rawNomVal = (idxNom >= 0 && row[idxNom]) ? row[idxNom] : '0';
+          let nominalVal = parseNominalAngka(rawNomVal);
+
+          // Pengecekan cerdas: jika kolom nominal ternyata salah membaca tanggal, cari kolom angka di baris yang sama
+          if (nominalVal === 0 || (rawNomVal && (rawNomVal.includes('/') || rawNomVal.includes('-')))) {
+            for (let c = 0; c < row.length; c++) {
+              if (c !== idxTgl && c !== idxId && c !== idxNis) {
+                const candidate = parseNominalAngka(row[c]);
+                if (candidate >= 10000 && candidate <= 5000000) {
+                  nominalVal = candidate;
+                  break;
+                }
+              }
+            }
+          }
 
           hasil.push({
             id: (idxId >= 0 && row[idxId]) ? row[idxId] : 'SPP-' + r,
@@ -2244,16 +2292,17 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
             petugas: (idxPetugas >= 0 && row[idxPetugas]) ? row[idxPetugas] : 'Admin'
           });
         }
+
         if (hasil.length > 0) {
-          const isChanged = JSON.stringify(appData.spp) !== JSON.stringify(hasil);
-          if (isChanged) {
-            appData.spp = hasil;
-            saveDataToStorage();
-            renderTableSPP();
-            terapkanFilterRekapSPP();
-            updateSyncStatsUI();
-            addSyncLog(`Data riwayat SPP sinkron dari Sheets (${hasil.length} transaksi).`, 'success');
-          }
+          // Gabungkan dengan transaksi yang baru saja dibuat di sesi sekarang jika belum sempat tercatat di Sheets
+          const localOnly = (appData.spp || []).filter(loc => !hasil.some(h => h.id === loc.id));
+          const gabungan = [...localOnly, ...hasil];
+
+          appData.spp = gabungan;
+          saveDataToStorage();
+          renderTableSPP();
+          terapkanFilterRekapSPP();
+          updateSyncStatsUI();
         }
       } catch (e) {
         console.warn('Direct fetch SPP CSV error:', e);
@@ -2383,20 +2432,25 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
 
     function sendDataToGoogleSheets(payload) {
       const url = globalSettings.apiUrl;
-      if (!url || url.includes('YourDeploymentId')) return;
+      if (!url || url.includes('YourDeploymentId')) {
+        addSyncLog(`[INFO] URL Apps Script belum diisi, data (${payload.action}) disimpan di lokal.`, 'info');
+        return;
+      }
 
       try {
+        const bodyData = JSON.stringify(payload);
         fetch(url, {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
+          body: bodyData
         }).then(() => {
-          addSyncLog(`Data (${payload.action || 'update'}) terkirim ke Sheets.`, 'success');
+          addSyncLog(`Data (${payload.action || 'update'}) berhasil dikirim ke Google Sheets.`, 'success');
           // Segarkan data otomatis pasca kirim
           setTimeout(() => autoSyncFromGoogleSheets(true), 1500);
         }).catch(err => {
           console.warn('Latar belakang Sheets:', err);
+          addSyncLog(`Gagal mengirim data ke Sheets: ${err.message}`, 'error');
         });
       } catch (e) {
         console.warn('Network send:', e);
@@ -3622,6 +3676,8 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
 
     function selectSppStudent(username, nama, kelas) {
       document.getElementById('sppSelectedUsername').value = username;
+      document.getElementById('sppSelectedNamaValue').value = nama;
+      document.getElementById('sppSelectedKelasValue').value = kelas;
       document.getElementById('sppSelectedNama').textContent = nama;
       document.getElementById('sppSelectedMeta').textContent = `Username: ${username} • Kelas: ${kelas}`;
       document.getElementById('sppSelectedBadge').classList.remove('hidden');
@@ -3631,7 +3687,10 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
 
     function clearSppSelectedSiswa() {
       document.getElementById('sppSelectedUsername').value = '';
-      document.getElementById('sppSelectedBadge').classList.add('hidden');
+      document.getElementById('sppSelectedNamaValue').value = '';
+      document.getElementById('sppSelectedKelasValue').value = '';
+      const badge = document.getElementById('sppSelectedBadge');
+      if (badge) badge.classList.add('hidden');
     }
 
     function submitCatatSPP() {
@@ -3641,35 +3700,47 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
         return;
       }
 
-      const s = (appData.siswa || []).find(x => x.username === username);
+      const s = (appData.siswa || []).find(x => x.username && x.username.toLowerCase() === username.toLowerCase());
+      const selectedNama = document.getElementById('sppSelectedNamaValue')?.value || (s ? s.nama : username);
+      const selectedKelas = document.getElementById('sppSelectedKelasValue')?.value || (s ? s.kelas : '-');
+
       const rawTgl = document.getElementById('sppTanggal').value || getTodayDdMmYyyy();
       const tglFormatted = formatTanggalIndo(rawTgl);
       const bulan = document.getElementById('sppBulan').value;
       const tahun = document.getElementById('sppTahun').value || '2026';
-      const nominal = Number(document.getElementById('sppNominal').value || 0);
+      
+      // Ambil nilai nominal murni yang diinput
+      const rawNomInput = document.getElementById('sppNominal').value;
+      const nominal = parseNominalAngka(rawNomInput);
       const metode = document.getElementById('sppMetode').value;
       const status = document.getElementById('sppStatus').value;
 
-      if (nominal <= 0) {
+      if (!nominal || nominal <= 0) {
         showToast('Masukkan nominal pembayaran SPP yang valid!', 'warning');
         return;
       }
 
+      // Generate format nomor kuitansi unik: SPP-YYYYMMDD-XXXX
+      const now = new Date();
+      const stamp = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}${String(now.getSeconds()).padStart(2,'0')}`;
       const newSpp = {
-        id: 'SPP-' + Date.now(),
+        id: 'SPP-' + stamp,
         tanggal: tglFormatted,
         nis: username,
-        nama: s ? s.nama : username,
-        kelas: s ? s.kelas : '-',
+        nama: selectedNama,
+        kelas: selectedKelas || '-',
         bulan: bulan,
-        tahun: tahun,
-        nominal: nominal,
+        tahun: String(tahun),
+        nominal: Number(nominal),
         metode: metode,
         status: status,
         petugas: appData.currentUser ? appData.currentUser.nama : 'Admin'
       };
 
       if (!Array.isArray(appData.spp)) appData.spp = [];
+      // Bersihkan jika ada entri dengan nilai keliru akibat membaca tanggal
+      appData.spp = appData.spp.filter(item => parseNominalAngka(item.nominal) !== 14102026);
+      
       appData.spp.unshift(newSpp);
       saveDataToStorage();
       renderTableSPP();
@@ -3680,9 +3751,66 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
 
       clearSppSelectedSiswa();
       document.getElementById('sppNominal').value = '';
-      showToast(`Transaksi SPP untuk ${newSpp.nama} berhasil dicatat!`, 'success');
+      showToast(`Transaksi SPP Rp ${nominal.toLocaleString('id-ID')} untuk ${newSpp.nama} berhasil dicatat & dikirim ke Sheets!`, 'success');
 
-      sendDataToGoogleSheets({ action: 'simpanSPP', ...newSpp });
+      // Kirim data langsung ke Google Apps Script backend agar masuk ke Tab SPP di Google Sheets
+      sendDataToGoogleSheets({ 
+        action: 'simpanSPP', 
+        id: newSpp.id,
+        tanggal: newSpp.tanggal,
+        nis: newSpp.nis,
+        nama: newSpp.nama,
+        kelas: newSpp.kelas,
+        bulan: newSpp.bulan,
+        tahun: newSpp.tahun,
+        nominal: newSpp.nominal,
+        metode: newSpp.metode,
+        status: newSpp.status,
+        petugas: newSpp.petugas
+      });
+    }
+
+    function renderTableSPP() {
+      const tbody = document.getElementById('tbodySPP');
+      if (!tbody) return;
+
+      const list = appData.spp || [];
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-slate-400">Belum ada riwayat transaksi SPP.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(s => {
+        let nom = parseNominalAngka(s.nominal);
+        const isLunas = String(s.status || '').trim().toLowerCase() === 'lunas';
+        return `
+          <tr class="hover:bg-slate-50 transition">
+            <td class="py-2.5 px-3 font-mono font-bold text-slate-700">${escapeHtml(s.id)}</td>
+            <td class="py-2.5 px-3 text-slate-800">${escapeHtml(formatTanggalIndo(s.tanggal))}</td>
+            <td class="py-2.5 px-3">
+              <div class="font-bold text-slate-800">${escapeHtml(s.nama)}</div>
+              <div class="text-[10px] text-slate-500 font-mono">NIS: ${escapeHtml(s.nis || '-')} • Kelas: ${escapeHtml(s.kelas || '-')}</div>
+            </td>
+            <td class="py-2.5 px-3 text-indigo-700 font-semibold">${escapeHtml(s.bulan)} ${escapeHtml(s.tahun)}</td>
+            <td class="py-2.5 px-3 font-extrabold text-slate-900">Rp ${nom.toLocaleString('id-ID')}</td>
+            <td class="py-2.5 px-3">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold ${isLunas ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                ${escapeHtml(s.status || 'Lunas')}
+              </span>
+            </td>
+            <td class="py-2.5 px-3 text-center">
+              <div class="flex items-center justify-center gap-1.5">
+                <button onclick='tampilkanKuitansiSPP(${JSON.stringify(s)})' title="Lihat Kuitansi" class="p-1.5 text-amber-600 hover:bg-amber-50 rounded-lg transition">
+                  <i class="fa-solid fa-receipt"></i>
+                </button>
+                <button onclick="hapusTransaksiSPP('${s.id}')" title="Hapus Transaksi" class="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg transition">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
 
     function tampilkanKuitansiSPP(sppItem) {
@@ -3696,10 +3824,12 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
       document.getElementById('kuitansiMetode').textContent = sppItem.metode || 'Tunai';
       
       const elStatus = document.getElementById('kuitansiStatus');
+      const isLunas = String(sppItem.status || '').trim().toLowerCase() === 'lunas';
       elStatus.textContent = (sppItem.status || 'Lunas').toUpperCase();
-      elStatus.className = sppItem.status === 'Lunas' ? 'font-bold text-emerald-600 uppercase' : 'font-bold text-rose-600 uppercase';
+      elStatus.className = isLunas ? 'font-bold text-emerald-600 uppercase' : 'font-bold text-rose-600 uppercase';
 
-      document.getElementById('kuitansiNominal').textContent = `Rp ${Number(sppItem.nominal || 0).toLocaleString('id-ID')}`;
+      const nom = parseNominalAngka(sppItem.nominal);
+      document.getElementById('kuitansiNominal').textContent = `Rp ${nom.toLocaleString('id-ID')}`;
       document.getElementById('kuitansiPetugas').textContent = sppItem.petugas || 'Admin';
 
       document.getElementById('modalKuitansiSPP')?.classList.remove('hidden');
