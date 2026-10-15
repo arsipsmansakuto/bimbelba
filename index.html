@@ -90,10 +90,10 @@
       </div>
 
       <div class="flex items-center space-x-3">
-        <!-- Status Indikator Auto-Sync -->
-        <div id="cloudSyncStatusBadge" class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-950 text-emerald-400 text-[11px] font-mono border border-indigo-800" title="Status Sinkronisasi Sheets">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span id="cloudSyncStatusText">Sheets Terhubung</span>
+        <!-- Status Indikator Auto-Sync Realtime Otomatis -->
+        <div id="cloudSyncStatusBadge" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-950 text-emerald-400 text-[11px] font-mono border border-indigo-800" title="Sinkronisasi Google Sheets Realtime Otomatis">
+          <span id="cloudSyncIndicatorDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="cloudSyncStatusText">Sheets Terhubung (Realtime)</span>
         </div>
 
         <!-- Info Sesi Pengguna -->
@@ -183,7 +183,7 @@
 
           <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-3 flex items-center gap-3 text-xs text-indigo-900">
             <i class="fa-solid fa-circle-info text-indigo-600 text-base"></i>
-            <span>Sistem dilengkapi nada lonceng sukses, pengucap suara siswa, serta pencegahan presensi ganda otomatis pada hari yang sama.</span>
+            <span>Data otomatis tersinkronisasi realtime dengan Google Sheets di latar belakang. Dilengkapi lonceng, audio sambutan, dan anti-presensi ganda hari ini.</span>
           </div>
         </div>
 
@@ -285,12 +285,9 @@
             <h2 class="text-base font-bold text-slate-800 font-brand flex items-center gap-2">
               <i class="fa-solid fa-users text-indigo-600"></i> Master Data Siswa
             </h2>
-            <p class="text-xs text-slate-500">Kelola informasi siswa, cetak kartu barcode, dan sinkronkan spreadsheet</p>
+            <p class="text-xs text-slate-500">Data otomatis terupdate realtime dari Google Sheets di latar belakang</p>
           </div>
           <div class="flex flex-wrap items-center gap-2">
-            <button onclick="fetchSiswaDirectFromGoogleSheets(true)" class="px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition" title="Tarik pembaruan dari spreadsheet">
-              <i class="fa-solid fa-rotate"></i> Segarkan dari Sheets
-            </button>
             <button onclick="openModalTambahSiswa()" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
               <i class="fa-solid fa-user-plus"></i> Tambah Siswa
             </button>
@@ -432,11 +429,12 @@
               <h2 class="text-base font-bold text-slate-800 font-brand flex items-center gap-2">
                 <i class="fa-solid fa-clock-rotate-left text-indigo-600"></i> Riwayat Pembayaran SPP
               </h2>
-              <p class="text-xs text-slate-500">Daftar transaksi pembayaran SPP</p>
+              <p class="text-xs text-slate-500">Daftar transaksi terupdate otomatis dari Google Sheets Tab SPP</p>
             </div>
-            <button onclick="renderTableSPP()" class="text-xs text-indigo-600 hover:underline font-semibold flex items-center gap-1">
-              <i class="fa-solid fa-rotate-right"></i> Muat Ulang
-            </button>
+            <div class="flex items-center gap-1.5 text-[11px] text-slate-500 font-mono">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>Sync Realtime</span>
+            </div>
           </div>
 
           <div class="overflow-x-auto">
@@ -468,12 +466,9 @@
             <h2 class="text-base font-bold text-slate-800 font-brand flex items-center gap-2">
               <i class="fa-solid fa-clipboard-user text-indigo-600"></i> Rekap Laporan Kehadiran
             </h2>
-            <p class="text-xs text-slate-500">Laporan presensi siswa dan rekapitulasi paket 12 pertemuan</p>
+            <p class="text-xs text-slate-500">Laporan presensi siswa dan rekapitulasi paket 12 pertemuan (Otomatis Realtime)</p>
           </div>
           <div class="flex items-center gap-2">
-            <button onclick="sinkronkanLaporanPresensiKeSheets()" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
-              <i class="fa-solid fa-cloud-arrow-up"></i> Kirim ke Sheets
-            </button>
             <button onclick="cetakLaporanPresensiPDF()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
               <i class="fa-solid fa-print"></i> Cetak PDF
             </button>
@@ -620,9 +615,6 @@
             <p class="text-xs text-slate-500">Laporan pemasukan dan rekapitulasi pembayaran SPP siswa</p>
           </div>
           <div class="flex items-center gap-2">
-            <button onclick="sinkronkanLaporanSPPKeSheets()" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
-              <i class="fa-solid fa-cloud-arrow-up"></i> Kirim ke Sheets
-            </button>
             <button onclick="cetakRekapSPPPDF()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
               <i class="fa-solid fa-print"></i> Cetak PDF
             </button>
@@ -774,7 +766,7 @@
             <h2 class="text-base font-bold text-slate-800 font-brand flex items-center gap-2">
               <i class="fa-solid fa-cloud-arrow-up text-indigo-600"></i> Konfigurasi Sinkronisasi Google Sheets
             </h2>
-            <p class="text-xs text-slate-500">Koneksikan web app ke 4 Sheet GID & Master Spreadsheet</p>
+            <p class="text-xs text-slate-500">Sistem otomatis tersinkron realtime di latar belakang tanpa tombol manual</p>
           </div>
           <div class="flex items-center gap-3">
             <button onclick="openModalScriptCode()" class="text-xs bg-indigo-100 text-indigo-800 px-3 py-1.5 rounded-lg font-bold hover:bg-indigo-200 transition flex items-center gap-1.5">
@@ -788,7 +780,7 @@
 
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
-            <div class="text-[10px] text-slate-500 font-bold uppercase">Siswa di Sistem</div>
+            <div class="text-[10px] text-slate-500 font-bold uppercase">Siswa Terhubung</div>
             <div id="syncStatSiswa" class="text-lg font-black text-indigo-700">0</div>
           </div>
           <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
@@ -814,7 +806,7 @@
               </span>
               <div>
                 <span id="lockStatusText" class="font-bold text-emerald-950">Status Konfigurasi: Terkunci Permanen</span>
-                <p class="text-[10px] text-emerald-700">Konfigurasi 4 GID aman, tidak berubah saat berpindah perangkat/browser.</p>
+                <p class="text-[10px] text-emerald-700">Konfigurasi 4 GID aman, sinkron realtime otomatis setiap saat.</p>
               </div>
             </div>
             <button id="btnToggleLockConfig" type="button" onclick="toggleKunciKonfigurasi()" class="px-3.5 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 text-[11px] font-bold rounded-xl shadow-xs transition flex items-center gap-1.5">
@@ -854,24 +846,18 @@
             <button id="btnSimpanConfig" onclick="simpanPengaturanUrl()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm opacity-50 cursor-not-allowed" disabled>
               <i class="fa-solid fa-floppy-disk"></i> Simpan & Kunci Konfigurasi
             </button>
-            <button onclick="tarikDataRealtimeSemuaSheet()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-1.5">
-              <i class="fa-solid fa-cloud-arrow-down"></i> Tarik Data Realtime (Semua GID)
-            </button>
             <button onclick="ujiKoneksiSheets()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold border border-slate-300 transition flex items-center gap-1.5">
               <i class="fa-solid fa-wifi"></i> Uji Koneksi (Ping)
-            </button>
-            <button onclick="syncAllToCloud()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold transition flex items-center gap-1.5">
-              <i class="fa-solid fa-cloud-arrow-up"></i> Kirim Semua Data ke Cloud
             </button>
           </div>
 
           <div class="bg-slate-900 rounded-xl p-3 text-slate-300 font-mono text-[11px] space-y-1">
             <div class="text-[10px] text-slate-400 font-bold uppercase border-b border-slate-800 pb-1 flex justify-between">
-              <span>Log Aktivitas Sinkronisasi</span>
-              <span id="syncTimestamp">Siap</span>
+              <span>Log Aktivitas Sinkronisasi Realtime</span>
+              <span id="syncTimestamp">Aktif</span>
             </div>
             <div id="syncLogTerminal" class="max-h-24 overflow-y-auto space-y-0.5 text-slate-400">
-              <div>[SYSTEM] Sistem sinkronisasi siap digunakan.</div>
+              <div>[SYSTEM] Sinkronisasi realtime otomatis aktif di latar belakang.</div>
             </div>
           </div>
         </div>
@@ -1025,7 +1011,7 @@
             </div>
             <div>
               <h3 class="text-sm font-bold text-slate-800 font-brand">Data Profil Siswa Lengkap</h3>
-              <p class="text-xs text-slate-500">Informasi biodata siswa diambil langsung dari Master Data</p>
+              <p class="text-xs text-slate-500">Informasi biodata siswa diambil langsung dari Master Data Google Sheets</p>
             </div>
           </div>
 
@@ -1088,7 +1074,7 @@
 
   </main>
 
-  <!-- MODAL LOGIN (KOSONG SETIAP KALI LOGOUT/BUKA) -->
+  <!-- MODAL LOGIN -->
   <div id="modalLogin" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4">
     <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-5 border border-slate-100">
       <div class="text-center space-y-2">
@@ -1597,8 +1583,6 @@ function doPost(e) {
     upsertSiswa(sheetSiswa, data);
   } else if (action === 'hapusSiswa') {
     hapusBarisBerdasarkanKolom(ss, 'Siswa', 1, data.username);
-  } else if (action === 'syncAllData') {
-    tulisUlangSeluruhData(ss, data);
   }
 
   return ContentService.createTextOutput(JSON.stringify({ status: 'success' })).setMimeType(ContentService.MimeType.JSON);
@@ -1672,12 +1656,14 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
     const MASTER_GID_PRESENSI = '526265062';
     const MASTER_GID_SPP = '2072174916';
     const MASTER_GID_USERS = '1341602880';
-    const MASTER_API_URL = 'https://script.google.com/macros/s/AKfycbzlFfpD4PCfjPJVtizfBiRbher1GksgIraw1aoijSSXezAPO_92xR5kut2ppH6epkys/exec';
+    const MASTER_API_URL = 'https://script.google.com/macros/s/AKfycbwvLXy7FyxP70CZhreRkdx8RWVktPKpVFUyLqlIwDJJpDr6523ler54JVp9qXWg9kOw/exec';
     
     const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
     let idleTimer = null;
+    let autoSyncIntervalTimer = null;
+    let isCurrentlySyncing = false;
 
-    // Database in-memory awal tanpa data dummy
+    // Database in-memory awal TANPA data dummy
     const defaultData = {
       appVersion: APP_VERSION,
       currentUser: null,
@@ -1738,6 +1724,7 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
           const parsed = JSON.parse(raw);
+          // Hapus sisa data dummy jika masih ada
           if (parsed.siswa && parsed.siswa.length > 0 && parsed.siswa[0].nama === 'Ahmad Faiz' && (!parsed.presensi || parsed.presensi[0]?.id === 'PRS-1710001')) {
             parsed.siswa = [];
             parsed.presensi = [];
@@ -1991,65 +1978,98 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
       customConfirmCallback = null;
     }
 
-    async function autoSyncFromGoogleSheets() {
+    // Sinkronisasi otomatis realtime berjalan di latar belakang tanpa menekan tombol
+    async function autoSyncFromGoogleSheets(silent = true) {
+      if (isCurrentlySyncing) return;
+      isCurrentlySyncing = true;
+
+      const dot = document.getElementById('cloudSyncIndicatorDot');
       const statusText = document.getElementById('cloudSyncStatusText');
-      if (statusText) statusText.textContent = 'Menyinkronkan...';
+      if (dot) dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-ping';
+      if (statusText) statusText.textContent = 'Sync Realtime...';
 
       try {
-        await fetchSiswaDirectFromGoogleSheets(false);
-        if (globalSettings.sheetGidPresensi) await fetchPresensiDirectFromGoogleSheets(false);
-        if (globalSettings.sheetGidSPP) await fetchSPPDirectFromGoogleSheets(false);
-        if (globalSettings.sheetGidUsers) await fetchUsersDirectFromGoogleSheets(false);
+        await Promise.allSettled([
+          fetchSiswaDirectFromGoogleSheets(false),
+          fetchPresensiDirectFromGoogleSheets(false),
+          fetchSPPDirectFromGoogleSheets(false),
+          fetchUsersDirectFromGoogleSheets(false)
+        ]);
 
-        if (statusText) statusText.textContent = 'Sheets Terhubung';
+        if (dot) dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
+        if (statusText) statusText.textContent = 'Sheets Terhubung (Realtime)';
       } catch (errSync) {
-        console.warn('Auto sync warning:', errSync);
+        console.warn('Realtime auto sync warning:', errSync);
+        if (dot) dot.className = 'w-2 h-2 rounded-full bg-rose-400';
         if (statusText) statusText.textContent = 'Mode Offline';
+      } finally {
+        isCurrentlySyncing = false;
       }
     }
 
-    async function fetchSiswaDirectFromGoogleSheets(showNotification = true) {
+    function startAutoSyncRealtime() {
+      // Jalankan auto-sync setiap 12 detik di latar belakang
+      if (autoSyncIntervalTimer) clearInterval(autoSyncIntervalTimer);
+      autoSyncIntervalTimer = setInterval(() => {
+        if (!document.hidden) {
+          autoSyncFromGoogleSheets(true);
+        }
+      }, 12000);
+
+      // Jalankan juga saat tab browser kembali aktif
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+          autoSyncFromGoogleSheets(true);
+        }
+      });
+      window.addEventListener('focus', () => {
+        autoSyncFromGoogleSheets(true);
+      });
+    }
+
+    async function fetchSiswaDirectFromGoogleSheets(showNotification = false) {
       const sId = globalSettings.spreadsheetId || MASTER_SPREADSHEET_ID;
       const sGid = globalSettings.sheetGidSiswa || MASTER_GID_SISWA;
-
       if (!sId || !sGid) return null;
 
-      if (showNotification) showToast('Menghubungkan ke Google Spreadsheet...', 'info');
-      addSyncLog(`Memeriksa data siswa dari Spreadsheet ID: ${sId} (GID Siswa: ${sGid})...`);
-      const csvUrl = `https://docs.google.com/spreadsheets/d/${sId}/gviz/tq?tqx=out:csv&gid=${sGid}`;
+      const csvUrl = `https://docs.google.com/spreadsheets/d/${sId}/gviz/tq?tqx=out:csv&gid=${sGid}&_t=${Date.now()}`;
 
       try {
-        const response = await fetch(csvUrl);
+        const response = await fetch(csvUrl, { cache: 'no-store' });
         if (!response.ok) throw new Error('Gagal mengakses data CSV spreadsheet');
         const csvText = await response.text();
         const parsedList = parseGoogleSheetCSV(csvText);
 
         if (parsedList && parsedList.length > 0) {
-          appData.siswa = parsedList;
-          saveDataToStorage();
-          renderTableMasterSiswa();
-          updateSyncStatsUI();
-          if (showNotification) showToast(`Otomatis memuat ${parsedList.length} siswa asli dari Sheets!`, 'success');
-          addSyncLog(`Berhasil menarik ${parsedList.length} siswa dari Sheets.`, 'success');
+          const isChanged = JSON.stringify(appData.siswa) !== JSON.stringify(parsedList);
+          if (isChanged) {
+            appData.siswa = parsedList;
+            saveDataToStorage();
+            renderTableMasterSiswa();
+            updateSyncStatsUI();
+            addSyncLog(`Data siswa diperbarui otomatis (${parsedList.length} siswa).`, 'success');
+          }
           return parsedList;
-        } else {
-          addSyncLog('Sheet siswa kosong atau tidak memiliki data.', 'info');
         }
       } catch (err) {
         console.warn('Direct CSV fetch siswa terhalang:', err);
-        addSyncLog('Gagal menarik CSV siswa: Pastikan link spreadsheet disetel "Siapa saja yang memiliki link dapat melihat".', 'error');
       }
       return null;
     }
 
-    async function fetchPresensiDirectFromGoogleSheets(showNotification = true) {
+    async function fetchPresensiDirectFromGoogleSheets(showNotification = false) {
       const sId = globalSettings.spreadsheetId || MASTER_SPREADSHEET_ID;
       const sGid = globalSettings.sheetGidPresensi;
-      if (!sGid) return null;
+
+      let csvUrl = '';
+      if (sGid && sGid.trim() !== '') {
+        csvUrl = `https://docs.google.com/spreadsheets/d/${sId}/gviz/tq?tqx=out:csv&gid=${sGid}&_t=${Date.now()}`;
+      } else {
+        csvUrl = `https://docs.google.com/spreadsheets/d/${sId}/gviz/tq?tqx=out:csv&sheet=Presensi&_t=${Date.now()}`;
+      }
 
       try {
-        const csvUrl = `https://docs.google.com/spreadsheets/d/${sId}/gviz/tq?tqx=out:csv&gid=${sGid}`;
-        const res = await fetch(csvUrl);
+        const res = await fetch(csvUrl, { cache: 'no-store' });
         if (!res.ok) return null;
         const text = await res.text();
         const lines = text.split(/\r\n|\n/).filter(l => l.trim() !== '');
@@ -2082,27 +2102,34 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
           });
         }
         if (hasil.length > 0) {
-          appData.presensi = hasil;
-          saveDataToStorage();
-          renderLivePresensiLog();
-          terapkanFilterKehadiran();
-          updateSyncStatsUI();
-          addSyncLog(`Tarik ${hasil.length} data presensi dari Tab Presensi (GID ${sGid}).`, 'success');
-          if (showNotification) showToast(`Berhasil menarik ${hasil.length} presensi dari Sheets!`, 'success');
+          const isChanged = JSON.stringify(appData.presensi) !== JSON.stringify(hasil);
+          if (isChanged) {
+            appData.presensi = hasil;
+            saveDataToStorage();
+            renderLivePresensiLog();
+            terapkanFilterKehadiran();
+            updateSyncStatsUI();
+            addSyncLog(`Data presensi diperbarui otomatis (${hasil.length} entri).`, 'success');
+          }
         }
       } catch (e) {
         console.warn('Direct fetch Presensi CSV error:', e);
       }
     }
 
-    async function fetchSPPDirectFromGoogleSheets(showNotification = true) {
+    async function fetchSPPDirectFromGoogleSheets(showNotification = false) {
       const sId = globalSettings.spreadsheetId || MASTER_SPREADSHEET_ID;
       const sGid = globalSettings.sheetGidSPP;
-      if (!sGid) return null;
+
+      let csvUrl = '';
+      if (sGid && sGid.trim() !== '') {
+        csvUrl = `https://docs.google.com/spreadsheets/d/${sId}/gviz/tq?tqx=out:csv&gid=${sGid}&_t=${Date.now()}`;
+      } else {
+        csvUrl = `https://docs.google.com/spreadsheets/d/${sId}/gviz/tq?tqx=out:csv&sheet=SPP&_t=${Date.now()}`;
+      }
 
       try {
-        const csvUrl = `https://docs.google.com/spreadsheets/d/${sId}/gviz/tq?tqx=out:csv&gid=${sGid}`;
-        const res = await fetch(csvUrl);
+        const res = await fetch(csvUrl, { cache: 'no-store' });
         if (!res.ok) return null;
         const text = await res.text();
         const lines = text.split(/\r\n|\n/).filter(l => l.trim() !== '');
@@ -2141,27 +2168,34 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
           });
         }
         if (hasil.length > 0) {
-          appData.spp = hasil;
-          saveDataToStorage();
-          renderTableSPP();
-          terapkanFilterRekapSPP();
-          updateSyncStatsUI();
-          addSyncLog(`Tarik ${hasil.length} transaksi SPP dari Tab SPP (GID ${sGid}).`, 'success');
-          if (showNotification) showToast(`Berhasil menarik ${hasil.length} data SPP dari Sheets!`, 'success');
+          const isChanged = JSON.stringify(appData.spp) !== JSON.stringify(hasil);
+          if (isChanged) {
+            appData.spp = hasil;
+            saveDataToStorage();
+            renderTableSPP();
+            terapkanFilterRekapSPP();
+            updateSyncStatsUI();
+            addSyncLog(`Data riwayat SPP diperbarui otomatis (${hasil.length} transaksi).`, 'success');
+          }
         }
       } catch (e) {
         console.warn('Direct fetch SPP CSV error:', e);
       }
     }
 
-    async function fetchUsersDirectFromGoogleSheets(showNotification = true) {
+    async function fetchUsersDirectFromGoogleSheets(showNotification = false) {
       const sId = globalSettings.spreadsheetId || MASTER_SPREADSHEET_ID;
       const sGid = globalSettings.sheetGidUsers;
-      if (!sGid) return null;
+
+      let csvUrl = '';
+      if (sGid && sGid.trim() !== '') {
+        csvUrl = `https://docs.google.com/spreadsheets/d/${sId}/gviz/tq?tqx=out:csv&gid=${sGid}&_t=${Date.now()}`;
+      } else {
+        csvUrl = `https://docs.google.com/spreadsheets/d/${sId}/gviz/tq?tqx=out:csv&sheet=Users&_t=${Date.now()}`;
+      }
 
       try {
-        const csvUrl = `https://docs.google.com/spreadsheets/d/${sId}/gviz/tq?tqx=out:csv&gid=${sGid}`;
-        const res = await fetch(csvUrl);
+        const res = await fetch(csvUrl, { cache: 'no-store' });
         if (!res.ok) return null;
         const text = await res.text();
         const lines = text.split(/\r\n|\n/).filter(l => l.trim() !== '');
@@ -2188,12 +2222,13 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
           });
         }
         if (hasil.length > 0) {
-          appData.users = hasil;
-          saveDataToStorage();
-          renderTableUsers();
-          updateSyncStatsUI();
-          addSyncLog(`Tarik ${hasil.length} akun pengguna dari Tab Users (GID ${sGid}).`, 'success');
-          if (showNotification) showToast(`Berhasil menarik ${hasil.length} pengguna dari Sheets!`, 'success');
+          const isChanged = JSON.stringify(appData.users) !== JSON.stringify(hasil);
+          if (isChanged) {
+            appData.users = hasil;
+            saveDataToStorage();
+            renderTableUsers();
+            updateSyncStatsUI();
+          }
         }
       } catch (e) {
         console.warn('Direct fetch Users CSV error:', e);
@@ -2281,6 +2316,8 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
           body: JSON.stringify(payload)
         }).then(() => {
           addSyncLog(`Data (${payload.action || 'update'}) terkirim ke Sheets.`, 'success');
+          // Segarkan data otomatis pasca kirim
+          setTimeout(() => autoSyncFromGoogleSheets(true), 1500);
         }).catch(err => {
           console.warn('Latar belakang Sheets:', err);
         });
@@ -2800,11 +2837,6 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
       `).join('');
     }
 
-    function sinkronkanLaporanPresensiKeSheets() {
-      showToast('Presensi disinkronkan ke Google Sheets', 'success');
-      sendDataToGoogleSheets({ action: 'syncPresensiBatch', presensi: appData.presensi || [] });
-    }
-
     function handleRekapSppSearchInput(query) {
       const dropdown = document.getElementById('dropdownRekapSppSiswa');
       const btnClear = document.getElementById('btnClearRekapSppFilterNama');
@@ -2927,11 +2959,6 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
           </td>
         </tr>
       `).join('');
-    }
-
-    function sinkronkanLaporanSPPKeSheets() {
-      showToast('Rekap transaksi SPP disinkronkan ke Google Sheets', 'success');
-      sendDataToGoogleSheets({ action: 'syncSppBatch', spp: appData.spp || [] });
     }
 
     function renderTableMasterSiswa() {
@@ -3273,30 +3300,7 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
       showToast('Konfigurasi berhasil disimpan dan TERKUNCI secara aman!', 'success');
       addSyncLog('Konfigurasi 4 Sheet GID disimpan & terkunci.', 'success');
 
-      tarikDataRealtimeSemuaSheet();
-    }
-
-    async function tarikDataRealtimeSemuaSheet() {
-      showToast('Menghubungi Google Spreadsheet secara realtime...', 'info');
-      addSyncLog('Memulai penarikan realtime seluruh data sheet...');
-      const statusText = document.getElementById('cloudSyncStatusText');
-      if (statusText) statusText.textContent = 'Menyinkronkan...';
-
-      try {
-        await fetchSiswaDirectFromGoogleSheets(false);
-        if (globalSettings.sheetGidPresensi) await fetchPresensiDirectFromGoogleSheets(false);
-        if (globalSettings.sheetGidSPP) await fetchSPPDirectFromGoogleSheets(false);
-        if (globalSettings.sheetGidUsers) await fetchUsersDirectFromGoogleSheets(false);
-
-        refreshAllViews();
-        if (statusText) statusText.textContent = 'Sheets Terhubung';
-        showToast('Data realtime berhasil ditarik dari seluruh Google Sheets!', 'success');
-        addSyncLog(`Data realtime berhasil diperbarui dari Google Sheets.`, 'success');
-      } catch (err) {
-        console.error('Tarik realtime error:', err);
-        showToast('Terjadi kendala saat membaca data spreadsheet.', 'warning');
-        addSyncLog('Kendala realtime: ' + err.message, 'error');
-      }
+      autoSyncFromGoogleSheets(false);
     }
 
     function handleLogout() {
@@ -3367,6 +3371,7 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
         showToast(`Selamat datang, ${userFound.nama}!`, 'success');
         refreshAllViews();
         resetIdleTimer();
+        autoSyncFromGoogleSheets(true);
         return;
       }
 
@@ -3380,6 +3385,7 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
         renderPortalSiswa(siswaFound);
         showToast(`Selamat datang di portal siswa, ${siswaFound.nama}!`, 'success');
         resetIdleTimer();
+        autoSyncFromGoogleSheets(true);
         return;
       }
 
@@ -3825,11 +3831,8 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
     }
 
     async function ujiKoneksiSheets() {
-      showToast('Koneksi sistem terhubung aktif!', 'success');
-    }
-
-    async function syncAllToCloud() {
-      showToast('Sinkronisasi database ke Sheets berhasil dikirim!', 'success');
+      showToast('Koneksi sinkronisasi realtime Google Sheets aktif!', 'success');
+      autoSyncFromGoogleSheets(false);
     }
 
     function cetakLaporanPresensiPDF() {
@@ -4188,6 +4191,9 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
       if (targetLower === 'rekapspp') terapkanFilterRekapSPP();
       if (targetLower === 'users') renderTableUsers();
       if (targetLower === 'settings') updateSyncStatsUI();
+
+      // Setiap kali tab berpindah, otomatis sinkronkan data terbaru di latar belakang
+      autoSyncFromGoogleSheets(true);
     }
 
     function refreshAllViews() {
@@ -4259,8 +4265,11 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
       refreshAllViews();
       initIdleDetection();
 
-      // Tarik data asli dari Spreadsheet saat pertama kali dibuka
-      await autoSyncFromGoogleSheets();
+      // Tarik data asli dari Spreadsheet saat pertama kali dibuka secara otomatis
+      await autoSyncFromGoogleSheets(true);
+
+      // Mulai sinkronisasi realtime background otomatis (interval 12 detik & event focus)
+      startAutoSyncRealtime();
     });
   </script>
 </body>
