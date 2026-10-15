@@ -3534,7 +3534,6 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
     function simpanPengaturanUrl() {
       const input = document.getElementById('inputAppsScriptUrl');
       const inId = document.getElementById('inputSpreadsheetId');
-      const inGid = document.getElementById('inputSheetGid');
 
       if (!input) return;
       const url = input.value.trim();
@@ -3544,11 +3543,13 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
       }
       globalSettings.apiUrl = url;
       if (inId) globalSettings.spreadsheetId = inId.value.trim();
-      if (inGid) globalSettings.sheetGid = inGid.value.trim();
 
       saveGlobalSettings();
       showToast('Konfigurasi berhasil disimpan permanen!', 'success');
-      addSyncLog('Konfigurasi URL Web App & Spreadsheet disimpan.', 'success');
+      addSyncLog('Konfigurasi Web App URL & Spreadsheet ID disimpan.', 'success');
+      
+      // Langsung sinkronkan data riil
+      autoSyncFromGoogleSheets();
     }
 
     async function ujiKoneksiSheets() {
@@ -4165,9 +4166,6 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
       if (document.getElementById('inputSpreadsheetId') && globalSettings.spreadsheetId) {
         document.getElementById('inputSpreadsheetId').value = globalSettings.spreadsheetId;
       }
-      if (document.getElementById('inputSheetGid') && globalSettings.sheetGid) {
-        document.getElementById('inputSheetGid').value = globalSettings.sheetGid;
-      }
 
       // Selalu mulai dengan modal login jika belum ada sesi aktif
       if (!appData.currentUser) {
@@ -4183,19 +4181,19 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
 
       refreshAllViews();
 
-      // Sinkronisasi otomatis di latar belakang saat web dibuka
+      // Sinkronisasi otomatis data riil dari Google Sheets saat web dibuka
       autoSyncFromGoogleSheets();
 
       // Inisialisasi deteksi auto-logout 30 menit
       initIdleDetection();
 
-      // Auto-refresh periodik data setiap 45 detik
+      // Auto-refresh periodik data setiap 35 detik
       if (autoSyncTimer) clearInterval(autoSyncTimer);
       autoSyncTimer = setInterval(() => {
         if (!document.hidden) {
           autoSyncFromGoogleSheets();
         }
-      }, 45000);
+      }, 35000);
     });
   </script>
 </body>
