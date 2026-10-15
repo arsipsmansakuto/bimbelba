@@ -392,9 +392,10 @@
             <div>
               <label class="block text-xs font-semibold text-slate-700 mb-1">Nominal Pembayaran (Rp)</label>
               <input type="number" id="sppNominal" placeholder="Contoh: 80000" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 font-bold focus:outline-none focus:ring-2 focus:ring-amber-500">
-              <div class="flex gap-2 mt-2">
+              <div class="flex flex-wrap gap-2 mt-2">
                 <button type="button" onclick="setNominalSppPreset(80000)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg text-[11px] font-semibold text-slate-700 transition">Rp 80.000</button>
                 <button type="button" onclick="setNominalSppPreset(110000)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg text-[11px] font-semibold text-slate-700 transition">Rp 110.000</button>
+                <button type="button" onclick="setNominalSppPreset(250000)" class="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 border border-amber-300 rounded-lg text-[11px] font-bold text-amber-800 transition">Rp 250.000</button>
               </div>
             </div>
 
@@ -1551,9 +1552,6 @@ function doGet(e) {
   if (action === 'ping') {
     return ContentService.createTextOutput(JSON.stringify({ status: 'success', message: 'Pong! Server BIMBEL BA Aktif' })).setMimeType(ContentService.MimeType.JSON);
   }
-  if (action === 'getAllData') {
-    return ContentService.createTextOutput(JSON.stringify({ status: 'success', data: ambilSemuaData() })).setMimeType(ContentService.MimeType.JSON);
-  }
   return ContentService.createTextOutput(JSON.stringify({ status: 'success', message: 'SIM BIMBEL BA Web App Ready' })).setMimeType(ContentService.MimeType.JSON);
 }
 
@@ -1573,9 +1571,11 @@ function doPost(e) {
   if (action === 'simpanPresensi') {
     var sheet = getOrCreateSheet(ss, 'Presensi', ['ID Presensi', 'Tanggal', 'Waktu', 'Username', 'Nama Siswa', 'Kelas', 'Status', 'Keterangan']);
     sheet.appendRow([data.id, data.tanggal, data.waktu, data.nis, data.nama, data.kelas, data.status, data.keterangan]);
+  } else if (action === 'hapusPresensi') {
+    hapusBarisBerdasarkanKolom(ss, 'Presensi', 1, data.id);
   } else if (action === 'simpanSPP') {
     var sheetSPP = getOrCreateSheet(ss, 'SPP', ['No Kuitansi', 'Tanggal', 'Username', 'Nama Siswa', 'Kelas', 'Bulan', 'Tahun', 'Nominal', 'Metode', 'Status', 'Petugas']);
-    sheetSPP.appendRow([data.id, data.tanggal, data.nis, data.nama, data.kelas, data.bulan, data.tahun, data.nominal, data.metode, data.status, data.petugas]);
+    upsertSPP(sheetSPP, data);
   } else if (action === 'hapusSPP') {
     hapusBarisBerdasarkanKolom(ss, 'SPP', 1, data.id);
   } else if (action === 'tambahSiswa' || action === 'updateSiswa') {
@@ -1583,6 +1583,11 @@ function doPost(e) {
     upsertSiswa(sheetSiswa, data);
   } else if (action === 'hapusSiswa') {
     hapusBarisBerdasarkanKolom(ss, 'Siswa', 1, data.username);
+  } else if (action === 'simpanUser' || action === 'updateUser') {
+    var sheetUser = getOrCreateSheet(ss, 'Users', ['Nama Pengguna', 'Username', 'Password', 'Peran', 'Status']);
+    upsertUser(sheetUser, data);
+  } else if (action === 'hapusUser') {
+    hapusBarisBerdasarkanKolom(ss, 'Users', 2, data.username);
   }
 
   return ContentService.createTextOutput(JSON.stringify({ status: 'success' })).setMimeType(ContentService.MimeType.JSON);
@@ -1610,12 +1615,36 @@ function upsertSiswa(sheet, s) {
   sheet.appendRow([s.username, s.password||'123', s.nama, s.kelas, s.alamat, s.sekolah_asal, s.hobi, s.kategori_bimbingan, s.nama_ortu, "'" + s.no_telp, s.status_akun||'Aktif']);
 }
 
+function upsertSPP(sheet, spp) {
+  var data = sheet.getDataRange().getValues();
+  var idTarget = String(spp.id || '').trim();
+  for (var i = 1; i < data.length; i++) {
+    if (String(data[i][0]).trim() === idTarget) {
+      sheet.getRange(i + 1, 1, 1, 11).setValues([[spp.id, spp.tanggal, spp.nis, spp.nama, spp.kelas, spp.bulan, spp.tahun, Number(spp.nominal || 0), spp.metode, spp.status, spp.petugas]]);
+      return;
+    }
+  }
+  sheet.appendRow([spp.id, spp.tanggal, spp.nis, spp.nama, spp.kelas, spp.bulan, spp.tahun, Number(spp.nominal || 0), spp.metode, spp.status, spp.petugas]);
+}
+
+function upsertUser(sheet, u) {
+  var data = sheet.getDataRange().getValues();
+  var username = String(u.username || '').toLowerCase().trim();
+  for (var i = 1; i < data.length; i++) {
+    if (String(data[i][1]).toLowerCase().trim() === username) {
+      sheet.getRange(i + 1, 1, 1, 5).setValues([[u.nama, u.username, u.password, u.role, u.status || 'Aktif']]);
+      return;
+    }
+  }
+  sheet.appendRow([u.nama, u.username, u.password, u.role, u.status || 'Aktif']);
+}
+
 function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
   var s = ss.getSheetByName(sheetName);
   if (!s) return;
   var rows = s.getDataRange().getValues();
   for (var r = rows.length - 1; r >= 1; r--) {
-    if (String(rows[r][colIndex - 1]) === String(valueToMatch)) {
+    if (String(rows[r][colIndex - 1]).toLowerCase().trim() === String(valueToMatch).toLowerCase().trim()) {
       s.deleteRow(r + 1);
       return;
     }
@@ -1652,11 +1681,11 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
     
     // Konfigurasi Master Permanen (Bila dibuka di perangkat baru/tanpa cache, tetap membaca spreadsheet ini)
     const MASTER_SPREADSHEET_ID = '1oQMV5G7fiLOxTXlENGAEHEBEs2TaC5tqA8P7b-rdmjo';
-    const MASTER_GID_SISWA = '1709630193';
+    const MASTER_GID_SISWA = '709630193';
     const MASTER_GID_PRESENSI = '526265062';
     const MASTER_GID_SPP = '2072174916';
     const MASTER_GID_USERS = '1341602880';
-    const MASTER_API_URL = 'https://script.google.com/macros/s/AKfycbwvLXy7FyxP70CZhreRkdx8RWVktPKpVFUyLqlIwDJJpDr6523ler54JVp9qXWg9kOw/exec';
+    const MASTER_API_URL = 'https://script.google.com/macros/s/AKfycbxF1DmDvKjkQDM_acaYzUSHg7i2KFuC9MTZngwu_z1ghmi0MJ-SFhORV-8G2knPNZXb/exec';
     
     const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
     let idleTimer = null;
@@ -1821,6 +1850,34 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
         return `${parts[2]}-${parts[1]}-${parts[0]}`;
       }
       return tglStr;
+    }
+
+    /* Helper untuk membersihkan dan membedah nominal uang secara presisi dari spreadsheet */
+    function parseNominalAngka(val) {
+      if (val === null || val === undefined) return 0;
+      if (typeof val === 'number') return isNaN(val) ? 0 : val;
+      let s = String(val).trim();
+      if (!s) return 0;
+
+      // Bersihkan teks mata uang 'Rp', spasi, titik, koma
+      s = s.replace(/^[Rr][Pp]\.?\s*/i, '').trim();
+      
+      // Jika format Indonesia seperti 80.000 atau 250.000, buang titik ribuan
+      if (s.includes('.') && !s.includes(',')) {
+        // Cek apakah titik merupakan pemisah ribuan (3 digit di akhir)
+        if (/\.\d{3}$/.test(s)) {
+          s = s.replace(/\./g, '');
+        }
+      } else if (s.includes(',') && s.includes('.')) {
+        // Format 1.000.000,00 -> buang titik, desimal diabaikan
+        s = s.split(',')[0].replace(/\./g, '');
+      } else if (s.includes(',')) {
+        // Format 80000,00
+        s = s.split(',')[0];
+      }
+
+      const num = Number(s.replace(/[^0-9]/g, ''));
+      return isNaN(num) ? 0 : num;
     }
 
     function formatNoTelp(val) {
@@ -2135,7 +2192,25 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
         const lines = text.split(/\r\n|\n/).filter(l => l.trim() !== '');
         if (lines.length < 2) return null;
 
-        const rows = lines.map(l => l.split(',').map(c => c.replace(/^"|"$/g, '').trim()));
+        const rows = lines.map(line => {
+          const values = [];
+          let cur = '';
+          let insideQuote = false;
+          for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            if (char === '"' && (i === 0 || line[i - 1] !== '\\')) {
+              insideQuote = !insideQuote;
+            } else if (char === ',' && !insideQuote) {
+              values.push(cur.replace(/^"|"$/g, '').trim());
+              cur = '';
+            } else {
+              cur += char;
+            }
+          }
+          values.push(cur.replace(/^"|"$/g, '').trim());
+          return values;
+        });
+
         const headers = rows[0].map(h => h.toLowerCase().replace(/[^a-z0-9]/g, ''));
 
         let idxId = headers.findIndex(h => h.includes('kuitansi') || h.includes('id') || h.includes('no'));
@@ -2145,7 +2220,7 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
         let idxKelas = headers.findIndex(h => h.includes('kelas'));
         let idxBulan = headers.findIndex(h => h.includes('bulan'));
         let idxTahun = headers.findIndex(h => h.includes('tahun'));
-        let idxNom = headers.findIndex(h => h.includes('nominal') || h.includes('bayar') || h.includes('jumlah'));
+        let idxNom = headers.findIndex(h => h.includes('nominal') || h.includes('bayar') || h.includes('jumlah') || h.includes('total') || h.includes('rp'));
         let idxMetode = headers.findIndex(h => h.includes('metode'));
         let idxStatus = headers.findIndex(h => h.includes('status'));
         let idxPetugas = headers.findIndex(h => h.includes('petugas') || h.includes('admin'));
@@ -2153,6 +2228,8 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
         const hasil = [];
         for (let r = 1; r < rows.length; r++) {
           const row = rows[r];
+          const nominalVal = (idxNom >= 0 && row[idxNom]) ? parseNominalAngka(row[idxNom]) : 0;
+
           hasil.push({
             id: (idxId >= 0 && row[idxId]) ? row[idxId] : 'SPP-' + r,
             tanggal: (idxTgl >= 0 && row[idxTgl]) ? formatTanggalIndo(row[idxTgl]) : getTodayDdMmYyyy(),
@@ -2161,7 +2238,7 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
             kelas: (idxKelas >= 0 && row[idxKelas]) ? row[idxKelas] : '-',
             bulan: (idxBulan >= 0 && row[idxBulan]) ? row[idxBulan] : 'Oktober',
             tahun: (idxTahun >= 0 && row[idxTahun]) ? row[idxTahun] : '2026',
-            nominal: (idxNom >= 0 && row[idxNom]) ? Number(row[idxNom].replace(/[^0-9]/g, '')) || 80000 : 80000,
+            nominal: nominalVal,
             metode: (idxMetode >= 0 && row[idxMetode]) ? row[idxMetode] : 'Tunai',
             status: (idxStatus >= 0 && row[idxStatus]) ? row[idxStatus] : 'Lunas',
             petugas: (idxPetugas >= 0 && row[idxPetugas]) ? row[idxPetugas] : 'Admin'
@@ -2175,7 +2252,7 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
             renderTableSPP();
             terapkanFilterRekapSPP();
             updateSyncStatsUI();
-            addSyncLog(`Data riwayat SPP diperbarui otomatis (${hasil.length} transaksi).`, 'success');
+            addSyncLog(`Data riwayat SPP sinkron dari Sheets (${hasil.length} transaksi).`, 'success');
           }
         }
       } catch (e) {
@@ -2925,8 +3002,10 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
       let totalBelum = 0;
 
       data.forEach(d => {
-        if (d.status === 'Lunas') {
-          totalNominal += Number(d.nominal || 0);
+        const nom = parseNominalAngka(d.nominal);
+        const st = String(d.status || '').trim().toLowerCase();
+        if (st === 'lunas') {
+          totalNominal += nom;
         } else {
           totalBelum++;
         }
@@ -2942,23 +3021,27 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
         return;
       }
 
-      tbody.innerHTML = data.map(s => `
-        <tr class="hover:bg-slate-50 transition">
-          <td class="py-2.5 px-3 font-mono font-bold text-slate-700">${escapeHtml(s.id)}</td>
-          <td class="py-2.5 px-3 text-slate-800">${escapeHtml(formatTanggalIndo(s.tanggal))}</td>
-          <td class="py-2.5 px-3 font-mono text-slate-500">${escapeHtml(s.nis)}</td>
-          <td class="py-2.5 px-3 font-bold text-slate-800">${escapeHtml(s.nama)}</td>
-          <td class="py-2.5 px-3 text-slate-600">${escapeHtml(s.kelas || '-')}</td>
-          <td class="py-2.5 px-3 font-semibold text-indigo-700">${escapeHtml(s.bulan)} ${escapeHtml(s.tahun)}</td>
-          <td class="py-2.5 px-3 font-extrabold text-slate-900">Rp ${Number(s.nominal || 0).toLocaleString('id-ID')}</td>
-          <td class="py-2.5 px-3 text-slate-600">${escapeHtml(s.metode || 'Tunai')}</td>
-          <td class="py-2.5 px-3">
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold ${s.status === 'Lunas' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
-              ${escapeHtml(s.status)}
-            </span>
-          </td>
-        </tr>
-      `).join('');
+      tbody.innerHTML = data.map(s => {
+        const nom = parseNominalAngka(s.nominal);
+        const isLunas = String(s.status || '').trim().toLowerCase() === 'lunas';
+        return `
+          <tr class="hover:bg-slate-50 transition">
+            <td class="py-2.5 px-3 font-mono font-bold text-slate-700">${escapeHtml(s.id)}</td>
+            <td class="py-2.5 px-3 text-slate-800">${escapeHtml(formatTanggalIndo(s.tanggal))}</td>
+            <td class="py-2.5 px-3 font-mono text-slate-500">${escapeHtml(s.nis)}</td>
+            <td class="py-2.5 px-3 font-bold text-slate-800">${escapeHtml(s.nama)}</td>
+            <td class="py-2.5 px-3 text-slate-600">${escapeHtml(s.kelas || '-')}</td>
+            <td class="py-2.5 px-3 font-semibold text-indigo-700">${escapeHtml(s.bulan)} ${escapeHtml(s.tahun)}</td>
+            <td class="py-2.5 px-3 font-extrabold text-slate-900">Rp ${nom.toLocaleString('id-ID')}</td>
+            <td class="py-2.5 px-3 text-slate-600">${escapeHtml(s.metode || 'Tunai')}</td>
+            <td class="py-2.5 px-3">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold ${isLunas ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                ${escapeHtml(s.status)}
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
 
     function renderTableMasterSiswa() {
@@ -3796,6 +3879,11 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
       renderTableUsers();
       updateSyncStatsUI();
       closeModalEditUser();
+
+      sendDataToGoogleSheets({
+        action: isEdit ? 'updateUser' : 'simpanUser',
+        ...userObj
+      });
     }
 
     function hapusUserAkun(username) {
@@ -3806,13 +3894,18 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
 
       showCustomConfirm(
         'Hapus Pengguna',
-        `Hapus akun pengguna "${username}"?`,
+        `Hapus akun pengguna "${username}"? Akun akan dihapus dari sistem dan Google Spreadsheet.`,
         function() {
           appData.users = appData.users.filter(x => x.username !== username);
           saveDataToStorage();
           renderTableUsers();
           updateSyncStatsUI();
           showToast('Pengguna berhasil dihapus', 'info');
+
+          sendDataToGoogleSheets({
+            action: 'hapusUser',
+            username: username
+          });
         },
         true
       );
