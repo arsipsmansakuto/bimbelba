@@ -1665,14 +1665,22 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
     const STORAGE_KEY = 'sim_bimbel_ba_v3_2_state';
     const SETTINGS_KEY = 'sim_bimbel_ba_global_settings';
     const APP_VERSION = '3.2.0';
-    const GOOGLE_SPREADSHEET_ID = '1oQMV5G7fiLOxTXlENGAEHEBEs2TaC5tqA8P7b-rdmjo';
-    const DEFAULT_GID_SISWA = '1709630193';
+    
+    // Konfigurasi Master Permanen (Bila dibuka di perangkat baru/tanpa cache, tetap membaca spreadsheet ini)
+    const MASTER_SPREADSHEET_ID = '1oQMV5G7fiLOxTXlENGAEHEBEs2TaC5tqA8P7b-rdmjo';
+    const MASTER_GID_SISWA = '1709630193';
+    const MASTER_GID_PRESENSI = '526265062'; // Isi GID tab presensi jika ada default
+    const MASTER_GID_SPP = '2072174916';      // Isi GID tab SPP jika ada default
+    const MASTER_GID_USERS = '1341602880';    // Isi GID tab users jika ada default
+    const MASTER_API_URL = 'https://script.google.com/macros/s/AKfycbyy-5uc6MjXgoEYXJ7zHO8JUGMPq8Naj9RrKR5JJ7ym83VCa-Xw-tj8wsEQfPudZQ9S/exec';      // URL Web App Apps Script (Code.gs)
     
     // Auto logout 30 menit tidak aktif (1.800.000 ms)
     const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
     let idleTimer = null;
     let autoSyncTimer = null;
 
+    // HAPUS SEMUA DATA DUMMY: Mulai dari array kosong murni!
+    // Hanya akun admin otentikasi darurat lokal yang dipertahankan agar bisa login pertama kali
     const defaultData = {
       appVersion: APP_VERSION,
       currentUser: { nama: 'Bunda Ani (Admin)', username: 'admin', role: 'admin' },
@@ -1680,30 +1688,22 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
         { nama: 'Bunda Ani (Admin)', username: 'admin', password: '123', role: 'admin', status: 'Aktif' },
         { nama: 'Kak Rina (Petugas)', username: 'petugas', password: '123', role: 'petugas', status: 'Aktif' }
       ],
-      siswa: [
-        { username: '202601', password: '123', nama: 'Ahmad Faiz', kelas: '4 SD', alamat: 'Jl. Melati No. 5', sekolah_asal: 'SDN 1 Kebumen', hobi: 'Membaca', kategori_bimbingan: 'BIMBEL', nama_ortu: 'Bpk. Hendra', no_telp: '08123456789', status_akun: 'Aktif' },
-        { username: '202602', password: '123', nama: 'Clarissa Putri', kelas: '5 SD', alamat: 'Jl. Mawar No. 8', sekolah_asal: 'SDN 2', hobi: 'Menulis', kategori_bimbingan: 'BIMBA', nama_ortu: 'Ibu Ratna', no_telp: '08129876543', status_akun: 'Aktif' },
-        { username: '202603', password: '123', nama: 'Dimas Satria', kelas: '6 SD', alamat: 'Jl. Anggrek No. 12', sekolah_asal: 'SDN 3', hobi: 'Menggambar', kategori_bimbingan: 'PRIVAT', nama_ortu: 'Bpk. Joko', no_telp: '08134567890', status_akun: 'Aktif' }
-      ],
-      presensi: [
-        { id: 'PRS-1710001', tanggal: '15/10/2026', waktu: '08:15', nis: '202601', nama: 'Ahmad Faiz', kelas: '4 SD', status: 'Hadir', keterangan: '-' },
-        { id: 'PRS-1710002', tanggal: '15/10/2026', waktu: '08:20', nis: '202602', nama: 'Clarissa Putri', kelas: '5 SD', status: 'Hadir', keterangan: '-' }
-      ],
-      spp: [
-        { id: 'SPP-2026-001', tanggal: '15/10/2026', nis: '202601', nama: 'Ahmad Faiz', kelas: '4 SD', bulan: 'Oktober', tahun: '2026', nominal: 80000, metode: 'Tunai', status: 'Lunas', petugas: 'Bunda Ani' },
-        { id: 'SPP-2026-002', tanggal: '15/10/2026', nis: '202602', nama: 'Clarissa Putri', kelas: '5 SD', bulan: 'Oktober', tahun: '2026', nominal: 110000, metode: 'Transfer Bank', status: 'Lunas', petugas: 'Kak Rina' }
-      ]
+      siswa: [],    // Tidak ada data dummy lagi
+      presensi: [], // Tidak ada data dummy lagi
+      spp: []       // Tidak ada data dummy lagi
     };
 
     let appData = { ...defaultData };
+    
+    // Default konfigurasi terkunci secara permanen lintas perangkat
     let globalSettings = {
-      apiUrl: 'https://script.google.com/macros/s/AKfycbxGZJwXl_DBMbDs8LcqFYho2ibz87fKEe91jDFQ2kKXZmr3jYyu30EMem-IMisjlbdj/exec',
-      spreadsheetId: GOOGLE_SPREADSHEET_ID,
-      sheetGidSiswa: DEFAULT_GID_SISWA,
-      sheetGidPresensi: '',
-      sheetGidSPP: '',
-      sheetGidUsers: '',
-      isConfigLocked: true
+      apiUrl: MASTER_API_URL,
+      spreadsheetId: MASTER_SPREADSHEET_ID,
+      sheetGidSiswa: MASTER_GID_SISWA,
+      sheetGidPresensi: MASTER_GID_PRESENSI,
+      sheetGidSPP: MASTER_GID_SPP,
+      sheetGidUsers: MASTER_GID_USERS,
+      isConfigLocked: true // Default selalu terkunci
     };
 
     function loadGlobalSettings() {
@@ -1711,11 +1711,16 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
         const raw = localStorage.getItem(SETTINGS_KEY);
         if (raw) {
           const parsed = JSON.parse(raw);
-          globalSettings = { ...globalSettings, ...parsed };
-          if (parsed.sheetGid && !parsed.sheetGidSiswa) {
-            globalSettings.sheetGidSiswa = parsed.sheetGid;
-          }
+          // Prioritaskan ID master jika storage lokal kosong
+          globalSettings = {
+            ...globalSettings,
+            ...parsed,
+            spreadsheetId: parsed.spreadsheetId || MASTER_SPREADSHEET_ID,
+            sheetGidSiswa: parsed.sheetGidSiswa || MASTER_GID_SISWA
+          };
         } else {
+          globalSettings.spreadsheetId = MASTER_SPREADSHEET_ID;
+          globalSettings.sheetGidSiswa = MASTER_GID_SISWA;
           globalSettings.isConfigLocked = true;
           saveGlobalSettings();
         }
@@ -1738,7 +1743,22 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
           const parsed = JSON.parse(raw);
-          appData = { ...defaultData, ...parsed, appVersion: APP_VERSION };
+          // Bersihkan data dummy lama jika ada di cache browser lama
+          if (parsed.siswa && parsed.siswa.length > 0 && parsed.siswa[0].nama === 'Ahmad Faiz' && (!parsed.presensi || parsed.presensi[0]?.id === 'PRS-1710001')) {
+            parsed.siswa = [];
+            parsed.presensi = [];
+            parsed.spp = [];
+          }
+
+          appData = {
+            ...defaultData,
+            ...parsed,
+            appVersion: APP_VERSION,
+            siswa: Array.isArray(parsed.siswa) ? parsed.siswa : [],
+            presensi: Array.isArray(parsed.presensi) ? parsed.presensi : [],
+            spp: Array.isArray(parsed.spp) ? parsed.spp : []
+          };
+
           if (!appData.currentUser) {
             appData.currentUser = { nama: 'Bunda Ani (Admin)', username: 'admin', role: 'admin' };
           }
@@ -1985,6 +2005,7 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
       if (statusText) statusText.textContent = 'Menyinkronkan...';
 
       try {
+        // Tarik data siswa realtime dari spreadsheet master yang diatur
         await fetchSiswaDirectFromGoogleSheets(false);
         if (globalSettings.sheetGidPresensi) await fetchPresensiDirectFromGoogleSheets(false);
         if (globalSettings.sheetGidSPP) await fetchSPPDirectFromGoogleSheets(false);
@@ -1998,8 +2019,10 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
     }
 
     async function fetchSiswaDirectFromGoogleSheets(showNotification = true) {
-      const sId = globalSettings.spreadsheetId || GOOGLE_SPREADSHEET_ID;
-      const sGid = globalSettings.sheetGidSiswa || DEFAULT_GID_SISWA;
+      const sId = globalSettings.spreadsheetId || MASTER_SPREADSHEET_ID;
+      const sGid = globalSettings.sheetGidSiswa || MASTER_GID_SISWA;
+
+      if (!sId || !sGid) return null;
 
       if (showNotification) showToast('Menghubungkan ke Google Spreadsheet...', 'info');
       addSyncLog(`Memeriksa data siswa dari Spreadsheet ID: ${sId} (GID Siswa: ${sGid})...`);
@@ -2016,12 +2039,15 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
           saveDataToStorage();
           renderTableMasterSiswa();
           updateSyncStatsUI();
-          if (showNotification) showToast(`Otomatis memuat ${parsedList.length} siswa dari Sheets!`, 'success');
+          if (showNotification) showToast(`Otomatis memuat ${parsedList.length} siswa asli dari Sheets!`, 'success');
           addSyncLog(`Berhasil menarik ${parsedList.length} siswa dari Sheets.`, 'success');
           return parsedList;
+        } else {
+          addSyncLog('Sheet siswa kosong atau tidak memiliki data.', 'info');
         }
       } catch (err) {
         console.warn('Direct CSV fetch siswa terhalang:', err);
+        addSyncLog('Gagal menarik CSV siswa: Pastikan link spreadsheet disetel "Siapa saja yang memiliki link dapat melihat".', 'error');
       }
       return null;
     }
@@ -4187,14 +4213,15 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
         }
       } catch (fpErr) {}
 
-      if (document.getElementById('inputAppsScriptUrl') && globalSettings.apiUrl) {
-        document.getElementById('inputAppsScriptUrl').value = globalSettings.apiUrl;
+      // Terapkan konfigurasi master permanen ke input form
+      if (document.getElementById('inputAppsScriptUrl')) {
+        document.getElementById('inputAppsScriptUrl').value = globalSettings.apiUrl || '';
       }
-      if (document.getElementById('inputSpreadsheetId') && globalSettings.spreadsheetId) {
-        document.getElementById('inputSpreadsheetId').value = globalSettings.spreadsheetId;
+      if (document.getElementById('inputSpreadsheetId')) {
+        document.getElementById('inputSpreadsheetId').value = globalSettings.spreadsheetId || MASTER_SPREADSHEET_ID;
       }
       if (document.getElementById('inputSheetGidSiswa')) {
-        document.getElementById('inputSheetGidSiswa').value = globalSettings.sheetGidSiswa || DEFAULT_GID_SISWA;
+        document.getElementById('inputSheetGidSiswa').value = globalSettings.sheetGidSiswa || MASTER_GID_SISWA;
       }
       if (document.getElementById('inputSheetGidPresensi')) {
         document.getElementById('inputSheetGidPresensi').value = globalSettings.sheetGidPresensi || '';
@@ -4206,6 +4233,7 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
         document.getElementById('inputSheetGidUsers').value = globalSettings.sheetGidUsers || '';
       }
 
+      // Pastikan status selalu terkunci permanen
       applyConfigLockUI();
 
       if (!appData.currentUser) {
@@ -4214,7 +4242,7 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
 
       if (appData.currentUser.role === 'siswa') {
         const s = (appData.siswa || []).find(x => x.username === appData.currentUser.username) || appData.siswa[0];
-        renderPortalSiswa(s);
+        if (s) renderPortalSiswa(s);
       } else {
         document.getElementById('currentUserNameDisplay').textContent = appData.currentUser.nama;
         document.getElementById('currentUserRoleDisplay').textContent = (appData.currentUser.role || 'ADMIN').toUpperCase();
@@ -4225,7 +4253,9 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
 
       refreshAllViews();
       initIdleDetection();
-      autoSyncFromGoogleSheets();
+
+      // Langsung tarik data asli dari Spreadsheet saat pertama kali dibuka di perangkat baru
+      await autoSyncFromGoogleSheets();
     });
   </script>
 </body>
