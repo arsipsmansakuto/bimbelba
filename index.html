@@ -90,23 +90,23 @@
       </div>
 
       <div class="flex items-center space-x-3">
-        <!-- Status Indikator -->
-        <div id="cloudSyncStatusBadge" class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-950 text-emerald-400 text-[11px] font-mono border border-indigo-800" title="Status Database & Sheets">
+        <!-- Status Indikator Auto-Sync -->
+        <div id="cloudSyncStatusBadge" class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-950 text-emerald-400 text-[11px] font-mono border border-indigo-800" title="Status Sinkronisasi Sheets">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span id="cloudSyncStatusText">Aktif (Online)</span>
+          <span id="cloudSyncStatusText">Sheets Terhubung</span>
         </div>
 
-        <!-- Info Sesi Login Aktif -->
+        <!-- Info Sesi Pengguna -->
         <div id="userInfoHeader" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-indigo-800 text-xs">
           <i class="fa-solid fa-circle-user text-amber-400 text-base"></i>
           <div>
-            <div id="currentUserNameDisplay" class="font-semibold text-slate-100">Bunda Ani (Admin)</div>
-            <div id="currentUserRoleDisplay" class="text-[10px] text-indigo-300 uppercase">ADMINISTRATOR</div>
+            <div id="currentUserNameDisplay" class="font-semibold text-slate-100">Silakan Login</div>
+            <div id="currentUserRoleDisplay" class="text-[10px] text-indigo-300 uppercase">BELUM LOGIN</div>
           </div>
         </div>
 
         <!-- Tombol Logout -->
-        <button onclick="handleLogout()" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-sm border border-rose-500" title="Keluar dari Akun">
+        <button id="btnHeaderLogout" onclick="handleLogout()" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-sm border border-rose-500" title="Keluar dari Akun">
           <i class="fa-solid fa-right-from-bracket text-xs"></i>
           <span>Logout</span>
         </button>
@@ -114,7 +114,7 @@
     </div>
 
     <!-- MENU TABS NAVIGASI ADMIN -->
-    <nav id="adminNavTabs" class="bg-indigo-950/60 border-t border-indigo-800/60 overflow-x-auto no-scrollbar">
+    <nav id="adminNavTabs" class="hidden bg-indigo-950/60 border-t border-indigo-800/60 overflow-x-auto no-scrollbar">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 flex space-x-1 sm:space-x-2 py-2">
         <button id="btnTabScanner" onclick="pindahTab('scanner')" class="nav-tab-btn flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-indigo-600 text-white shadow-sm whitespace-nowrap">
           <i class="fa-solid fa-barcode"></i> Scanner & Presensi
@@ -144,7 +144,7 @@
   <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
 
     <!-- TAB 1: SCANNER & PRESENSI -->
-    <section id="tabContentScanner" class="space-y-6">
+    <section id="tabContentScanner" class="hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
         <!-- SCANNER KAMERA BARCODE -->
@@ -1088,7 +1088,7 @@
 
   </main>
 
-  <!-- MODAL LOGIN -->
+  <!-- MODAL LOGIN (KOSONG SETIAP KALI LOGOUT/BUKA) -->
   <div id="modalLogin" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4">
     <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-5 border border-slate-100">
       <div class="text-center space-y-2">
@@ -1102,12 +1102,12 @@
       <form id="formLogin" onsubmit="event.preventDefault(); prosesLogin();" class="space-y-3.5">
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">Username</label>
-          <input type="text" id="loginUsername" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="admin / username siswa">
+          <input type="text" id="loginUsername" required autocomplete="off" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="admin / username siswa">
         </div>
 
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">Password</label>
-          <input type="password" id="loginPassword" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="••••••••">
+          <input type="password" id="loginPassword" required autocomplete="off" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="••••••••">
         </div>
 
         <div class="flex gap-2">
@@ -1669,33 +1669,29 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
     // Konfigurasi Master Permanen (Bila dibuka di perangkat baru/tanpa cache, tetap membaca spreadsheet ini)
     const MASTER_SPREADSHEET_ID = '1oQMV5G7fiLOxTXlENGAEHEBEs2TaC5tqA8P7b-rdmjo';
     const MASTER_GID_SISWA = '1709630193';
-    const MASTER_GID_PRESENSI = '526265062'; // Isi GID tab presensi jika ada default
-    const MASTER_GID_SPP = '2072174916';      // Isi GID tab SPP jika ada default
-    const MASTER_GID_USERS = '1341602880';    // Isi GID tab users jika ada default
-    const MASTER_API_URL = 'https://script.google.com/macros/s/AKfycbyy-5uc6MjXgoEYXJ7zHO8JUGMPq8Naj9RrKR5JJ7ym83VCa-Xw-tj8wsEQfPudZQ9S/exec';      // URL Web App Apps Script (Code.gs)
+    const MASTER_GID_PRESENSI = '526265062';
+    const MASTER_GID_SPP = '2072174916';
+    const MASTER_GID_USERS = '1341602880';
+    const MASTER_API_URL = 'https://script.google.com/macros/s/AKfycbzlFfpD4PCfjPJVtizfBiRbher1GksgIraw1aoijSSXezAPO_92xR5kut2ppH6epkys/exec';
     
-    // Auto logout 30 menit tidak aktif (1.800.000 ms)
     const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
     let idleTimer = null;
-    let autoSyncTimer = null;
 
-    // HAPUS SEMUA DATA DUMMY: Mulai dari array kosong murni!
-    // Hanya akun admin otentikasi darurat lokal yang dipertahankan agar bisa login pertama kali
+    // Database in-memory awal tanpa data dummy
     const defaultData = {
       appVersion: APP_VERSION,
-      currentUser: { nama: 'Bunda Ani (Admin)', username: 'admin', role: 'admin' },
+      currentUser: null,
       users: [
         { nama: 'Bunda Ani (Admin)', username: 'admin', password: '123', role: 'admin', status: 'Aktif' },
         { nama: 'Kak Rina (Petugas)', username: 'petugas', password: '123', role: 'petugas', status: 'Aktif' }
       ],
-      siswa: [],    // Tidak ada data dummy lagi
-      presensi: [], // Tidak ada data dummy lagi
-      spp: []       // Tidak ada data dummy lagi
+      siswa: [],
+      presensi: [],
+      spp: []
     };
 
     let appData = { ...defaultData };
     
-    // Default konfigurasi terkunci secara permanen lintas perangkat
     let globalSettings = {
       apiUrl: MASTER_API_URL,
       spreadsheetId: MASTER_SPREADSHEET_ID,
@@ -1703,7 +1699,7 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
       sheetGidPresensi: MASTER_GID_PRESENSI,
       sheetGidSPP: MASTER_GID_SPP,
       sheetGidUsers: MASTER_GID_USERS,
-      isConfigLocked: true // Default selalu terkunci
+      isConfigLocked: true
     };
 
     function loadGlobalSettings() {
@@ -1711,7 +1707,6 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
         const raw = localStorage.getItem(SETTINGS_KEY);
         if (raw) {
           const parsed = JSON.parse(raw);
-          // Prioritaskan ID master jika storage lokal kosong
           globalSettings = {
             ...globalSettings,
             ...parsed,
@@ -1743,7 +1738,6 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
           const parsed = JSON.parse(raw);
-          // Bersihkan data dummy lama jika ada di cache browser lama
           if (parsed.siswa && parsed.siswa.length > 0 && parsed.siswa[0].nama === 'Ahmad Faiz' && (!parsed.presensi || parsed.presensi[0]?.id === 'PRS-1710001')) {
             parsed.siswa = [];
             parsed.presensi = [];
@@ -1754,21 +1748,18 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
             ...defaultData,
             ...parsed,
             appVersion: APP_VERSION,
+            currentUser: null, // Selalu null di awal agar wajib login
             siswa: Array.isArray(parsed.siswa) ? parsed.siswa : [],
             presensi: Array.isArray(parsed.presensi) ? parsed.presensi : [],
             spp: Array.isArray(parsed.spp) ? parsed.spp : []
           };
-
-          if (!appData.currentUser) {
-            appData.currentUser = { nama: 'Bunda Ani (Admin)', username: 'admin', role: 'admin' };
-          }
         } else {
-          appData = { ...defaultData };
+          appData = { ...defaultData, currentUser: null };
           saveDataToStorage();
         }
       } catch (e) {
         console.error('Gagal membaca storage:', e);
-        appData = { ...defaultData };
+        appData = { ...defaultData, currentUser: null };
       }
     }
 
@@ -2005,7 +1996,6 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
       if (statusText) statusText.textContent = 'Menyinkronkan...';
 
       try {
-        // Tarik data siswa realtime dari spreadsheet master yang diatur
         await fetchSiswaDirectFromGoogleSheets(false);
         if (globalSettings.sheetGidPresensi) await fetchPresensiDirectFromGoogleSheets(false);
         if (globalSettings.sheetGidSPP) await fetchSPPDirectFromGoogleSheets(false);
@@ -2053,7 +2043,7 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
     }
 
     async function fetchPresensiDirectFromGoogleSheets(showNotification = true) {
-      const sId = globalSettings.spreadsheetId || GOOGLE_SPREADSHEET_ID;
+      const sId = globalSettings.spreadsheetId || MASTER_SPREADSHEET_ID;
       const sGid = globalSettings.sheetGidPresensi;
       if (!sGid) return null;
 
@@ -2106,7 +2096,7 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
     }
 
     async function fetchSPPDirectFromGoogleSheets(showNotification = true) {
-      const sId = globalSettings.spreadsheetId || GOOGLE_SPREADSHEET_ID;
+      const sId = globalSettings.spreadsheetId || MASTER_SPREADSHEET_ID;
       const sGid = globalSettings.sheetGidSPP;
       if (!sGid) return null;
 
@@ -2165,7 +2155,7 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
     }
 
     async function fetchUsersDirectFromGoogleSheets(showNotification = true) {
-      const sId = globalSettings.spreadsheetId || GOOGLE_SPREADSHEET_ID;
+      const sId = globalSettings.spreadsheetId || MASTER_SPREADSHEET_ID;
       const sGid = globalSettings.sheetGidUsers;
       if (!sGid) return null;
 
@@ -3317,16 +3307,83 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
         function() {
           appData.currentUser = null;
           saveDataToStorage();
+
+          // Sembunyikan navigasi dan seluruh tampilan tab
           document.getElementById('adminNavTabs').classList.add('hidden');
           document.getElementById('portalSiswaSection').classList.add('hidden');
-          document.getElementById('currentUserNameDisplay').textContent = 'Tamu';
-          document.getElementById('currentUserRoleDisplay').textContent = 'LOGOUT';
+          document.getElementById('tabContentScanner').classList.add('hidden');
+          document.getElementById('tabContentSiswa').classList.add('hidden');
+          document.getElementById('tabContentSpp').classList.add('hidden');
+          document.getElementById('tabContentLaporan').classList.add('hidden');
+          document.getElementById('tabContentRekapSPP').classList.add('hidden');
+          document.getElementById('tabContentUsers').classList.add('hidden');
+          document.getElementById('tabContentSettings').classList.add('hidden');
+
+          document.getElementById('currentUserNameDisplay').textContent = 'Silakan Login';
+          document.getElementById('currentUserRoleDisplay').textContent = 'BELUM LOGIN';
           
           showToast('Anda telah berhasil keluar.', 'info');
+          
+          // Buka modal login dan pastikan input benar-benar kosong
           openModalLogin(true);
         },
         false
       );
+    }
+
+    function openModalLogin(isMandatory = false) {
+      const modal = document.getElementById('modalLogin');
+      const inputU = document.getElementById('loginUsername');
+      const inputP = document.getElementById('loginPassword');
+
+      // Bersihkan username dan password secara total
+      if (inputU) inputU.value = '';
+      if (inputP) inputP.value = '';
+
+      if (modal) {
+        modal.classList.remove('hidden');
+        if (inputU) {
+          setTimeout(() => inputU.focus(), 100);
+        }
+      }
+    }
+
+    async function prosesLogin() {
+      const inputU = document.getElementById('loginUsername');
+      const inputP = document.getElementById('loginPassword');
+      const u = (inputU?.value || '').trim();
+      const p = (inputP?.value || '').trim();
+
+      const userFound = (appData.users || []).find(x => x.username.toLowerCase() === u.toLowerCase() && x.password === p);
+      if (userFound) {
+        appData.currentUser = { nama: userFound.nama, username: userFound.username, role: userFound.role };
+        saveDataToStorage();
+        document.getElementById('modalLogin').classList.add('hidden');
+        document.getElementById('currentUserNameDisplay').textContent = userFound.nama;
+        document.getElementById('currentUserRoleDisplay').textContent = userFound.role.toUpperCase();
+        document.getElementById('adminNavTabs').classList.remove('hidden');
+        document.getElementById('portalSiswaSection').classList.add('hidden');
+        pindahTab('scanner');
+        showToast(`Selamat datang, ${userFound.nama}!`, 'success');
+        refreshAllViews();
+        resetIdleTimer();
+        return;
+      }
+
+      let siswaFound = (appData.siswa || []).find(s => s.username.toLowerCase() === u.toLowerCase() && s.password === p);
+      if (siswaFound) {
+        appData.currentUser = { nama: siswaFound.nama, username: siswaFound.username, role: 'siswa' };
+        saveDataToStorage();
+        document.getElementById('modalLogin').classList.add('hidden');
+        document.getElementById('currentUserNameDisplay').textContent = siswaFound.nama;
+        document.getElementById('currentUserRoleDisplay').textContent = 'SISWA';
+        renderPortalSiswa(siswaFound);
+        showToast(`Selamat datang di portal siswa, ${siswaFound.nama}!`, 'success');
+        resetIdleTimer();
+        return;
+      }
+
+      showToast('Username atau password salah!', 'error');
     }
 
     async function prosesDownloadSemuaKartuZip() {
@@ -4133,46 +4190,6 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
       if (targetLower === 'settings') updateSyncStatsUI();
     }
 
-    function openModalLogin(isMandatory = false) {
-      document.getElementById('modalLogin')?.classList.remove('hidden');
-    }
-
-    async function prosesLogin() {
-      const u = document.getElementById('loginUsername').value.trim();
-      const p = document.getElementById('loginPassword').value.trim();
-
-      const userFound = (appData.users || []).find(x => x.username.toLowerCase() === u.toLowerCase() && x.password === p);
-      if (userFound) {
-        appData.currentUser = { nama: userFound.nama, username: userFound.username, role: userFound.role };
-        saveDataToStorage();
-        document.getElementById('modalLogin').classList.add('hidden');
-        document.getElementById('currentUserNameDisplay').textContent = userFound.nama;
-        document.getElementById('currentUserRoleDisplay').textContent = userFound.role.toUpperCase();
-        document.getElementById('adminNavTabs').classList.remove('hidden');
-        document.getElementById('portalSiswaSection').classList.add('hidden');
-        pindahTab('scanner');
-        showToast(`Selamat datang, ${userFound.nama}!`, 'success');
-        refreshAllViews();
-        resetIdleTimer();
-        return;
-      }
-
-      let siswaFound = (appData.siswa || []).find(s => s.username.toLowerCase() === u.toLowerCase() && s.password === p);
-      if (siswaFound) {
-        appData.currentUser = { nama: siswaFound.nama, username: siswaFound.username, role: 'siswa' };
-        saveDataToStorage();
-        document.getElementById('modalLogin').classList.add('hidden');
-        document.getElementById('currentUserNameDisplay').textContent = siswaFound.nama;
-        document.getElementById('currentUserRoleDisplay').textContent = 'SISWA';
-        renderPortalSiswa(siswaFound);
-        showToast(`Selamat datang di portal siswa, ${siswaFound.nama}!`, 'success');
-        resetIdleTimer();
-        return;
-      }
-
-      showToast('Username atau password salah!', 'error');
-    }
-
     function refreshAllViews() {
       renderLivePresensiLog();
       renderTableMasterSiswa();
@@ -4233,28 +4250,16 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
         document.getElementById('inputSheetGidUsers').value = globalSettings.sheetGidUsers || '';
       }
 
-      // Pastikan status selalu terkunci permanen
+      // Pastikan status konfigurasi selalu terkunci permanen
       applyConfigLockUI();
 
-      if (!appData.currentUser) {
-        appData.currentUser = { nama: 'Bunda Ani (Admin)', username: 'admin', role: 'admin' };
-      }
-
-      if (appData.currentUser.role === 'siswa') {
-        const s = (appData.siswa || []).find(x => x.username === appData.currentUser.username) || appData.siswa[0];
-        if (s) renderPortalSiswa(s);
-      } else {
-        document.getElementById('currentUserNameDisplay').textContent = appData.currentUser.nama;
-        document.getElementById('currentUserRoleDisplay').textContent = (appData.currentUser.role || 'ADMIN').toUpperCase();
-        document.getElementById('adminNavTabs').classList.remove('hidden');
-        document.getElementById('portalSiswaSection').classList.add('hidden');
-        pindahTab('scanner');
-      }
+      // Selalu mulai dengan modal login dalam keadaan input username & password bersih
+      openModalLogin(true);
 
       refreshAllViews();
       initIdleDetection();
 
-      // Langsung tarik data asli dari Spreadsheet saat pertama kali dibuka di perangkat baru
+      // Tarik data asli dari Spreadsheet saat pertama kali dibuka
       await autoSyncFromGoogleSheets();
     });
   </script>
