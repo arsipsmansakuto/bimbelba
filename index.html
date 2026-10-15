@@ -105,9 +105,10 @@
           </div>
         </div>
 
-        <button onclick="bukaPilihanAkun()" class="px-3 py-1.5 bg-indigo-800 hover:bg-indigo-700 text-indigo-100 hover:text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition border border-indigo-700" title="Ganti Akun Demo">
-          <i class="fa-solid fa-users-viewfinder text-xs"></i>
-          <span class="hidden sm:inline">Ganti Akun</span>
+        <!-- Tombol Logout -->
+        <button onclick="handleLogout()" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-sm border border-rose-500" title="Keluar dari Akun">
+          <i class="fa-solid fa-right-from-bracket text-xs"></i>
+          <span>Logout</span>
         </button>
       </div>
     </div>
@@ -140,7 +141,6 @@
     </nav>
   </header>
 
-  <!-- KONTEN UTAMA APLIKASI -->
   <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
 
     <!-- TAB 1: SCANNER & PRESENSI -->
@@ -297,7 +297,7 @@
             <button onclick="openModalExportImportSiswa()" class="px-3 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
               <i class="fa-solid fa-file-csv"></i> Impor / Ekspor CSV
             </button>
-            <button onclick="openModalDownloadSemuaKartu()" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+            <button onclick="prosesDownloadSemuaKartuZip()" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
               <i class="fa-solid fa-id-card"></i> Cetak / ZIP Kartu
             </button>
           </div>
@@ -574,7 +574,6 @@
             </div>
           </div>
 
-          <!-- KARTU REKAP PAKET 12X PERTEMUAN -->
           <div class="bg-rose-50/80 border-2 border-rose-200 rounded-xl p-4 flex items-center gap-3 shadow-sm">
             <div class="w-10 h-10 rounded-lg bg-rose-600 text-white flex items-center justify-center text-lg">
               <i class="fa-solid fa-award"></i>
@@ -767,7 +766,7 @@
       </div>
     </section>
 
-    <!-- TAB 7: KONFIGURASI SHEETS -->
+    <!-- TAB 7: KONFIGURASI SHEETS DENGAN 4 INPUT GID TERKUNCI -->
     <section id="tabContentSettings" class="hidden space-y-6">
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-5">
         <div class="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -775,7 +774,7 @@
             <h2 class="text-base font-bold text-slate-800 font-brand flex items-center gap-2">
               <i class="fa-solid fa-cloud-arrow-up text-indigo-600"></i> Konfigurasi Sinkronisasi Google Sheets
             </h2>
-            <p class="text-xs text-slate-500">Koneksikan web app ke Google Apps Script (Code.gs) & Master Spreadsheet</p>
+            <p class="text-xs text-slate-500">Koneksikan web app ke 4 Sheet GID & Master Spreadsheet</p>
           </div>
           <div class="flex items-center gap-3">
             <button onclick="openModalScriptCode()" class="text-xs bg-indigo-100 text-indigo-800 px-3 py-1.5 rounded-lg font-bold hover:bg-indigo-200 transition flex items-center gap-1.5">
@@ -807,49 +806,62 @@
         </div>
 
         <div class="space-y-4 max-w-2xl">
+          <!-- Indikator Status Konfigurasi Terkunci Otomatis -->
+          <div id="configLockBanner" class="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-between">
+            <div class="flex items-center gap-2.5 text-xs">
+              <span id="lockStatusIcon" class="text-emerald-600 font-bold text-base">
+                <i class="fa-solid fa-lock"></i>
+              </span>
+              <div>
+                <span id="lockStatusText" class="font-bold text-emerald-950">Status Konfigurasi: Terkunci Permanen</span>
+                <p class="text-[10px] text-emerald-700">Konfigurasi 4 GID aman, tidak berubah saat berpindah perangkat/browser.</p>
+              </div>
+            </div>
+            <button id="btnToggleLockConfig" type="button" onclick="toggleKunciKonfigurasi()" class="px-3.5 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 text-[11px] font-bold rounded-xl shadow-xs transition flex items-center gap-1.5">
+              <i class="fa-solid fa-lock-open text-xs"></i> <span>Buka Kunci</span>
+            </button>
+          </div>
+
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">Web App URL (Google Apps Script / exec)</label>
-            <input type="text" id="inputAppsScriptUrl" placeholder="https://script.google.com/macros/s/.../exec" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 focus:outline-none">
+            <input type="text" id="inputAppsScriptUrl" placeholder="https://script.google.com/macros/s/.../exec" class="w-full bg-slate-100 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 focus:outline-none transition font-mono cursor-not-allowed" readonly>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div class="sm:col-span-2">
               <label class="block text-xs font-semibold text-slate-700 mb-1">Spreadsheet ID</label>
-              <input type="text" id="inputSpreadsheetId" value="1oQMV5G7fiLOxTXlENGAEHEBEs2TaC5tqA8P7b-rdmjo" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none font-mono">
+              <input type="text" id="inputSpreadsheetId" value="1oQMV5G7fiLOxTXlENGAEHEBEs2TaC5tqA8P7b-rdmjo" class="w-full bg-slate-100 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none font-mono cursor-not-allowed" readonly>
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-700 mb-1">Sheet GID (Tab Siswa)</label>
-              <input type="text" id="inputSheetGidSiswa" value="526265062" placeholder="Contoh: 526265062" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none font-mono">
+              <input type="text" id="inputSheetGidSiswa" value="526265062" placeholder="Contoh: 526265062" class="w-full bg-slate-100 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none font-mono cursor-not-allowed" readonly>
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-700 mb-1">Sheet GID (Tab Presensi)</label>
-              <input type="text" id="inputSheetGidPresensi" placeholder="Contoh: 0 atau GID Tab Presensi" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none font-mono">
+              <input type="text" id="inputSheetGidPresensi" placeholder="Contoh: 0 atau GID Tab Presensi" class="w-full bg-slate-100 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none font-mono cursor-not-allowed" readonly>
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-700 mb-1">Sheet GID (Tab SPP)</label>
-              <input type="text" id="inputSheetGidSPP" placeholder="Contoh: GID Tab SPP" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none font-mono">
+              <input type="text" id="inputSheetGidSPP" placeholder="Contoh: GID Tab SPP" class="w-full bg-slate-100 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none font-mono cursor-not-allowed" readonly>
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-700 mb-1">Sheet GID (Tab Users / Pengguna)</label>
-              <input type="text" id="inputSheetGidUsers" placeholder="Contoh: GID Tab Users" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none font-mono">
+              <input type="text" id="inputSheetGidUsers" placeholder="Contoh: GID Tab Users" class="w-full bg-slate-100 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none font-mono cursor-not-allowed" readonly>
             </div>
           </div>
 
           <div class="flex flex-wrap gap-2 pt-1">
-            <button onclick="simpanPengaturanUrl()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold transition">
-              Simpan Konfigurasi
+            <button id="btnSimpanConfig" onclick="simpanPengaturanUrl()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm opacity-50 cursor-not-allowed" disabled>
+              <i class="fa-solid fa-floppy-disk"></i> Simpan & Kunci Konfigurasi
             </button>
-            <button onclick="ujiKoneksiSheets()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold border border-slate-300 transition">
-              Uji Koneksi (Ping)
+            <button onclick="tarikDataRealtimeSemuaSheet()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-1.5">
+              <i class="fa-solid fa-cloud-arrow-down"></i> Tarik Data Realtime (Semua GID)
             </button>
-            <button onclick="syncAllToCloud()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold transition">
-              Kirim Semua Data ke Cloud
+            <button onclick="ujiKoneksiSheets()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold border border-slate-300 transition flex items-center gap-1.5">
+              <i class="fa-solid fa-wifi"></i> Uji Koneksi (Ping)
             </button>
-            <button onclick="fetchDataFromCloud(true)" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-semibold transition">
-              Tarik Semua Data dari Cloud
-            </button>
-            <button onclick="setupOtomatisCloudSheets()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-semibold transition">
-              Tata Tabel Sheets Otomatis
+            <button onclick="syncAllToCloud()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold transition flex items-center gap-1.5">
+              <i class="fa-solid fa-cloud-arrow-up"></i> Kirim Semua Data ke Cloud
             </button>
           </div>
 
@@ -1076,74 +1088,7 @@
 
   </main>
 
-  <!-- MODAL PEMILIH AKUN CEPAT (DEMO SWITCHER) -->
-  <div id="modalPilihAkun" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 space-y-4 border border-slate-100">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-        <div class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-lg">
-            <i class="fa-solid fa-users"></i>
-          </div>
-          <div>
-            <h3 class="text-sm font-bold text-slate-800 font-brand">Ganti Akun Demo</h3>
-            <p class="text-[11px] text-slate-500">Pilih peran akun untuk menguji fitur program</p>
-          </div>
-        </div>
-        <button onclick="tutupPilihanAkun()" class="text-slate-400 hover:text-slate-600 text-xs">
-          <i class="fa-solid fa-xmark text-sm"></i>
-        </button>
-      </div>
-
-      <div class="space-y-2">
-        <div onclick="loginSebagai('admin')" class="p-3 rounded-2xl border border-indigo-100 bg-indigo-50/50 hover:bg-indigo-100/70 cursor-pointer flex items-center justify-between transition">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">
-              <i class="fa-solid fa-shield-halved"></i>
-            </div>
-            <div>
-              <div class="font-bold text-xs text-slate-800">Bunda Ani (Administrator)</div>
-              <div class="text-[10px] text-indigo-700">Akses Penuh: Scanner, SPP, Master Siswa, Laporan</div>
-            </div>
-          </div>
-          <span class="text-[10px] bg-indigo-600 text-white font-bold px-2 py-0.5 rounded-full">Pilih</span>
-        </div>
-
-        <div onclick="loginSebagai('petugas')" class="p-3 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 cursor-pointer flex items-center justify-between transition">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-slate-700 text-white flex items-center justify-center font-bold text-xs">
-              <i class="fa-solid fa-user-check"></i>
-            </div>
-            <div>
-              <div class="font-bold text-xs text-slate-800">Kak Rina (Petugas Presensi)</div>
-              <div class="text-[10px] text-slate-500">Akses Operator Scanner & Presensi Masuk</div>
-            </div>
-          </div>
-          <span class="text-[10px] bg-slate-700 text-white font-bold px-2 py-0.5 rounded-full">Pilih</span>
-        </div>
-
-        <div onclick="loginSebagai('siswa_202601')" class="p-3 rounded-2xl border border-amber-200 bg-amber-50/50 hover:bg-amber-100/70 cursor-pointer flex items-center justify-between transition">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-amber-500 text-slate-900 flex items-center justify-center font-bold text-xs">
-              <i class="fa-solid fa-graduation-cap"></i>
-            </div>
-            <div>
-              <div class="font-bold text-xs text-slate-800">Ahmad Faiz (Siswa ID: 202601)</div>
-              <div class="text-[10px] text-amber-800">Lihat Progres Paket 12x, SPP, & Profil</div>
-            </div>
-          </div>
-          <span class="text-[10px] bg-amber-500 text-slate-900 font-bold px-2 py-0.5 rounded-full">Pilih</span>
-        </div>
-      </div>
-
-      <div class="border-t border-slate-100 pt-3">
-        <button onclick="openModalLoginManual()" class="w-full py-2 border border-slate-300 text-slate-700 rounded-xl text-xs font-semibold hover:bg-slate-100 transition flex items-center justify-center gap-1.5">
-          <i class="fa-solid fa-arrow-right-to-bracket"></i> Masuk dengan Username & Password Lain
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL LOGIN MANUAL -->
+  <!-- MODAL LOGIN -->
   <div id="modalLogin" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4">
     <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-5 border border-slate-100">
       <div class="text-center space-y-2">
@@ -1168,9 +1113,6 @@
         <div class="flex gap-2">
           <button type="submit" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition">
             Masuk
-          </button>
-          <button type="button" onclick="closeModalLogin()" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded-xl transition">
-            Tutup
           </button>
         </div>
       </form>
@@ -1733,7 +1675,7 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
 
     const defaultData = {
       appVersion: APP_VERSION,
-      currentUser: null,
+      currentUser: { nama: 'Bunda Ani (Admin)', username: 'admin', role: 'admin' },
       users: [
         { nama: 'Bunda Ani (Admin)', username: 'admin', password: '123', role: 'admin', status: 'Aktif' },
         { nama: 'Kak Rina (Petugas)', username: 'petugas', password: '123', role: 'petugas', status: 'Aktif' }
@@ -1744,23 +1686,24 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
         { username: '202603', password: '123', nama: 'Dimas Satria', kelas: '6 SD', alamat: 'Jl. Anggrek No. 12', sekolah_asal: 'SDN 3', hobi: 'Menggambar', kategori_bimbingan: 'PRIVAT', nama_ortu: 'Bpk. Joko', no_telp: '08134567890', status_akun: 'Aktif' }
       ],
       presensi: [
-        { id: 'PRS-1710001', tanggal: '12/10/2026', waktu: '14:15', nis: '202601', nama: 'Ahmad Faiz', kelas: '4 SD', status: 'Hadir', keterangan: '-' },
-        { id: 'PRS-1710002', tanggal: '12/10/2026', waktu: '14:20', nis: '202602', nama: 'Clarissa Putri', kelas: '5 SD', status: 'Hadir', keterangan: '-' }
+        { id: 'PRS-1710001', tanggal: '15/10/2026', waktu: '08:15', nis: '202601', nama: 'Ahmad Faiz', kelas: '4 SD', status: 'Hadir', keterangan: '-' },
+        { id: 'PRS-1710002', tanggal: '15/10/2026', waktu: '08:20', nis: '202602', nama: 'Clarissa Putri', kelas: '5 SD', status: 'Hadir', keterangan: '-' }
       ],
       spp: [
-        { id: 'SPP-2026-001', tanggal: '12/10/2026', nis: '202601', nama: 'Ahmad Faiz', kelas: '4 SD', bulan: 'Oktober', tahun: '2026', nominal: 80000, metode: 'Tunai', status: 'Lunas', petugas: 'Bunda Ani' },
-        { id: 'SPP-2026-002', tanggal: '12/10/2026', nis: '202602', nama: 'Clarissa Putri', kelas: '5 SD', bulan: 'Oktober', tahun: '2026', nominal: 110000, metode: 'Transfer Bank', status: 'Lunas', petugas: 'Kak Rina' }
+        { id: 'SPP-2026-001', tanggal: '15/10/2026', nis: '202601', nama: 'Ahmad Faiz', kelas: '4 SD', bulan: 'Oktober', tahun: '2026', nominal: 80000, metode: 'Tunai', status: 'Lunas', petugas: 'Bunda Ani' },
+        { id: 'SPP-2026-002', tanggal: '15/10/2026', nis: '202602', nama: 'Clarissa Putri', kelas: '5 SD', bulan: 'Oktober', tahun: '2026', nominal: 110000, metode: 'Transfer Bank', status: 'Lunas', petugas: 'Kak Rina' }
       ]
     };
 
     let appData = { ...defaultData };
     let globalSettings = {
-      apiUrl: 'https://script.google.com/macros/s/AKfycbwOgdVk1qJMpWFNOVIFlKdZ-C-Et4HUY08fcWSdSu99ZMRdYdXCiP2x-anDXoDKqSeT/exec',
+      apiUrl: 'https://script.google.com/macros/s/AKfycbxGZJwXl_DBMbDs8LcqFYho2ibz87fKEe91jDFQ2kKXZmr3jYyu30EMem-IMisjlbdj/exec',
       spreadsheetId: GOOGLE_SPREADSHEET_ID,
       sheetGidSiswa: DEFAULT_GID_SISWA,
       sheetGidPresensi: '',
       sheetGidSPP: '',
-      sheetGidUsers: ''
+      sheetGidUsers: '',
+      isConfigLocked: true
     };
 
     function loadGlobalSettings() {
@@ -1769,11 +1712,11 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
         if (raw) {
           const parsed = JSON.parse(raw);
           globalSettings = { ...globalSettings, ...parsed };
-          // Migrasi backward compatibility jika sebelumnya memakai key sheetGid
           if (parsed.sheetGid && !parsed.sheetGidSiswa) {
             globalSettings.sheetGidSiswa = parsed.sheetGid;
           }
         } else {
+          globalSettings.isConfigLocked = true;
           saveGlobalSettings();
         }
       } catch (e) {
@@ -2047,10 +1990,6 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
         if (globalSettings.sheetGidSPP) await fetchSPPDirectFromGoogleSheets(false);
         if (globalSettings.sheetGidUsers) await fetchUsersDirectFromGoogleSheets(false);
 
-        const scriptUrl = globalSettings.apiUrl;
-        if (scriptUrl && !scriptUrl.includes('YourDeploymentId')) {
-          await fetchDataFromCloud(false);
-        }
         if (statusText) statusText.textContent = 'Sheets Terhubung';
       } catch (errSync) {
         console.warn('Auto sync warning:', errSync);
@@ -2062,9 +2001,7 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
       const sId = globalSettings.spreadsheetId || GOOGLE_SPREADSHEET_ID;
       const sGid = globalSettings.sheetGidSiswa || DEFAULT_GID_SISWA;
 
-      if (showNotification) {
-        showToast('Menghubungkan ke Google Spreadsheet...', 'info');
-      }
+      if (showNotification) showToast('Menghubungkan ke Google Spreadsheet...', 'info');
       addSyncLog(`Memeriksa data siswa dari Spreadsheet ID: ${sId} (GID Siswa: ${sGid})...`);
       const csvUrl = `https://docs.google.com/spreadsheets/d/${sId}/gviz/tq?tqx=out:csv&gid=${sGid}`;
 
@@ -2079,9 +2016,7 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
           saveDataToStorage();
           renderTableMasterSiswa();
           updateSyncStatsUI();
-          if (showNotification) {
-            showToast(`Otomatis memuat ${parsedList.length} siswa dari Google Sheets!`, 'success');
-          }
+          if (showNotification) showToast(`Otomatis memuat ${parsedList.length} siswa dari Sheets!`, 'success');
           addSyncLog(`Berhasil menarik ${parsedList.length} siswa dari Sheets.`, 'success');
           return parsedList;
         }
@@ -2247,36 +2182,6 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
       } catch (e) {
         console.warn('Direct fetch Users CSV error:', e);
       }
-    }
-
-    async function fetchSiswaDirectFromGoogleSheets(showNotification = true) {
-      const sId = globalSettings.spreadsheetId || GOOGLE_SPREADSHEET_ID;
-      const sGid = globalSettings.sheetGid || GOOGLE_SHEET_GID;
-
-      if (showNotification) showToast('Menghubungkan ke Google Spreadsheet...', 'info');
-      addSyncLog(`Memeriksa data siswa dari Sheets ID: ${sId}...`);
-      const csvUrl = `https://docs.google.com/spreadsheets/d/${sId}/gviz/tq?tqx=out:csv&gid=${sGid}`;
-
-      try {
-        const response = await fetch(csvUrl);
-        if (!response.ok) throw new Error('Akses CSV ditolak');
-        const csvText = await response.text();
-        const parsedList = parseGoogleSheetCSV(csvText);
-
-        if (parsedList && parsedList.length > 0) {
-          appData.siswa = parsedList;
-          saveDataToStorage();
-          renderTableMasterSiswa();
-          updateSyncStatsUI();
-          if (showNotification) showToast(`Berhasil memuat ${parsedList.length} siswa dari Sheets!`, 'success');
-          addSyncLog(`Berhasil menarik ${parsedList.length} data siswa.`, 'success');
-          return parsedList;
-        }
-      } catch (err) {
-        if (showNotification) showToast('Menggunakan data siswa lokal.', 'info');
-        addSyncLog('Koneksi langsung Sheets terhalang (menggunakan data lokal)', 'info');
-      }
-      return null;
     }
 
     function parseGoogleSheetCSV(csvText) {
@@ -3160,7 +3065,7 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
         showToast(`Data siswa ${nama} berhasil diperbarui`, 'success');
       } else {
         if (appData.siswa.some(x => x.username === username)) {
-          showToast(`Username ${username} sudah dipakai!`, 'error');
+          showToast(`Username ${username} sudah dipakai siswa lain!`, 'error');
           return;
         }
         appData.siswa.push(siswaObj);
@@ -3181,14 +3086,18 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
     function hapusDataSiswa(username) {
       showCustomConfirm(
         'Hapus Data Siswa',
-        `Hapus siswa "${username}" secara permanen?`,
+        `Apakah Anda yakin ingin menghapus data siswa dengan username "${username}"? Tindakan ini permanen.`,
         function() {
           appData.siswa = appData.siswa.filter(s => s.username !== username);
           saveDataToStorage();
           renderTableMasterSiswa();
           updateSyncStatsUI();
           showToast(`Siswa ${username} berhasil dihapus`, 'info');
-          sendDataToGoogleSheets({ action: 'hapusSiswa', username: username });
+
+          sendDataToGoogleSheets({
+            action: 'hapusSiswa',
+            username: username
+          });
         },
         true
       );
@@ -3215,7 +3124,7 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
           });
         }
       } catch (e) {
-        console.error('JsBarcode:', e);
+        console.error('JsBarcode render error:', e);
       }
 
       document.getElementById('modalPreviewKartu').classList.remove('hidden');
@@ -3246,11 +3155,150 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
       window.print();
     }
 
-    function openModalDownloadSemuaKartu() {
+    function applyConfigLockUI() {
+      const isLocked = !!globalSettings.isConfigLocked;
+      const inputs = [
+        'inputAppsScriptUrl',
+        'inputSpreadsheetId',
+        'inputSheetGidSiswa',
+        'inputSheetGidPresensi',
+        'inputSheetGidSPP',
+        'inputSheetGidUsers'
+      ];
+
+      inputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.readOnly = isLocked;
+          if (isLocked) {
+            el.classList.add('bg-slate-100', 'cursor-not-allowed');
+            el.classList.remove('bg-white');
+          } else {
+            el.classList.remove('bg-slate-100', 'cursor-not-allowed');
+            el.classList.add('bg-white');
+          }
+        }
+      });
+
+      const banner = document.getElementById('configLockBanner');
+      const icon = document.getElementById('lockStatusIcon');
+      const text = document.getElementById('lockStatusText');
+      const btn = document.getElementById('btnToggleLockConfig');
+      const btnSimpan = document.getElementById('btnSimpanConfig');
+
+      if (isLocked) {
+        if (banner) banner.className = 'p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-between';
+        if (icon) icon.innerHTML = '<i class="fa-solid fa-lock text-emerald-600"></i>';
+        if (text) text.innerHTML = '<span class="text-emerald-950 font-bold">Status Konfigurasi: Terkunci Permanen</span>';
+        if (btn) {
+          btn.innerHTML = '<i class="fa-solid fa-lock-open text-xs"></i> <span>Buka Kunci</span>';
+          btn.className = 'px-3.5 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 text-[11px] font-bold rounded-xl shadow-xs transition flex items-center gap-1.5';
+        }
+        if (btnSimpan) {
+          btnSimpan.disabled = true;
+          btnSimpan.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+      } else {
+        if (banner) banner.className = 'p-3.5 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-between';
+        if (icon) icon.innerHTML = '<i class="fa-solid fa-lock-open text-amber-600"></i>';
+        if (text) text.innerHTML = '<span class="text-amber-950 font-bold">Status Konfigurasi: Terbuka (Dapat Diedit)</span>';
+        if (btn) {
+          btn.innerHTML = '<i class="fa-solid fa-lock text-xs"></i> <span>Kunci Kembali</span>';
+          btn.className = 'px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-bold rounded-xl shadow-xs transition flex items-center gap-1.5';
+        }
+        if (btnSimpan) {
+          btnSimpan.disabled = false;
+          btnSimpan.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+      }
+    }
+
+    function toggleKunciKonfigurasi() {
+      if (globalSettings.isConfigLocked) {
+        showCustomConfirm(
+          'Buka Kunci Konfigurasi',
+          'Apakah Anda yakin ingin membuka kunci formulir konfigurasi spreadsheet untuk mengubah GID atau URL?',
+          function() {
+            globalSettings.isConfigLocked = false;
+            saveGlobalSettings();
+            applyConfigLockUI();
+            showToast('Kunci konfigurasi dibuka. Anda dapat mengedit GID.', 'info');
+          },
+          false
+        );
+      } else {
+        globalSettings.isConfigLocked = true;
+        saveGlobalSettings();
+        applyConfigLockUI();
+        showToast('Konfigurasi spreadsheet telah dikunci kembali.', 'success');
+      }
+    }
+
+    function simpanPengaturanUrl() {
+      const input = document.getElementById('inputAppsScriptUrl');
+      const inId = document.getElementById('inputSpreadsheetId');
+      const inGidSiswa = document.getElementById('inputSheetGidSiswa');
+      const inGidPresensi = document.getElementById('inputSheetGidPresensi');
+      const inGidSPP = document.getElementById('inputSheetGidSPP');
+      const inGidUsers = document.getElementById('inputSheetGidUsers');
+
+      if (input) globalSettings.apiUrl = input.value.trim();
+      if (inId) globalSettings.spreadsheetId = inId.value.trim();
+      if (inGidSiswa) globalSettings.sheetGidSiswa = inGidSiswa.value.trim();
+      if (inGidPresensi) globalSettings.sheetGidPresensi = inGidPresensi.value.trim();
+      if (inGidSPP) globalSettings.sheetGidSPP = inGidSPP.value.trim();
+      if (inGidUsers) globalSettings.sheetGidUsers = inGidUsers.value.trim();
+
+      globalSettings.isConfigLocked = true;
+
+      saveGlobalSettings();
+      applyConfigLockUI();
+
+      showToast('Konfigurasi berhasil disimpan dan TERKUNCI secara aman!', 'success');
+      addSyncLog('Konfigurasi 4 Sheet GID disimpan & terkunci.', 'success');
+
+      tarikDataRealtimeSemuaSheet();
+    }
+
+    async function tarikDataRealtimeSemuaSheet() {
+      showToast('Menghubungi Google Spreadsheet secara realtime...', 'info');
+      addSyncLog('Memulai penarikan realtime seluruh data sheet...');
+      const statusText = document.getElementById('cloudSyncStatusText');
+      if (statusText) statusText.textContent = 'Menyinkronkan...';
+
+      try {
+        await fetchSiswaDirectFromGoogleSheets(false);
+        if (globalSettings.sheetGidPresensi) await fetchPresensiDirectFromGoogleSheets(false);
+        if (globalSettings.sheetGidSPP) await fetchSPPDirectFromGoogleSheets(false);
+        if (globalSettings.sheetGidUsers) await fetchUsersDirectFromGoogleSheets(false);
+
+        refreshAllViews();
+        if (statusText) statusText.textContent = 'Sheets Terhubung';
+        showToast('Data realtime berhasil ditarik dari seluruh Google Sheets!', 'success');
+        addSyncLog(`Data realtime berhasil diperbarui dari Google Sheets.`, 'success');
+      } catch (err) {
+        console.error('Tarik realtime error:', err);
+        showToast('Terjadi kendala saat membaca data spreadsheet.', 'warning');
+        addSyncLog('Kendala realtime: ' + err.message, 'error');
+      }
+    }
+
+    function handleLogout() {
+      if (isCameraScanning) stopCameraScanner();
       showCustomConfirm(
-        'Download Seluruh Kartu',
-        'Unduh seluruh kartu barcode siswa ke dalam format ZIP?',
-        function() { prosesDownloadSemuaKartuZip(); },
+        'Konfirmasi Logout',
+        'Apakah Anda yakin ingin keluar dari akun saat ini?',
+        function() {
+          appData.currentUser = null;
+          saveDataToStorage();
+          document.getElementById('adminNavTabs').classList.add('hidden');
+          document.getElementById('portalSiswaSection').classList.add('hidden');
+          document.getElementById('currentUserNameDisplay').textContent = 'Tamu';
+          document.getElementById('currentUserRoleDisplay').textContent = 'LOGOUT';
+          
+          showToast('Anda telah berhasil keluar.', 'info');
+          openModalLogin(true);
+        },
         false
       );
     }
@@ -3693,70 +3741,12 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
       if (elU) elU.textContent = (appData.users || []).length;
     }
 
-    function simpanPengaturanUrl() {
-      const input = document.getElementById('inputAppsScriptUrl');
-      const inId = document.getElementById('inputSpreadsheetId');
-      const inGid = document.getElementById('inputSheetGid');
-
-      if (input) globalSettings.apiUrl = input.value.trim();
-      if (inId) globalSettings.spreadsheetId = inId.value.trim();
-      if (inGid) globalSettings.sheetGid = inGid.value.trim();
-
-      saveGlobalSettings();
-      showToast('Konfigurasi spreadsheet berhasil disimpan!', 'success');
-    }
-
     async function ujiKoneksiSheets() {
       showToast('Koneksi sistem terhubung aktif!', 'success');
     }
 
     async function syncAllToCloud() {
       showToast('Sinkronisasi database ke Sheets berhasil dikirim!', 'success');
-    }
-
-    async function fetchDataFromCloud(showNotification = true) {
-      const url = globalSettings.apiUrl;
-      if (!url || url.includes('YourDeploymentId')) return;
-
-      if (showNotification) {
-        showToast('Menarik data terbaru dari Google Spreadsheet...', 'info');
-      }
-      addSyncLog('Menarik data terbaru dari Google Apps Script...');
-      try {
-        const res = await fetch(`${url}?action=getAllData`);
-        const result = await res.json();
-        if (result && result.data) {
-          if (Array.isArray(result.data.siswa) && result.data.siswa.length > 0) {
-            appData.siswa = result.data.siswa;
-          }
-          if (Array.isArray(result.data.presensi) && result.data.presensi.length > 0) {
-            appData.presensi = result.data.presensi;
-          }
-          if (Array.isArray(result.data.spp) && result.data.spp.length > 0) {
-            appData.spp = result.data.spp;
-          }
-          if (Array.isArray(result.data.users) && result.data.users.length > 0) {
-            appData.users = result.data.users;
-          }
-          saveDataToStorage();
-          refreshAllViews();
-          if (showNotification) {
-            showToast('Data Google Sheets berhasil diperbarui!', 'success');
-          }
-          addSyncLog('Seluruh data berhasil ditarik dari Google Sheets.', 'success');
-        }
-      } catch (e) {
-        // Fallback coba tarik masing-masing tab via direct GID jika Apps Script terkendala
-        await fetchSiswaDirectFromGoogleSheets(false);
-        if (globalSettings.sheetGidPresensi) await fetchPresensiDirectFromGoogleSheets(false);
-        if (globalSettings.sheetGidSPP) await fetchSPPDirectFromGoogleSheets(false);
-        if (globalSettings.sheetGidUsers) await fetchUsersDirectFromGoogleSheets(false);
-
-        if (showNotification) {
-          showToast('Data ditarik melalui GID tab Spreadsheet.', 'info');
-        }
-        addSyncLog('Menarik via GID tab spreadsheet selesai.', 'info');
-      }
     }
 
     function cetakLaporanPresensiPDF() {
@@ -3892,6 +3882,23 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
         }, 150);
+      }
+    }
+
+    function openModalScriptCode() {
+      document.getElementById('modalScriptCode')?.classList.remove('hidden');
+    }
+
+    function closeModalScriptCode() {
+      document.getElementById('modalScriptCode')?.classList.add('hidden');
+    }
+
+    function salinTeksAppsScript() {
+      const ta = document.getElementById('appsScriptCodeText');
+      if (ta) {
+        ta.select();
+        document.execCommand('copy');
+        showToast('Kode Google Apps Script berhasil disalin!', 'success');
       }
     }
 
@@ -4100,47 +4107,7 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
       if (targetLower === 'settings') updateSyncStatsUI();
     }
 
-    function bukaPilihanAkun() {
-      document.getElementById('modalPilihAkun')?.classList.remove('hidden');
-    }
-
-    function tutupPilihanAkun() {
-      document.getElementById('modalPilihAkun')?.classList.add('hidden');
-    }
-
-    function loginSebagai(tipe) {
-      tutupPilihanAkun();
-      if (tipe === 'admin') {
-        appData.currentUser = { nama: 'Bunda Ani (Admin)', username: 'admin', role: 'admin' };
-        saveDataToStorage();
-        document.getElementById('currentUserNameDisplay').textContent = appData.currentUser.nama;
-        document.getElementById('currentUserRoleDisplay').textContent = 'ADMINISTRATOR';
-        document.getElementById('adminNavTabs').classList.remove('hidden');
-        document.getElementById('portalSiswaSection').classList.add('hidden');
-        pindahTab('scanner');
-        showToast('Beralih ke akun Admin!', 'success');
-      } else if (tipe === 'petugas') {
-        appData.currentUser = { nama: 'Kak Rina (Petugas)', username: 'petugas', role: 'petugas' };
-        saveDataToStorage();
-        document.getElementById('currentUserNameDisplay').textContent = appData.currentUser.nama;
-        document.getElementById('currentUserRoleDisplay').textContent = 'PETUGAS';
-        document.getElementById('adminNavTabs').classList.remove('hidden');
-        document.getElementById('portalSiswaSection').classList.add('hidden');
-        pindahTab('scanner');
-        showToast('Beralih ke akun Petugas Presensi!', 'success');
-      } else if (tipe === 'siswa_202601') {
-        const s = (appData.siswa || []).find(x => x.username === '202601') || appData.siswa[0];
-        appData.currentUser = { nama: s.nama, username: s.username, role: 'siswa' };
-        saveDataToStorage();
-        document.getElementById('currentUserNameDisplay').textContent = s.nama;
-        document.getElementById('currentUserRoleDisplay').textContent = 'SISWA';
-        renderPortalSiswa(s);
-        showToast(`Beralih ke Portal Siswa: ${s.nama}!`, 'success');
-      }
-    }
-
-    function openModalLoginManual() {
-      tutupPilihanAkun();
+    function openModalLogin(isMandatory = false) {
       document.getElementById('modalLogin')?.classList.remove('hidden');
     }
 
@@ -4178,15 +4145,6 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
       }
 
       showToast('Username atau password salah!', 'error');
-    }
-
-    function closeModalLogin() {
-      document.getElementById('modalLogin')?.classList.add('hidden');
-    }
-
-    function handleLogout() {
-      if (isCameraScanning) stopCameraScanner();
-      bukaPilihanAkun();
     }
 
     function refreshAllViews() {
@@ -4235,11 +4193,21 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
       if (document.getElementById('inputSpreadsheetId') && globalSettings.spreadsheetId) {
         document.getElementById('inputSpreadsheetId').value = globalSettings.spreadsheetId;
       }
-      if (document.getElementById('inputSheetGid') && globalSettings.sheetGid) {
-        document.getElementById('inputSheetGid').value = globalSettings.sheetGid;
+      if (document.getElementById('inputSheetGidSiswa')) {
+        document.getElementById('inputSheetGidSiswa').value = globalSettings.sheetGidSiswa || DEFAULT_GID_SISWA;
+      }
+      if (document.getElementById('inputSheetGidPresensi')) {
+        document.getElementById('inputSheetGidPresensi').value = globalSettings.sheetGidPresensi || '';
+      }
+      if (document.getElementById('inputSheetGidSPP')) {
+        document.getElementById('inputSheetGidSPP').value = globalSettings.sheetGidSPP || '';
+      }
+      if (document.getElementById('inputSheetGidUsers')) {
+        document.getElementById('inputSheetGidUsers').value = globalSettings.sheetGidUsers || '';
       }
 
-      // Pastikan aplikasi langsung siap dan dapat dijelajahi
+      applyConfigLockUI();
+
       if (!appData.currentUser) {
         appData.currentUser = { nama: 'Bunda Ani (Admin)', username: 'admin', role: 'admin' };
       }
@@ -4257,6 +4225,7 @@ function hapusBarisBerdasarkanKolom(ss, sheetName, colIndex, valueToMatch) {
 
       refreshAllViews();
       initIdleDetection();
+      autoSyncFromGoogleSheets();
     });
   </script>
 </body>
