@@ -7,7 +7,7 @@
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Font Awesome Icons CDN -->
+  <!-- Font Awesome CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Google Fonts: Inter & Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -103,7 +103,7 @@
       </div>
 
       <div class="flex items-center space-x-3">
-        <div id="cloudSyncStatusBadge" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-950 text-emerald-400 text-[11px] font-mono border border-indigo-800" title="Sinkronisasi Google Sheets">
+        <div id="cloudSyncStatusBadge" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-950 text-emerald-400 text-[11px] font-mono border border-indigo-800" title="Status Sinkronisasi Sheets">
           <span id="cloudSyncIndicatorDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           <span id="cloudSyncStatusText">Sheets Terhubung</span>
         </div>
@@ -179,7 +179,7 @@
               <h2 class="text-base font-bold text-slate-800 flex items-center gap-2 font-brand">
                 <i class="fa-solid fa-camera text-indigo-600"></i> Kamera Scanner Barcode
               </h2>
-              <p class="text-xs text-slate-500">Scan kartu barcode / QR code siswa secara instan (28 FPS)</p>
+              <p class="text-xs text-slate-500">Scan kartu barcode / QR code siswa secara instan</p>
             </div>
             <div class="flex gap-2">
               <button id="btnToggleCamera" onclick="toggleCameraScanner()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-sm transition">
@@ -202,13 +202,13 @@
             </div>
             <div id="cameraPlaceholderText" class="text-center p-6 text-slate-400 space-y-2">
               <i class="fa-solid fa-barcode text-5xl text-indigo-400/50 mb-2 block"></i>
-              <p class="text-xs font-medium">Klik tombol <b>"Aktifkan Kamera"</b> untuk scan kartu fisik, atau gunakan input manual di samping kanan.</p>
+              <p class="text-xs font-medium">Klik <b>"Aktifkan Kamera"</b> untuk scan kartu fisik, atau gunakan form di samping.</p>
             </div>
           </div>
 
           <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-3 flex items-center gap-3 text-xs text-indigo-900">
-            <i class="fa-solid fa-circle-info text-indigo-600 text-base"></i>
-            <span>Tersinkron dengan Google Sheets. Dilengkapi audio notifikasi dan proteksi presensi ganda di hari yang sama.</span>
+            <i class="fa-solid fa-shield-halved text-indigo-600 text-base"></i>
+            <span>Dilengkapi proteksi presensi ganda otomatis: siswa yang sudah presensi di tanggal ini tidak dapat presensi ulang.</span>
           </div>
         </div>
 
@@ -314,7 +314,7 @@
             <button onclick="openModalExportImportSiswa()" class="px-3 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
               <i class="fa-solid fa-file-csv"></i> Impor / Ekspor CSV
             </button>
-            <button id="btnCetakSemuaA4" onclick="cetakSemuaKartuA4()" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition" title="Susun dan Cetak Semua Kartu Siswa di Lembar Standar A4">
+            <button id="btnCetakSemuaA4" onclick="cetakSemuaKartuA4()" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition cursor-pointer" title="Susun dan Cetak Semua Kartu Siswa di Lembar Standar A4">
               <i class="fa-solid fa-print"></i> Cetak Semua Kartu (A4)
             </button>
             <button onclick="prosesDownloadSemuaKartuZip()" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
@@ -782,24 +782,24 @@
               <i class="fa-solid fa-graduation-cap"></i>
             </div>
             <div>
-              <div class="text-xs text-indigo-200 uppercase font-semibold">Portal Siswa</div>
-              <h2 id="portalSiswaNama" class="text-xl sm:text-2xl font-bold font-brand">Ahmad Faiz</h2>
+              <div class="text-xs text-indigo-200 uppercase font-semibold">Selamat Datang,</div>
+              <h2 id="portalSiswaNama" class="text-xl sm:text-2xl font-bold font-brand">-</h2>
               <div class="text-xs text-indigo-200 flex items-center gap-3 mt-0.5">
-                <span>Username: <b id="portalSiswaNis" class="text-white">202601</b></span>
+                <span>Username: <b id="portalSiswaNis" class="text-white">-</b></span>
                 <span>•</span>
-                <span>Kelas: <b id="portalSiswaKelas" class="text-white">4 SD</b></span>
+                <span>Kelas: <b id="portalSiswaKelas" class="text-white">-</b></span>
               </div>
             </div>
           </div>
           <button onclick="pindahTab('scanner')" class="self-start sm:self-auto px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-semibold transition flex items-center gap-2">
-            <i class="fa-solid fa-arrow-left"></i> Kembali ke Menu Admin
+            <i class="fa-solid fa-arrow-left"></i> Kembali ke Menu Utama
           </button>
         </div>
 
         <div class="bg-indigo-950/60 rounded-2xl p-4 border border-indigo-500/30 space-y-2">
           <div class="flex items-center justify-between text-xs font-bold">
             <span class="text-amber-300 uppercase tracking-wide">Progres Paket Bimbingan Belajar</span>
-            <span id="portalProgressPaketText" class="text-white">0 / 12 Pertemuan (Paket ke-1)</span>
+            <span id="portalProgressPaketText" class="text-white">0 / 12 Pertemuan</span>
           </div>
           <div class="w-full bg-indigo-900/80 rounded-full h-3 overflow-hidden border border-indigo-700/50">
             <div id="portalProgressBar" class="bg-gradient-to-r from-amber-400 to-amber-300 h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
@@ -816,7 +816,7 @@
                 <th class="py-2.5 px-3">Tanggal</th>
                 <th class="py-2.5 px-3">Waktu</th>
                 <th class="py-2.5 px-3">Status</th>
-                <th class="py-2.5 px-3">Catatan / Keterangan</th>
+                <th class="py-2.5 px-3">Keterangan</th>
               </tr>
             </thead>
             <tbody id="tbodyPortalPresensi" class="divide-y divide-slate-100"></tbody>
@@ -827,14 +827,99 @@
 
   </main>
 
+  <!-- MODAL SUDAH PRESENSI HARI INI -->
+  <div id="modalPeringatanSudahPresensi" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border-2 border-rose-500">
+      <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-3xl mx-auto ring-8 ring-rose-50">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <div>
+        <span class="inline-block px-3 py-1 bg-rose-100 text-rose-800 text-xs font-extrabold rounded-full uppercase tracking-wider mb-1">
+          SUDAH PRESENSI
+        </span>
+        <h3 class="text-lg font-black text-slate-800 font-brand">Anda Sudah Presensi Hari Ini</h3>
+        <p class="text-xs text-slate-500">Siswa tersebut telah terdaftar di presensi tanggal ini.</p>
+      </div>
+
+      <div class="bg-rose-50 border border-rose-100 rounded-2xl p-4 text-left text-xs space-y-1.5">
+        <div class="flex justify-between">
+          <span class="text-slate-500">Nama Siswa:</span>
+          <span id="modalPeringatanNama" class="font-bold text-rose-950">Nama Siswa</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-500">Username / NIS:</span>
+          <span id="modalPeringatanNis" class="font-bold font-mono text-slate-700">-</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-500">Tanggal:</span>
+          <span id="modalPeringatanTanggal" class="font-bold text-slate-800">-</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-500">Tercatat Pada:</span>
+          <span id="modalPeringatanWaktu" class="font-bold text-rose-700">-</span>
+        </div>
+      </div>
+
+      <button onclick="closeModalPeringatanSudahPresensi()" class="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md transition">
+        Mengerti
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL PRESENSI BERHASIL -->
+  <div id="modalPresensiBerhasil" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border-2 border-emerald-500">
+      <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl mx-auto shadow-md ring-8 ring-emerald-50">
+        <i class="fa-solid fa-circle-check"></i>
+      </div>
+      <div>
+        <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-extrabold rounded-full uppercase tracking-wider mb-1">
+          SUKSES TERCATAT
+        </span>
+        <h3 class="text-xl font-black text-slate-800 font-brand">Presensi Anda Tercatat</h3>
+        <p class="text-xs text-slate-500">Terima kasih telah melakukan presensi tepat waktu!</p>
+      </div>
+
+      <div class="bg-emerald-50/70 border border-emerald-100 rounded-2xl p-4 text-left text-xs space-y-1.5">
+        <div class="flex justify-between">
+          <span class="text-slate-500">Nama Siswa:</span>
+          <span id="modalBerhasilNama" class="font-bold text-emerald-950">Nama Siswa</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-500">Username:</span>
+          <span id="modalBerhasilNis" class="font-semibold text-emerald-800">-</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-500">Kelas:</span>
+          <span id="modalBerhasilKelas" class="font-semibold text-slate-700">-</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-500">Tanggal:</span>
+          <span id="modalBerhasilTanggal" class="font-bold text-slate-800">-</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-500">Jam:</span>
+          <span id="modalBerhasilWaktu" class="font-bold text-emerald-700">-</span>
+        </div>
+      </div>
+
+      <button onclick="closeModalPresensiBerhasil()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md transition">
+        Tutup (Selesai)
+      </button>
+    </div>
+  </div>
+
   <!-- MODAL LOGIN -->
   <div id="modalLogin" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4">
     <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-5 border border-slate-100">
       <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
-        <div class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold">
+        <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold">
           <i class="fa-solid fa-graduation-cap"></i>
         </div>
-        <h2 class="text-base font-bold text-slate-800 font-brand">Masuk SIM BIMBEL BA</h2>
+        <div>
+          <h2 class="text-base font-bold text-slate-800 font-brand">Masuk SIM BIMBEL BA</h2>
+          <p class="text-[10px] text-slate-500">Silakan login untuk mengakses sistem</p>
+        </div>
       </div>
 
       <form id="formLogin" onsubmit="event.preventDefault(); prosesLogin();" class="space-y-3.5">
@@ -842,12 +927,14 @@
           <label class="block text-xs font-semibold text-slate-700 mb-1">Username</label>
           <input type="text" id="loginUsername" required autocomplete="off" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="admin / petugas / id siswa">
         </div>
+
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">Password</label>
           <input type="password" id="loginPassword" required autocomplete="off" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="••••••••">
         </div>
+
         <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition">
-          Masuk
+          Masuk ke Aplikasi
         </button>
       </form>
     </div>
@@ -1140,9 +1227,12 @@
   <script>
     const STORAGE_KEY = 'sim_bimbel_ba_v3_2_state';
     const SETTINGS_KEY = 'sim_bimbel_ba_global_settings';
-    const MASTER_API_URL = 'https://script.google.com/macros/s/AKfycbzHY0JQxtVAg9px7n01csLjgHmLrDZEkHJBx2npJOneil-L0Qo0-gzdRkXj3xP13Wfb/exec';
+    const MASTER_API_URL = 'https://script.google.com/macros/s/AKfycbxT7IWkz_pHVuWC5foOg_ORlB3kDYPmZJ0dN8DhLNgzntllVlOznEA3Fe2CMk255IU/exec';
     
     let isCurrentlySyncing = false;
+    let html5QrScannerInstance = null;
+    let isCameraScanning = false;
+    let customConfirmCallback = null;
 
     const defaultData = {
       currentUser: null,
@@ -1190,13 +1280,108 @@
       return `https://wa.me/${clean}`;
     }
 
+    function getTodayDdMmYyyy() {
+      const now = new Date();
+      const d = String(now.getDate()).padStart(2, '0');
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const y = now.getFullYear();
+      return `${d}/${m}/${y}`;
+    }
+
+    function formatTanggalIndo(input) {
+      if (!input) return getTodayDdMmYyyy();
+      if (typeof input === 'string') {
+        const str = input.trim();
+        if (/^\d{2}\/\d{2}\/\d{4}$/.test(str)) return str;
+        if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(str)) {
+          const parts = str.split('/');
+          return `${String(parts[0]).padStart(2, '0')}/${String(parts[1]).padStart(2, '0')}/${parts[2]}`;
+        }
+        if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+          const parts = str.split('-');
+          return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+      }
+      return getTodayDdMmYyyy();
+    }
+
+    function playBeep(freq = 659, type = 'sine', duration = 0.15) {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function speakText(text) {
+      try {
+        if ('speechSynthesis' in window && text) {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = 'id-ID';
+          window.speechSynthesis.speak(utterance);
+        }
+      } catch (e) {}
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toastNotification');
+      const msg = document.getElementById('toastMessage');
+      const icon = document.getElementById('toastIcon');
+      if (!toast || !msg || !icon) return;
+
+      msg.textContent = message;
+      if (type === 'success') {
+        icon.className = 'fa-solid fa-circle-check text-emerald-400';
+      } else if (type === 'error') {
+        icon.className = 'fa-solid fa-circle-xmark text-rose-400';
+      } else {
+        icon.className = 'fa-solid fa-triangle-exclamation text-amber-400';
+      }
+
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3000);
+    }
+
+    function addSyncLog(msg, type = 'info') {
+      const term = document.getElementById('syncLogTerminal');
+      const timeEl = document.getElementById('syncTimestamp');
+      const now = new Date().toLocaleTimeString('id-ID');
+      if (timeEl) timeEl.textContent = now;
+      if (!term) return;
+
+      const div = document.createElement('div');
+      const colorClass = type === 'error' ? 'text-rose-400' : (type === 'success' ? 'text-emerald-400' : 'text-slate-300');
+      div.className = colorClass;
+      div.textContent = `[${now}] ${msg}`;
+      term.prepend(div);
+    }
+
     function loadData() {
       try {
+        const rawSettings = localStorage.getItem(SETTINGS_KEY);
+        if (rawSettings) {
+          globalSettings = JSON.parse(rawSettings);
+        }
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
           const parsed = JSON.parse(raw);
           appData = { ...defaultData, ...parsed };
-          // Pastikan setiap kali reload aplikasi selalu kembali ke posisi belum login (kosong)
+          // Pastikan setiap kali reload kembali ke posisi belum login
           appData.currentUser = null;
         }
       } catch (e) {
@@ -1225,182 +1410,254 @@
           body: JSON.stringify(payload)
         });
         
-        addSyncLog(`Data [${payload.action}] berhasil tersinkron ke Google Sheets!`, 'success');
+        addSyncLog(`Data [${payload.action}] berhasil disinkronkan ke Google Sheets!`, 'success');
         
         setTimeout(() => {
           syncAllSheetsData(true);
-        }, 1200);
+        }, 1500);
       } catch (err) {
-        addSyncLog(`Gagal sinkronisasi [${payload.action}]: ${err.message}`, 'error');
-        console.warn('Gagal sendDataToGoogleSheets:', err);
+        addSyncLog(`Gagal sync data: ${err.message}`, 'error');
       }
     }
 
     async function syncAllSheetsData(silent = false) {
-      if (isCurrentlySyncing) return;
-      isCurrentlySyncing = true;
       const url = globalSettings.apiUrl || MASTER_API_URL;
+      if (!url || isCurrentlySyncing) return;
+      isCurrentlySyncing = true;
+      const dot = document.getElementById('cloudSyncIndicatorDot');
+      const text = document.getElementById('cloudSyncStatusText');
+      if (dot) dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-ping';
+      if (text) text.textContent = 'Menyinkronkan...';
+
       try {
-        const res = await fetch(`${url}?action=getAllData`);
-        const json = await res.json();
-        if (json && json.status === 'success' && json.data) {
-          appData.siswa = json.data.siswa || [];
-          appData.presensi = json.data.presensi || [];
-          appData.spp = json.data.spp || [];
-          if (json.data.users && json.data.users.length > 0) {
-            appData.users = json.data.users;
+        const resp = await fetch(`${url}?action=getAllData`);
+        const result = await resp.json();
+        if (result && result.data) {
+          appData.siswa = result.data.siswa || [];
+          appData.presensi = result.data.presensi || [];
+          appData.spp = result.data.spp || [];
+          if (result.data.users && result.data.users.length > 0) {
+            appData.users = result.data.users;
           }
           saveDataToStorage();
-          renderTableMasterSiswa();
+
           renderLivePresensiLog();
+          renderTableMasterSiswa();
           renderTableSPP();
+          renderTableUsers();
           terapkanFilterKehadiran();
           renderTableRekapSPP();
-          renderTableUsers();
           updateSyncStatsUI();
-          if (!silent) showToast('Data berhasil disinkronkan dari Google Sheets', 'success');
+
+          if (!silent) showToast('Data berhasil disinkronkan dengan Google Sheets', 'success');
+          if (dot) dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
+          if (text) text.textContent = 'Sheets Terhubung';
         }
-      } catch (e) {
-        if (!silent) showToast('Gagal sinkron dengan Google Sheets', 'warning');
+      } catch (err) {
+        if (!silent) showToast('Koneksi ke Sheets tertunda (offline/terbatas)', 'warning');
+        if (dot) dot.className = 'w-2 h-2 rounded-full bg-rose-400';
+        if (text) text.textContent = 'Koneksi Terbatas';
       } finally {
         isCurrentlySyncing = false;
       }
     }
 
-    function addSyncLog(msg, type = 'info') {
-      const term = document.getElementById('syncLogTerminal');
-      const timeEl = document.getElementById('syncTimestamp');
-      const now = new Date().toLocaleTimeString('id-ID');
-      if (timeEl) timeEl.textContent = now;
-      if (!term) return;
-
-      const div = document.createElement('div');
-      div.className = type === 'error' ? 'text-rose-400' : (type === 'success' ? 'text-emerald-400' : 'text-slate-300');
-      div.textContent = `[${now}] ${msg}`;
-      term.prepend(div);
+    function closeModalPeringatanSudahPresensi() {
+      document.getElementById('modalPeringatanSudahPresensi')?.classList.add('hidden');
     }
 
-    function showToast(msg, type = 'success') {
-      const toast = document.getElementById('toastNotification');
-      const text = document.getElementById('toastMessage');
-      const icon = document.getElementById('toastIcon');
-      if (!toast || !text || !icon) return;
-      text.textContent = msg;
-      icon.className = type === 'success' ? 'fa-solid fa-circle-check text-emerald-400' : (type === 'error' ? 'fa-solid fa-circle-xmark text-rose-400' : 'fa-solid fa-triangle-exclamation text-amber-400');
-      toast.classList.remove('translate-y-20', 'opacity-0');
-      setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
+    function closeModalPresensiBerhasil() {
+      document.getElementById('modalPresensiBerhasil')?.classList.add('hidden');
     }
-
-    let customConfirmCallback = null;
-    function showCustomConfirm(title, message, onConfirmCallback, isDestructive = true) {
-      customConfirmCallback = onConfirmCallback;
-      const modal = document.getElementById('customConfirmModal');
-      document.getElementById('customConfirmTitle').textContent = title;
-      document.getElementById('customConfirmMessage').textContent = message;
-      const btn = document.getElementById('customConfirmBtnYes');
-      btn.className = isDestructive ? 'flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md transition' : 'flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition';
-      btn.onclick = function() {
-        const action = customConfirmCallback;
-        closeCustomConfirm();
-        if (typeof action === 'function') action();
-      };
-      modal.classList.remove('hidden');
-    }
-
-    function closeCustomConfirm() {
-      document.getElementById('customConfirmModal')?.classList.add('hidden');
-      customConfirmCallback = null;
-    }
-
-    function pindahTab(tabId) {
-      const tabs = ['scanner', 'siswa', 'spp', 'laporan', 'rekapSPP', 'users', 'settings'];
-      document.getElementById('portalSiswaSection')?.classList.add('hidden');
-      tabs.forEach(t => {
-        const titleCase = t === 'rekapSPP' ? 'RekapSPP' : (t.charAt(0).toUpperCase() + t.slice(1));
-        document.getElementById(`tabContent${titleCase}`)?.classList.add('hidden');
-        const btn = document.getElementById(`btnTab${titleCase}`);
-        if (btn) btn.className = 'nav-tab-btn flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap';
-      });
-
-      const activeTitle = tabId === 'rekapSPP' ? 'RekapSPP' : (tabId.charAt(0).toUpperCase() + tabId.slice(1));
-      document.getElementById(`tabContent${activeTitle}`)?.classList.remove('hidden');
-      const activeBtn = document.getElementById(`btnTab${activeTitle}`);
-      if (activeBtn) activeBtn.className = 'nav-tab-btn flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-indigo-600 text-white shadow-sm whitespace-nowrap';
-
-      if (tabId === 'siswa') renderTableMasterSiswa();
-      if (tabId === 'spp') renderTableSPP();
-      if (tabId === 'laporan') terapkanFilterKehadiran();
-      if (tabId === 'rekapSPP') renderTableRekapSPP();
-      if (tabId === 'users') renderTableUsers();
-    }
-
-    let html5QrScannerInstance = null;
-    let isCameraScanning = false;
-
-    async function toggleCameraScanner() {
-      const btn = document.getElementById('btnToggleCamera');
-      const btnText = document.getElementById('btnToggleCameraText');
-      const laser = document.getElementById('cameraLaserOverlay');
-      const placeholder = document.getElementById('cameraPlaceholderText');
-
-      if (isCameraScanning) {
-        if (html5QrScannerInstance) await html5QrScannerInstance.stop();
-        isCameraScanning = false;
-        btnText.textContent = 'Aktifkan Kamera';
-        btn.className = 'px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-sm transition';
-        laser.classList.add('hidden');
-        placeholder.classList.remove('hidden');
-      } else {
-        try {
-          if (!html5QrScannerInstance) html5QrScannerInstance = new Html5Qrcode('cameraReader');
-          await html5QrScannerInstance.start(
-            { facingMode: 'environment' },
-            { fps: 24, qrbox: { width: 250, height: 250 } },
-            (decodedText) => prosesPresensi(decodedText),
-            () => {}
-          );
-          isCameraScanning = true;
-          btnText.textContent = 'Matikan Kamera';
-          btn.className = 'px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-sm transition';
-          laser.classList.remove('hidden');
-          placeholder.classList.add('hidden');
-        } catch (e) {
-          showToast('Kamera tidak dapat diakses', 'warning');
-        }
-      }
-    }
-
-    function gantiKameraSumber(val) {}
 
     function prosesPresensi(query) {
       if (!query) return;
-      const q = query.trim().toLowerCase();
-      const siswa = appData.siswa.find(s => s.username.toLowerCase() === q || s.nama.toLowerCase() === q);
+      const q = String(query).trim().toLowerCase();
+      
+      // Cari data siswa berdasarkan username atau nama
+      let siswa = (appData.siswa || []).find(s => s.username && s.username.toLowerCase() === q);
+      if (!siswa) siswa = (appData.siswa || []).find(s => s.nama && s.nama.toLowerCase() === q);
+      if (!siswa) siswa = (appData.siswa || []).find(s => s.nama && s.nama.toLowerCase().includes(q));
+
       if (!siswa) {
-        showToast(`Siswa "${query}" tidak ditemukan!`, 'warning');
+        playBeep(330, 'square', 0.25);
+        showToast(`Siswa "${query}" tidak ditemukan di database!`, 'warning');
         return;
       }
 
-      const today = new Date().toLocaleDateString('id-ID');
-      const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      // Ambil tanggal target presensi
+      const inputTanggal = document.getElementById('presensiTanggal')?.value;
+      const targetTanggalFormatted = formatTanggalIndo(inputTanggal || getTodayDdMmYyyy());
+      const usernameTarget = String(siswa.username || '').toLowerCase().trim();
+      const namaTarget = String(siswa.nama || '').toLowerCase().trim();
+
+      // PROTEKSI KETAT PRESENSI GANDA:
+      // Scanner dan Manual saling mengunci jika tanggal & NIS/nama sama
+      const sudahPresensi = (appData.presensi || []).find(p => {
+        const tglPresensi = formatTanggalIndo(p.tanggal);
+        const nisPresensi = String(p.nis || '').toLowerCase().trim();
+        const namaPresensi = String(p.nama || '').toLowerCase().trim();
+
+        const matchTanggal = (tglPresensi === targetTanggalFormatted);
+        const matchIdentitas = (nisPresensi === usernameTarget) || (namaPresensi === namaTarget);
+
+        return matchTanggal && matchIdentitas;
+      });
+
+      if (sudahPresensi) {
+        playBeep(260, 'sawtooth', 0.35);
+        speakText('Siswa sudah presensi hari ini');
+
+        const elNama = document.getElementById('modalPeringatanNama');
+        const elNis = document.getElementById('modalPeringatanNis');
+        const elTgl = document.getElementById('modalPeringatanTanggal');
+        const elWaktu = document.getElementById('modalPeringatanWaktu');
+
+        if (elNama) elNama.textContent = siswa.nama;
+        if (elNis) elNis.textContent = siswa.username;
+        if (elTgl) elTgl.textContent = formatTanggalIndo(sudahPresensi.tanggal);
+        if (elWaktu) elWaktu.textContent = `${sudahPresensi.waktu || '-'} WIB (${sudahPresensi.status || 'Hadir'})`;
+
+        document.getElementById('modalPeringatanSudahPresensi')?.classList.remove('hidden');
+        showToast(`Peringatan: ${siswa.nama} sudah presensi hari ini!`, 'warning');
+        clearScanManualInput();
+        return;
+      }
+
+      // Jika belum presensi, lakukan pencatatan
+      const now = new Date();
+      const time = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      const customKeterangan = document.getElementById('presensiKeterangan')?.value ? document.getElementById('presensiKeterangan').value.trim() : '-';
 
       const newRecord = {
         id: 'PRS-' + Date.now(),
-        tanggal: today,
+        tanggal: targetTanggalFormatted,
         waktu: time,
         nis: siswa.username,
         nama: siswa.nama,
         kelas: siswa.kelas || '-',
         status: 'Hadir',
-        keterangan: '-'
+        keterangan: customKeterangan
       };
 
+      if (!Array.isArray(appData.presensi)) appData.presensi = [];
       appData.presensi.unshift(newRecord);
       saveDataToStorage();
       renderLivePresensiLog();
+      updateSyncStatsUI();
+
+      const mNama = document.getElementById('modalBerhasilNama');
+      const mNis = document.getElementById('modalBerhasilNis');
+      const mKelas = document.getElementById('modalBerhasilKelas');
+      const mTgl = document.getElementById('modalBerhasilTanggal');
+      const mWaktu = document.getElementById('modalBerhasilWaktu');
+
+      if (mNama) mNama.textContent = siswa.nama;
+      if (mNis) mNis.textContent = siswa.username;
+      if (mKelas) mKelas.textContent = siswa.kelas || '-';
+      if (mTgl) mTgl.textContent = targetTanggalFormatted;
+      if (mWaktu) mWaktu.textContent = `${time} WIB`;
+
+      document.getElementById('modalPresensiBerhasil')?.classList.remove('hidden');
+      playBeep(659, 'sine', 0.12);
+      setTimeout(() => playBeep(988, 'sine', 0.18), 120);
+      speakText(`Presensi berhasil, ${siswa.nama}`);
+
       showToast(`Presensi berhasil: ${siswa.nama}`, 'success');
 
+      clearScanManualInput();
+      const inputKet = document.getElementById('presensiKeterangan');
+      if (inputKet) inputKet.value = '';
+
       sendDataToGoogleSheets({ action: 'simpanPresensi', ...newRecord });
+    }
+
+    async function toggleCameraScanner() {
+      if (isCameraScanning) {
+        await stopCameraScanner();
+      } else {
+        await startCameraScanner();
+      }
+    }
+
+    async function startCameraScanner(selectedCameraId = null) {
+      const btn = document.getElementById('btnToggleCamera');
+      const btnText = document.getElementById('btnToggleCameraText');
+      const laser = document.getElementById('cameraLaserOverlay');
+      const placeholder = document.getElementById('cameraPlaceholderText');
+      const camSelect = document.getElementById('cameraSourceSelect');
+
+      try {
+        if (typeof Html5Qrcode === 'undefined') {
+          showToast('Pustaka scanner belum dimuat', 'error');
+          return;
+        }
+
+        if (!html5QrScannerInstance) {
+          html5QrScannerInstance = new Html5Qrcode('cameraReader', { verbose: false });
+        }
+
+        const devices = await Html5Qrcode.getCameras();
+        if (!devices || devices.length === 0) {
+          showToast('Tidak ada kamera terdeteksi', 'warning');
+          return;
+        }
+
+        if (camSelect) {
+          camSelect.innerHTML = '';
+          devices.forEach((cam, idx) => {
+            const opt = document.createElement('option');
+            opt.value = cam.id;
+            opt.textContent = cam.label || `Kamera ${idx + 1}`;
+            camSelect.appendChild(opt);
+          });
+          if (devices.length > 1) camSelect.classList.remove('hidden');
+        }
+
+        let cameraIdToUse = selectedCameraId || devices[0].id;
+        const rearCamera = devices.find(d => /back|rear|belakang/i.test(d.label));
+        if (!selectedCameraId && rearCamera) cameraIdToUse = rearCamera.id;
+
+        await html5QrScannerInstance.start(
+          cameraIdToUse,
+          { fps: 24, qrbox: { width: 280, height: 260 } },
+          (decodedText) => {
+            prosesPresensi(decodedText);
+          },
+          () => {}
+        );
+
+        isCameraScanning = true;
+        if (btn) btn.className = 'px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-sm transition';
+        if (btnText) btnText.textContent = 'Matikan Kamera';
+        if (laser) laser.classList.remove('hidden');
+        if (placeholder) placeholder.classList.add('hidden');
+      } catch (err) {
+        showToast('Kamera tidak dapat diakses atau izin diblokir browser', 'error');
+      }
+    }
+
+    async function stopCameraScanner() {
+      const btn = document.getElementById('btnToggleCamera');
+      const btnText = document.getElementById('btnToggleCameraText');
+      const laser = document.getElementById('cameraLaserOverlay');
+      const placeholder = document.getElementById('cameraPlaceholderText');
+
+      if (html5QrScannerInstance && isCameraScanning) {
+        try { await html5QrScannerInstance.stop(); } catch (e) {}
+      }
+      isCameraScanning = false;
+      if (btn) btn.className = 'px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-sm transition';
+      if (btnText) btnText.textContent = 'Aktifkan Kamera';
+      if (laser) laser.classList.add('hidden');
+      if (placeholder) placeholder.classList.remove('hidden');
+    }
+
+    async function gantiKameraSumber(cameraId) {
+      if (isCameraScanning) {
+        await stopCameraScanner();
+        await startCameraScanner(cameraId);
+      }
     }
 
     function handleManualSearchInput(q) {
@@ -1412,7 +1669,7 @@
         return;
       }
       btnClear.classList.remove('hidden');
-      const res = appData.siswa.filter(s => s.nama.toLowerCase().includes(q.toLowerCase()) || s.username.toLowerCase().includes(q.toLowerCase()));
+      const res = (appData.siswa || []).filter(s => s.nama.toLowerCase().includes(q.toLowerCase()) || s.username.toLowerCase().includes(q.toLowerCase()));
       if (res.length === 0) {
         dropdown.innerHTML = '<div class="p-2.5 text-xs text-slate-400">Tidak ada siswa cocok</div>';
       } else {
@@ -1433,10 +1690,14 @@
     }
 
     function clearScanManualInput() {
-      document.getElementById('inputScanManual').value = '';
-      document.getElementById('selectedManualStudentQuery').value = '';
-      document.getElementById('dropdownSiswaManual').classList.add('hidden');
-      document.getElementById('btnClearScanManual').classList.add('hidden');
+      const el = document.getElementById('inputScanManual');
+      const sel = document.getElementById('selectedManualStudentQuery');
+      const drop = document.getElementById('dropdownSiswaManual');
+      const btn = document.getElementById('btnClearScanManual');
+      if (el) el.value = '';
+      if (sel) sel.value = '';
+      if (drop) drop.classList.add('hidden');
+      if (btn) btn.classList.add('hidden');
     }
 
     function submitPresensiManual() {
@@ -1448,16 +1709,15 @@
         return;
       }
       prosesPresensi(target);
-      clearScanManualInput();
     }
 
     function renderLivePresensiLog() {
       const tbody = document.getElementById('tbodyLivePresensi');
       const counter = document.getElementById('totalPresensiHariIni');
       if (!tbody) return;
-      if (counter) counter.textContent = appData.presensi.length;
+      if (counter) counter.textContent = (appData.presensi || []).length;
 
-      if (appData.presensi.length === 0) {
+      if (!appData.presensi || appData.presensi.length === 0) {
         tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-slate-400">Belum ada presensi yang tercatat hari ini.</td></tr>`;
         return;
       }
@@ -1616,7 +1876,7 @@
     function hapusDataSiswa(username) {
       showCustomConfirm(
         'Hapus Data Siswa',
-        `Apakah Anda yakin ingin menghapus data siswa dengan username "${username}"? Data di Google Spreadsheet juga akan ikut terhapus.`,
+        `Apakah Anda yakin ingin menghapus siswa "${username}"? Data di Google Spreadsheet juga akan ikut dihapus.`,
         function() {
           appData.siswa = appData.siswa.filter(s => s.username.toLowerCase() !== username.toLowerCase());
           saveDataToStorage();
@@ -1633,159 +1893,63 @@
       );
     }
 
-    function renderTableUsers() {
-      const tbody = document.getElementById('tbodyUsers');
-      if (!tbody) return;
-      tbody.innerHTML = appData.users.map(u => `
-        <tr class="hover:bg-slate-50 transition">
-          <td class="py-2.5 px-3 font-bold">${u.nama}</td>
-          <td class="py-2.5 px-3 font-mono">${u.username}</td>
-          <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] bg-indigo-100 text-indigo-800 font-bold uppercase">${u.role}</span></td>
-          <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] bg-emerald-100 text-emerald-800 font-bold">${u.status}</span></td>
-          <td class="py-2.5 px-3 text-center">
-            <div class="flex items-center justify-center gap-1.5">
-              <button onclick="bukaEditUser('${u.username}')" class="p-1.5 text-amber-600 hover:bg-amber-50 rounded-lg"><i class="fa-solid fa-pen-to-square"></i></button>
-              ${u.username !== 'admin' ? `
-                <button onclick="hapusUserAkun('${u.username}')" class="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg"><i class="fa-solid fa-trash"></i></button>
-              ` : ''}
-            </div>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    function openModalTambahUser() {
-      document.getElementById('modalEditUserTitle').textContent = 'Tambah Pengguna Baru';
-      document.getElementById('userFormIsEdit').value = '0';
-      document.getElementById('userFormNama').value = '';
-      document.getElementById('userFormUsername').value = '';
-      document.getElementById('userFormUsername').readOnly = false;
-      document.getElementById('userFormPassword').value = '123';
-      document.getElementById('userFormRole').value = 'petugas';
-      document.getElementById('userFormStatus').value = 'Aktif';
-      document.getElementById('modalEditUser')?.classList.remove('hidden');
-    }
-
-    function bukaEditUser(username) {
-      const u = appData.users.find(x => x.username.toLowerCase() === username.toLowerCase());
-      if (!u) return;
-      document.getElementById('modalEditUserTitle').textContent = 'Edit Akun Pengguna';
-      document.getElementById('userFormIsEdit').value = '1';
-      document.getElementById('userFormOldUsername').value = u.username;
-      document.getElementById('userFormNama').value = u.nama;
-      document.getElementById('userFormUsername').value = u.username;
-      document.getElementById('userFormUsername').readOnly = (u.username === 'admin');
-      document.getElementById('userFormPassword').value = u.password || '123';
-      document.getElementById('userFormRole').value = u.role || 'petugas';
-      document.getElementById('userFormStatus').value = u.status || 'Aktif';
-      document.getElementById('modalEditUser')?.classList.remove('hidden');
-    }
-
-    function closeModalEditUser() {
-      document.getElementById('modalEditUser')?.classList.add('hidden');
-    }
-
-    function simpanDataUserAkun() {
-      const isEdit = document.getElementById('userFormIsEdit').value === '1';
-      const oldUsername = document.getElementById('userFormOldUsername').value;
-      const nama = document.getElementById('userFormNama').value.trim();
-      const username = document.getElementById('userFormUsername').value.trim();
-      const password = document.getElementById('userFormPassword').value.trim();
-      const role = document.getElementById('userFormRole').value;
-      const status = document.getElementById('userFormStatus').value;
-
-      if (!nama || !username) {
-        showToast('Nama dan username tidak boleh kosong', 'warning');
+    function cetakSemuaKartuA4() {
+      const siswaList = appData.siswa || [];
+      if (siswaList.length === 0) {
+        showToast('Belum ada data siswa untuk dicetak!', 'warning');
         return;
       }
 
-      const userObj = { nama, username, password, role, status, oldUsername: isEdit ? oldUsername : undefined };
+      const printArea = document.getElementById('printArea');
+      if (!printArea) return;
 
-      if (isEdit) {
-        const idx = appData.users.findIndex(x => x.username.toLowerCase() === oldUsername.toLowerCase());
-        if (idx !== -1) appData.users[idx] = { nama, username, password, role, status };
-        showToast('Data pengguna berhasil diperbarui di aplikasi & disinkronkan ke Sheets', 'success');
-      } else {
-        if (appData.users.some(x => x.username.toLowerCase() === username.toLowerCase())) {
-          showToast(`Username ${username} sudah digunakan!`, 'error');
-          return;
-        }
-        appData.users.push({ nama, username, password, role, status });
-        showToast('Pengguna baru berhasil ditambahkan & disinkronkan ke Sheets', 'success');
-      }
+      const perPage = 8;
+      let pagesHtml = '';
 
-      saveDataToStorage();
-      renderTableUsers();
-      updateSyncStatsUI();
-      closeModalEditUser();
-      
-      sendDataToGoogleSheets({ 
-        action: isEdit ? 'updateUser' : 'simpanUser', 
-        ...userObj 
-      });
-    }
-
-    function hapusUserAkun(username) {
-      if (username === 'admin') {
-        showToast('Akun admin utama tidak boleh dihapus!', 'warning');
-        return;
-      }
-
-      showCustomConfirm(
-        'Hapus Pengguna',
-        `Apakah Anda yakin ingin menghapus akun "${username}"? Data ini juga akan langsung dihapus dari tab Users di Google Spreadsheet.`,
-        function() {
-          appData.users = appData.users.filter(x => x.username.toLowerCase() !== username.toLowerCase());
-          saveDataToStorage();
-          renderTableUsers();
-          updateSyncStatsUI();
-          showToast(`Akun ${username} berhasil dihapus dari aplikasi & Sheets`, 'info');
-          
-          sendDataToGoogleSheets({ 
-            action: 'hapusUser', 
-            username: username 
-          });
-        },
-        true
-      );
-    }
-
-    function renderTableSPP() {
-      const tbody = document.getElementById('tbodySPP');
-      if (!tbody) return;
-      tbody.innerHTML = appData.spp.map(s => `
-        <tr class="hover:bg-slate-50 transition">
-          <td class="py-2.5 px-3 font-mono font-bold">${s.id}</td>
-          <td class="py-2.5 px-3">${s.tanggal}</td>
-          <td class="py-2.5 px-3 font-bold">${s.nama}</td>
-          <td class="py-2.5 px-3">${s.bulan} ${s.tahun}</td>
-          <td class="py-2.5 px-3 font-bold">Rp ${Number(s.nominal||0).toLocaleString('id-ID')}</td>
-          <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] bg-emerald-100 text-emerald-800 font-bold">${s.status}</span></td>
-          <td class="py-2.5 px-3 text-center">
-            <div class="flex items-center justify-center gap-1.5">
-              <button onclick='tampilkanKuitansiSPP(${JSON.stringify(s)})' class="p-1.5 text-amber-600 hover:bg-amber-50 rounded-lg"><i class="fa-solid fa-receipt"></i></button>
-              <button onclick="hapusSPP('${s.id}')" class="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg"><i class="fa-solid fa-trash"></i></button>
+      for (let i = 0; i < siswaList.length; i += perPage) {
+        const pageCards = siswaList.slice(i, i + perPage);
+        const cardsHtml = pageCards.map((s, idx) => {
+          const barcodeId = `barcode-a4-${i + idx}`;
+          return `
+            <div style="border: 1.5px dashed #475569; padding: 10px 12px; border-radius: 12px; background: #ffffff; page-break-inside: avoid; display: flex; flex-direction: column; justify-content: space-between; height: 58mm; box-sizing: border-box;">
+              <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #312e81; padding-bottom: 4px;">
+                <div style="font-size: 11px; font-weight: 800; color: #1e1b4b; font-family: sans-serif;">BIMBEL BA</div>
+                <span style="font-size: 8px; font-weight: 800; background: #e0e7ff; color: #3730a3; padding: 2px 7px; border-radius: 9999px;">${s.kategori_bimbingan || 'BIMBEL'}</span>
+              </div>
+              <div style="margin: 4px 0; font-size: 9px; font-family: sans-serif;">
+                <div style="font-weight: 800; font-size: 11px; color: #0f172a;">${s.nama}</div>
+                <div style="color: #475569;">ID: ${s.username} • Kelas: ${s.kelas || '-'}</div>
+              </div>
+              <div style="text-align: center; background: #f8fafc; border-radius: 6px; padding: 3px 2px; border: 1px solid #e2e8f0;">
+                <svg id="${barcodeId}" style="max-height: 28px; width: 100%; margin: 0 auto; display: block;"></svg>
+                <div style="font-family: monospace; font-size: 8px; font-weight: bold; color: #334155;">${s.username}</div>
+              </div>
             </div>
-          </td>
-        </tr>
-      `).join('');
-    }
+          `;
+        }).join('');
 
-    function hapusSPP(id) {
-      showCustomConfirm(
-        'Hapus SPP',
-        `Apakah Anda yakin ingin menghapus catatan SPP dengan nomor "${id}"?`,
-        function() {
-          appData.spp = appData.spp.filter(x => x.id !== id);
-          saveDataToStorage();
-          renderTableSPP();
-          renderTableRekapSPP();
-          updateSyncStatsUI();
-          showToast(`SPP ${id} berhasil dihapus`, 'info');
-          sendDataToGoogleSheets({ action: 'hapusSPP', id: id });
-        },
-        true
-      );
+        pagesHtml += `
+          <div class="a4-print-page" style="width: 210mm; min-height: 297mm; padding: 10mm 8mm; margin: 0 auto; page-break-after: always;">
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8mm 6mm; width: 100%;">
+              ${cardsHtml}
+            </div>
+          </div>
+        `;
+      }
+
+      printArea.innerHTML = pagesHtml;
+
+      setTimeout(() => {
+        siswaList.forEach((s, idx) => {
+          const el = document.getElementById(`barcode-a4-${idx}`);
+          if (el && typeof JsBarcode !== 'undefined') {
+            try {
+              JsBarcode(el, s.username, { format: 'CODE128', width: 1.8, height: 30, displayValue: false, margin: 0 });
+            } catch(e) {}
+          }
+        });
+        setTimeout(() => window.print(), 300);
+      }, 100);
     }
 
     function setNominalSppPreset(nom) {
@@ -1795,7 +1959,7 @@
     function handleSppSearchInput(q) {
       const d = document.getElementById('dropdownSppSiswa');
       if (!q.trim()) { d.classList.add('hidden'); return; }
-      const res = appData.siswa.filter(s => s.nama.toLowerCase().includes(q.toLowerCase()));
+      const res = (appData.siswa || []).filter(s => s.nama.toLowerCase().includes(q.toLowerCase()));
       d.innerHTML = res.map(s => `
         <div onclick="selectSppStudent('${s.username}', '${s.nama}', '${s.kelas}')" class="p-2.5 hover:bg-amber-50 cursor-pointer">
           <div class="font-bold text-xs">${s.nama}</div>
@@ -1831,7 +1995,7 @@
       const s = appData.siswa.find(x => x.username === u);
       const newSpp = {
         id: 'SPP-' + Date.now(),
-        tanggal: document.getElementById('sppTanggal')?.value || new Date().toLocaleDateString('id-ID'),
+        tanggal: document.getElementById('sppTanggal')?.value || formatTanggalIndo(getTodayDdMmYyyy()),
         nis: u,
         nama: s ? s.nama : u,
         kelas: s ? s.kelas : '-',
@@ -1841,15 +2005,54 @@
         metode: document.getElementById('sppMetode').value,
         status: document.getElementById('sppStatus').value
       };
+      if (!Array.isArray(appData.spp)) appData.spp = [];
       appData.spp.unshift(newSpp);
       saveDataToStorage();
       renderTableSPP();
       renderTableRekapSPP();
       updateSyncStatsUI();
       tampilkanKuitansiSPP(newSpp);
-      showToast('Transaksi SPP dicatat', 'success');
+      showToast('Transaksi SPP berhasil dicatat', 'success');
 
       sendDataToGoogleSheets({ action: 'simpanSPP', ...newSpp });
+    }
+
+    function renderTableSPP() {
+      const tbody = document.getElementById('tbodySPP');
+      if (!tbody) return;
+      tbody.innerHTML = (appData.spp || []).map(s => `
+        <tr class="hover:bg-slate-50 transition">
+          <td class="py-2.5 px-3 font-mono font-bold">${s.id}</td>
+          <td class="py-2.5 px-3">${s.tanggal}</td>
+          <td class="py-2.5 px-3 font-bold">${s.nama}</td>
+          <td class="py-2.5 px-3">${s.bulan} ${s.tahun}</td>
+          <td class="py-2.5 px-3 font-bold">Rp ${Number(s.nominal||0).toLocaleString('id-ID')}</td>
+          <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] bg-emerald-100 text-emerald-800 font-bold">${s.status}</span></td>
+          <td class="py-2.5 px-3 text-center">
+            <div class="flex items-center justify-center gap-1.5">
+              <button onclick='tampilkanKuitansiSPP(${JSON.stringify(s)})' class="p-1.5 text-amber-600 hover:bg-amber-50 rounded-lg"><i class="fa-solid fa-receipt"></i></button>
+              <button onclick="hapusSPP('${s.id}')" class="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function hapusSPP(id) {
+      showCustomConfirm(
+        'Hapus SPP',
+        `Apakah Anda yakin ingin menghapus kuitansi SPP "${id}"?`,
+        function() {
+          appData.spp = appData.spp.filter(x => x.id !== id);
+          saveDataToStorage();
+          renderTableSPP();
+          renderTableRekapSPP();
+          updateSyncStatsUI();
+          showToast(`SPP ${id} berhasil dihapus`, 'info');
+          sendDataToGoogleSheets({ action: 'hapusSPP', id: id });
+        },
+        true
+      );
     }
 
     function tampilkanKuitansiSPP(s) {
@@ -1884,6 +2087,10 @@
         if (fName && !p.nama.toLowerCase().includes(fName) && !p.nis.toLowerCase().includes(fName)) return false;
         if (fStatus && p.status !== fStatus) return false;
         if (fTahun && !p.tanggal.includes(fTahun)) return false;
+        if (fBulan) {
+          const parts = p.tanggal.split('/');
+          if (parts.length === 3 && parts[1] !== fBulan) return false;
+        }
         return true;
       });
 
@@ -1987,16 +2194,16 @@
 
       let total = 0;
       let countBelum = 0;
-      appData.spp.forEach(s => {
+      (appData.spp || []).forEach(s => {
         if (s.status === 'Lunas') total += Number(s.nominal || 0);
         else countBelum++;
       });
 
       if (mNom) mNom.textContent = `Rp ${total.toLocaleString('id-ID')}`;
-      if (mCount) mCount.textContent = appData.spp.length;
+      if (mCount) mCount.textContent = (appData.spp || []).length;
       if (mBelum) mBelum.textContent = `${countBelum} Transaksi`;
 
-      tbody.innerHTML = appData.spp.map(s => `
+      tbody.innerHTML = (appData.spp || []).map(s => `
         <tr class="hover:bg-slate-50 transition">
           <td class="py-2.5 px-3 font-mono font-bold">${s.id}</td>
           <td class="py-2.5 px-3">${s.tanggal}</td>
@@ -2009,9 +2216,7 @@
       `).join('');
     }
 
-    function handleLaporanSearchInput(q) {
-      terapkanFilterKehadiran();
-    }
+    function handleLaporanSearchInput() { terapkanFilterKehadiran(); }
     function clearLapFilterName() {
       document.getElementById('lapFilterName').value = '';
       terapkanFilterKehadiran();
@@ -2021,7 +2226,126 @@
       document.getElementById('lapFilterBulan').value = '';
       document.getElementById('lapFilterTahun').value = '';
       document.getElementById('lapFilterStatus').value = '';
+      document.getElementById('lapFilterTglMulai').value = '';
+      document.getElementById('lapFilterTglSampai').value = '';
       terapkanFilterKehadiran();
+    }
+
+    function renderTableUsers() {
+      const tbody = document.getElementById('tbodyUsers');
+      if (!tbody) return;
+      tbody.innerHTML = (appData.users || []).map(u => `
+        <tr class="hover:bg-slate-50 transition">
+          <td class="py-2.5 px-3 font-bold">${u.nama}</td>
+          <td class="py-2.5 px-3 font-mono">${u.username}</td>
+          <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] bg-indigo-100 text-indigo-800 font-bold uppercase">${u.role}</span></td>
+          <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] bg-emerald-100 text-emerald-800 font-bold">${u.status}</span></td>
+          <td class="py-2.5 px-3 text-center">
+            <div class="flex items-center justify-center gap-1.5">
+              <button onclick="bukaEditUser('${u.username}')" class="p-1.5 text-amber-600 hover:bg-amber-50 rounded-lg"><i class="fa-solid fa-pen-to-square"></i></button>
+              ${u.username !== 'admin' ? `
+                <button onclick="hapusUserAkun('${u.username}')" class="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg"><i class="fa-solid fa-trash"></i></button>
+              ` : ''}
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openModalTambahUser() {
+      document.getElementById('modalEditUserTitle').textContent = 'Tambah Pengguna Baru';
+      document.getElementById('userFormIsEdit').value = '0';
+      document.getElementById('userFormNama').value = '';
+      document.getElementById('userFormUsername').value = '';
+      document.getElementById('userFormUsername').readOnly = false;
+      document.getElementById('userFormPassword').value = '123';
+      document.getElementById('userFormRole').value = 'petugas';
+      document.getElementById('userFormStatus').value = 'Aktif';
+      document.getElementById('modalEditUser')?.classList.remove('hidden');
+    }
+
+    function bukaEditUser(username) {
+      const u = appData.users.find(x => x.username.toLowerCase() === username.toLowerCase());
+      if (!u) return;
+      document.getElementById('modalEditUserTitle').textContent = 'Edit Akun Pengguna';
+      document.getElementById('userFormIsEdit').value = '1';
+      document.getElementById('userFormOldUsername').value = u.username;
+      document.getElementById('userFormNama').value = u.nama;
+      document.getElementById('userFormUsername').value = u.username;
+      document.getElementById('userFormUsername').readOnly = (u.username === 'admin');
+      document.getElementById('userFormPassword').value = u.password || '123';
+      document.getElementById('userFormRole').value = u.role || 'petugas';
+      document.getElementById('userFormStatus').value = u.status || 'Aktif';
+      document.getElementById('modalEditUser')?.classList.remove('hidden');
+    }
+
+    function closeModalEditUser() {
+      document.getElementById('modalEditUser')?.classList.add('hidden');
+    }
+
+    function simpanDataUserAkun() {
+      const isEdit = document.getElementById('userFormIsEdit').value === '1';
+      const oldUsername = document.getElementById('userFormOldUsername').value;
+      const nama = document.getElementById('userFormNama').value.trim();
+      const username = document.getElementById('userFormUsername').value.trim();
+      const password = document.getElementById('userFormPassword').value.trim();
+      const role = document.getElementById('userFormRole').value;
+      const status = document.getElementById('userFormStatus').value;
+
+      if (!nama || !username) {
+        showToast('Nama dan username tidak boleh kosong', 'warning');
+        return;
+      }
+
+      const userObj = { nama, username, password, role, status, oldUsername: isEdit ? oldUsername : undefined };
+
+      if (isEdit) {
+        const idx = appData.users.findIndex(x => x.username.toLowerCase() === oldUsername.toLowerCase());
+        if (idx !== -1) appData.users[idx] = { nama, username, password, role, status };
+        showToast('Data pengguna berhasil diperbarui', 'success');
+      } else {
+        if (appData.users.some(x => x.username.toLowerCase() === username.toLowerCase())) {
+          showToast(`Username ${username} sudah digunakan!`, 'error');
+          return;
+        }
+        appData.users.push({ nama, username, password, role, status });
+        showToast('Pengguna baru berhasil ditambahkan', 'success');
+      }
+
+      saveDataToStorage();
+      renderTableUsers();
+      updateSyncStatsUI();
+      closeModalEditUser();
+      
+      sendDataToGoogleSheets({ 
+        action: isEdit ? 'updateUser' : 'simpanUser', 
+        ...userObj 
+      });
+    }
+
+    function hapusUserAkun(username) {
+      if (username === 'admin') {
+        showToast('Akun admin utama tidak boleh dihapus!', 'warning');
+        return;
+      }
+
+      showCustomConfirm(
+        'Hapus Pengguna',
+        `Apakah Anda yakin ingin menghapus akun "${username}"? Data ini juga akan langsung dihapus dari tab Users Spreadsheet.`,
+        function() {
+          appData.users = appData.users.filter(x => x.username.toLowerCase() !== username.toLowerCase());
+          saveDataToStorage();
+          renderTableUsers();
+          updateSyncStatsUI();
+          showToast(`Akun ${username} berhasil dihapus dari aplikasi & Sheets`, 'info');
+          
+          sendDataToGoogleSheets({ 
+            action: 'hapusUser', 
+            username: username 
+          });
+        },
+        true
+      );
     }
 
     function updateSyncStatsUI() {
@@ -2029,10 +2353,10 @@
       const pEl = document.getElementById('syncStatPresensi');
       const spEl = document.getElementById('syncStatSPP');
       const uEl = document.getElementById('syncStatUsers');
-      if (sEl) sEl.textContent = appData.siswa.length;
-      if (pEl) pEl.textContent = appData.presensi.length;
-      if (spEl) spEl.textContent = appData.spp.length;
-      if (uEl) uEl.textContent = appData.users.length;
+      if (sEl) sEl.textContent = (appData.siswa || []).length;
+      if (pEl) pEl.textContent = (appData.presensi || []).length;
+      if (spEl) spEl.textContent = (appData.spp || []).length;
+      if (uEl) uEl.textContent = (appData.users || []).length;
     }
 
     function handleAdminStudentSearch(q) {
@@ -2040,7 +2364,7 @@
       const b = document.getElementById('btnClearAdminStudentSearch');
       if (!q.trim()) { d.classList.add('hidden'); b.classList.add('hidden'); return; }
       b.classList.remove('hidden');
-      const res = appData.siswa.filter(s => s.nama.toLowerCase().includes(q.toLowerCase()) || s.username.toLowerCase().includes(q.toLowerCase()));
+      const res = (appData.siswa || []).filter(s => s.nama.toLowerCase().includes(q.toLowerCase()) || s.username.toLowerCase().includes(q.toLowerCase()));
       if (res.length === 0) {
         d.innerHTML = '<div class="p-2.5 text-xs text-slate-400">Siswa tidak ditemukan</div>';
       } else {
@@ -2058,9 +2382,12 @@
     }
 
     function clearAdminStudentSearch() {
-      document.getElementById('adminStudentSearchInput').value = '';
-      document.getElementById('dropdownAdminStudentResults').classList.add('hidden');
-      document.getElementById('btnClearAdminStudentSearch').classList.add('hidden');
+      const inp = document.getElementById('adminStudentSearchInput');
+      const d = document.getElementById('dropdownAdminStudentResults');
+      const b = document.getElementById('btnClearAdminStudentSearch');
+      if (inp) inp.value = '';
+      if (d) d.classList.add('hidden');
+      if (b) b.classList.add('hidden');
     }
 
     function adminLihatSiswa(username) {
@@ -2070,7 +2397,7 @@
     }
 
     function bukaPreviewPortalSiswa() {
-      if (appData.siswa.length > 0) renderPortalSiswa(appData.siswa[0]);
+      if (appData.siswa && appData.siswa.length > 0) renderPortalSiswa(appData.siswa[0]);
       else showToast('Belum ada data siswa', 'warning');
     }
 
@@ -2086,7 +2413,7 @@
       document.getElementById('portalSiswaNis').textContent = siswa.username;
       document.getElementById('portalSiswaKelas').textContent = siswa.kelas;
 
-      const pSiswa = appData.presensi.filter(p => p.nis.toLowerCase() === siswa.username.toLowerCase());
+      const pSiswa = (appData.presensi || []).filter(p => p.nis.toLowerCase() === siswa.username.toLowerCase());
       const totalHadir = pSiswa.filter(p => p.status === 'Hadir').length;
       const paket = Math.floor(totalHadir / 12);
       const sisa = totalHadir % 12;
@@ -2111,67 +2438,25 @@
       }
     }
 
-    function cetakSemuaKartuA4() {
-      const siswaList = appData.siswa || [];
-      if (siswaList.length === 0) {
-        showToast('Belum ada data siswa untuk dicetak!', 'warning');
-        return;
-      }
+    function pindahTab(tabId) {
+      document.getElementById('portalSiswaSection')?.classList.add('hidden');
+      const tabs = ['scanner', 'siswa', 'spp', 'laporan', 'rekapSPP', 'users', 'settings'];
+      tabs.forEach(t => {
+        const titleCase = t === 'rekapSPP' ? 'RekapSPP' : (t.charAt(0).toUpperCase() + t.slice(1));
+        const el = document.getElementById(`tabContent${titleCase}`);
+        const btn = document.getElementById(`btnTab${titleCase}`);
+        if (el) el.classList.add('hidden');
+        if (btn) btn.className = 'nav-tab-btn flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap';
+      });
 
-      const printArea = document.getElementById('printArea');
-      if (!printArea) return;
-
-      const perPage = 8;
-      let pagesHtml = '';
-
-      for (let i = 0; i < siswaList.length; i += perPage) {
-        const pageCards = siswaList.slice(i, i + perPage);
-        const cardsHtml = pageCards.map((s, idx) => {
-          const barcodeId = `barcode-a4-${i + idx}`;
-          return `
-            <div style="border: 1.5px dashed #475569; padding: 10px 12px; border-radius: 12px; background: #ffffff; page-break-inside: avoid; display: flex; flex-direction: column; justify-content: space-between; height: 58mm; box-sizing: border-box;">
-              <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #312e81; padding-bottom: 4px;">
-                <div style="font-size: 11px; font-weight: 800; color: #1e1b4b; font-family: sans-serif;">BIMBEL BA</div>
-                <span style="font-size: 8px; font-weight: 800; background: #e0e7ff; color: #3730a3; padding: 2px 7px; border-radius: 9999px;">${s.kategori_bimbingan || 'BIMBEL'}</span>
-              </div>
-              <div style="margin: 4px 0; font-size: 9px; font-family: sans-serif;">
-                <div style="font-weight: 800; font-size: 11px; color: #0f172a;">${s.nama}</div>
-                <div style="color: #475569;">ID: ${s.username} • Kelas: ${s.kelas || '-'}</div>
-              </div>
-              <div style="text-align: center; background: #f8fafc; border-radius: 6px; padding: 3px 2px; border: 1px solid #e2e8f0;">
-                <svg id="${barcodeId}" style="max-height: 28px; width: 100%; margin: 0 auto; display: block;"></svg>
-                <div style="font-family: monospace; font-size: 8px; font-weight: bold; color: #334155;">${s.username}</div>
-              </div>
-            </div>
-          `;
-        }).join('');
-
-        pagesHtml += `
-          <div class="a4-print-page" style="width: 210mm; min-height: 297mm; padding: 10mm 8mm; margin: 0 auto; page-break-after: always;">
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8mm 6mm; width: 100%;">
-              ${cardsHtml}
-            </div>
-          </div>
-        `;
-      }
-
-      printArea.innerHTML = pagesHtml;
-
-      setTimeout(() => {
-        siswaList.forEach((s, idx) => {
-          const el = document.getElementById(`barcode-a4-${idx}`);
-          if (el && typeof JsBarcode !== 'undefined') {
-            try {
-              JsBarcode(el, s.username, { format: 'CODE128', width: 1.8, height: 30, displayValue: false, margin: 0 });
-            } catch(e) {}
-          }
-        });
-        setTimeout(() => window.print(), 300);
-      }, 100);
+      const activeTitleCase = tabId === 'rekapSPP' ? 'RekapSPP' : (tabId.charAt(0).toUpperCase() + tabId.slice(1));
+      const activeContent = document.getElementById(`tabContent${activeTitleCase}`);
+      const activeBtn = document.getElementById(`btnTab${activeTitleCase}`);
+      if (activeContent) activeContent.classList.remove('hidden');
+      if (activeBtn) activeBtn.className = 'nav-tab-btn flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-indigo-600 text-white shadow-sm whitespace-nowrap';
     }
 
     function resetAllFormsAndInputs() {
-      // Kosongkan form Scanner & Presensi manual
       const inputScanManual = document.getElementById('inputScanManual');
       const selectedManual = document.getElementById('selectedManualStudentQuery');
       const presensiKet = document.getElementById('presensiKeterangan');
@@ -2181,7 +2466,6 @@
       document.getElementById('dropdownSiswaManual')?.classList.add('hidden');
       document.getElementById('btnClearScanManual')?.classList.add('hidden');
 
-      // Kosongkan form SPP
       clearSppSelectedSiswa();
       const sppNominal = document.getElementById('sppNominal');
       const sppSearch = document.getElementById('sppSearchInput');
@@ -2189,13 +2473,9 @@
       if (sppSearch) sppSearch.value = '';
       document.getElementById('dropdownSppSiswa')?.classList.add('hidden');
 
-      // Kosongkan form Laporan
       resetFilterKehadiran();
-
-      // Kosongkan pencarian siswa admin di navbar
       clearAdminStudentSearch();
 
-      // Kosongkan input login
       const lUser = document.getElementById('loginUsername');
       const lPass = document.getElementById('loginPassword');
       if (lUser) lUser.value = '';
@@ -2215,7 +2495,6 @@
     }
 
     function kembalikanKeTampilanAwalKosong() {
-      // Hentikan scanner jika sedang aktif
       if (isCameraScanning && html5QrScannerInstance) {
         try { html5QrScannerInstance.stop(); } catch (e) {}
         isCameraScanning = false;
@@ -2227,30 +2506,23 @@
         document.getElementById('cameraPlaceholderText')?.classList.remove('hidden');
       }
 
-      // Reset state user aktif
       appData.currentUser = null;
       saveDataToStorage();
-
-      // Bersihkan seluruh formulir
       resetAllFormsAndInputs();
 
-      // Update tampilan header
       const nameDisp = document.getElementById('currentUserNameDisplay');
       const roleDisp = document.getElementById('currentUserRoleDisplay');
       if (nameDisp) nameDisp.textContent = 'Belum Login';
       if (roleDisp) roleDisp.textContent = 'TAMU / KOSONG';
 
-      // Sembunyikan semua tab & portal
       pindahTab('scanner');
-
-      // Munculkan modal login
       document.getElementById('modalLogin')?.classList.remove('hidden');
     }
 
     function prosesLogin() {
       const u = document.getElementById('loginUsername')?.value.trim().toLowerCase();
       const p = document.getElementById('loginPassword')?.value.trim();
-      const user = appData.users.find(x => x.username.toLowerCase() === u && x.password === p);
+      const user = (appData.users || []).find(x => x.username.toLowerCase() === u && x.password === p);
       if (user) {
         appData.currentUser = user;
         saveDataToStorage();
@@ -2261,7 +2533,7 @@
         showToast(`Selamat datang, ${user.nama}`, 'success');
         return;
       }
-      const s = appData.siswa.find(x => x.username.toLowerCase() === u && x.password === p);
+      const s = (appData.siswa || []).find(x => x.username.toLowerCase() === u && x.password === p);
       if (s) {
         appData.currentUser = { nama: s.nama, username: s.username, role: 'siswa' };
         saveDataToStorage();
@@ -2271,6 +2543,32 @@
         return;
       }
       showToast('Username atau password salah', 'error');
+    }
+
+    function showCustomConfirm(title, message, onConfirmCallback, isDestructive = true) {
+      customConfirmCallback = onConfirmCallback;
+      const modal = document.getElementById('customConfirmModal');
+      const t = document.getElementById('customConfirmTitle');
+      const m = document.getElementById('customConfirmMessage');
+      const btn = document.getElementById('customConfirmBtnYes');
+
+      if (t) t.textContent = title;
+      if (m) m.textContent = message;
+
+      if (btn) {
+        btn.className = isDestructive ? 'flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md transition' : 'flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition';
+        btn.onclick = function() {
+          const action = customConfirmCallback;
+          closeCustomConfirm();
+          if (typeof action === 'function') action();
+        };
+      }
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeCustomConfirm() {
+      document.getElementById('customConfirmModal')?.classList.add('hidden');
+      customConfirmCallback = null;
     }
 
     function simpanPengaturanUrl() {
