@@ -1002,6 +1002,7 @@
           </div>
         </div>
         <input type="hidden" id="siswaFormIsEdit" value="0">
+        <input type="hidden" id="siswaFormOldUsername" value="">
         <div class="flex gap-2 pt-2">
           <button type="submit" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition">
             Simpan Data
@@ -1227,7 +1228,7 @@
   <script>
     const STORAGE_KEY = 'sim_bimbel_ba_v3_2_state';
     const SETTINGS_KEY = 'sim_bimbel_ba_global_settings';
-    const MASTER_API_URL = 'https://script.google.com/macros/s/AKfycbzeE7VUF5J-bmXnR2H_5CC-SQwyJpG1fcQIH8ij6pvMq2zAj02WHtQgE4142FEwHJnr/exec';
+    const MASTER_API_URL = 'https://script.google.com/macros/s/AKfycbw6cSXxoADs0puCkLwWtKM4zwd9cnYEdRu7Kpqcm1Z2gcP7scm_6h1DnH9Q8usdRtX_/exec';
     
     let isCurrentlySyncing = false;
     let html5QrScannerInstance = null;
@@ -1779,6 +1780,7 @@
     function openModalTambahSiswa() {
       document.getElementById('modalFormSiswaTitle').textContent = 'Tambah Siswa Baru';
       document.getElementById('siswaFormIsEdit').value = '0';
+      document.getElementById('siswaFormOldUsername').value = '';
       document.getElementById('siswaFormUsername').value = '';
       document.getElementById('siswaFormUsername').readOnly = false;
       document.getElementById('siswaFormPassword').value = '123';
@@ -1798,8 +1800,9 @@
       if (!s) return;
       document.getElementById('modalFormSiswaTitle').textContent = 'Edit Data Siswa';
       document.getElementById('siswaFormIsEdit').value = '1';
+      document.getElementById('siswaFormOldUsername').value = s.username;
       document.getElementById('siswaFormUsername').value = s.username;
-      document.getElementById('siswaFormUsername').readOnly = true;
+      document.getElementById('siswaFormUsername').readOnly = false;
       document.getElementById('siswaFormPassword').value = s.password || '123';
       document.getElementById('siswaFormNama').value = s.nama;
       document.getElementById('siswaFormKelas').value = s.kelas || '';
@@ -1818,6 +1821,7 @@
 
     function simpanDataSiswa() {
       const isEdit = document.getElementById('siswaFormIsEdit').value === '1';
+      const oldUsername = (document.getElementById('siswaFormOldUsername').value || '').trim();
       const username = document.getElementById('siswaFormUsername').value.trim();
       const password = document.getElementById('siswaFormPassword').value.trim() || '123';
       const nama = document.getElementById('siswaFormNama').value.trim();
@@ -1836,6 +1840,7 @@
       }
 
       const siswaObj = {
+        oldUsername: isEdit ? oldUsername : username,
         username,
         password,
         nama,
@@ -1850,16 +1855,20 @@
       };
 
       if (isEdit) {
-        const idx = appData.siswa.findIndex(x => x.username.toLowerCase() === username.toLowerCase());
-        if (idx !== -1) appData.siswa[idx] = siswaObj;
-        showToast(`Data siswa ${nama} berhasil diperbarui`, 'success');
+        const idx = appData.siswa.findIndex(x => x.username.toLowerCase() === oldUsername.toLowerCase());
+        if (idx !== -1) {
+          appData.siswa[idx] = siswaObj;
+        } else {
+          appData.siswa.push(siswaObj);
+        }
+        showToast(`Data siswa ${nama} berhasil diperbarui di aplikasi & Spreadsheet`, 'success');
       } else {
         if (appData.siswa.some(x => x.username.toLowerCase() === username.toLowerCase())) {
           showToast(`Username ${username} sudah dipakai siswa lain!`, 'error');
           return;
         }
         appData.siswa.push(siswaObj);
-        showToast(`Siswa baru ${nama} berhasil ditambahkan`, 'success');
+        showToast(`Siswa baru ${nama} berhasil ditambahkan ke aplikasi & Spreadsheet`, 'success');
       }
 
       saveDataToStorage();
@@ -1867,6 +1876,7 @@
       updateSyncStatsUI();
       closeModalFormSiswa();
       
+      // Kirim perintah update/tambah langsung ke Google Sheets
       sendDataToGoogleSheets({ 
         action: isEdit ? 'updateSiswa' : 'tambahSiswa', 
         ...siswaObj 
@@ -1876,13 +1886,13 @@
     function hapusDataSiswa(username) {
       showCustomConfirm(
         'Hapus Data Siswa',
-        `Apakah Anda yakin ingin menghapus siswa "${username}"? Data di Google Spreadsheet juga akan ikut dihapus.`,
+        `Apakah Anda yakin ingin menghapus siswa "${username}"? Data di Google Spreadsheet juga akan ikut dihapus secara otomatis.`,
         function() {
           appData.siswa = appData.siswa.filter(s => s.username.toLowerCase() !== username.toLowerCase());
           saveDataToStorage();
           renderTableMasterSiswa();
           updateSyncStatsUI();
-          showToast(`Siswa ${username} berhasil dihapus dari aplikasi & Sheets`, 'info');
+          showToast(`Siswa ${username} berhasil dihapus dari aplikasi & Google Sheets`, 'info');
           
           sendDataToGoogleSheets({ 
             action: 'hapusSiswa', 
@@ -2041,14 +2051,14 @@
     function hapusSPP(id) {
       showCustomConfirm(
         'Hapus SPP',
-        `Apakah Anda yakin ingin menghapus kuitansi SPP "${id}"?`,
+        `Apakah Anda yakin ingin menghapus kuitansi SPP "${id}"? Baris data di Google Spreadsheet juga akan dihapus.`,
         function() {
-          appData.spp = appData.spp.filter(x => x.id !== id);
+          appData.spp = appData.spp.filter(x => String(x.id).trim() !== String(id).trim());
           saveDataToStorage();
           renderTableSPP();
           renderTableRekapSPP();
           updateSyncStatsUI();
-          showToast(`SPP ${id} berhasil dihapus`, 'info');
+          showToast(`SPP ${id} berhasil dihapus dari aplikasi & Google Sheets`, 'info');
           sendDataToGoogleSheets({ action: 'hapusSPP', id: id });
         },
         true
@@ -2153,7 +2163,7 @@
       const status = document.getElementById('editPresensiStatus').value;
       const ket = document.getElementById('editPresensiKeterangan').value;
 
-      const idx = appData.presensi.findIndex(x => x.id === id);
+      const idx = appData.presensi.findIndex(x => String(x.id).trim() === String(id).trim());
       if (idx !== -1) {
         appData.presensi[idx].tanggal = tgl;
         appData.presensi[idx].waktu = waktu;
@@ -2163,22 +2173,22 @@
         terapkanFilterKehadiran();
         renderLivePresensiLog();
         closeModalEditPresensi();
-        showToast('Presensi diperbarui', 'success');
-        sendDataToGoogleSheets({ action: 'simpanPresensi', ...appData.presensi[idx] });
+        showToast('Presensi diperbarui di aplikasi & Google Sheets', 'success');
+        sendDataToGoogleSheets({ action: 'updatePresensi', ...appData.presensi[idx] });
       }
     }
 
     function hapusPresensiRecord(id) {
       showCustomConfirm(
         'Hapus Presensi',
-        'Hapus data kehadiran ini dari aplikasi dan Google Sheets?',
+        'Hapus data kehadiran ini dari aplikasi dan Google Spreadsheet?',
         function() {
-          appData.presensi = appData.presensi.filter(x => x.id !== id);
+          appData.presensi = appData.presensi.filter(x => String(x.id).trim() !== String(id).trim());
           saveDataToStorage();
           terapkanFilterKehadiran();
           renderLivePresensiLog();
           updateSyncStatsUI();
-          showToast('Data presensi dihapus', 'info');
+          showToast('Data presensi dihapus dari aplikasi & Google Sheets', 'info');
           sendDataToGoogleSheets({ action: 'hapusPresensi', id: id });
         },
         true
@@ -2297,19 +2307,19 @@
         return;
       }
 
-      const userObj = { nama, username, password, role, status, oldUsername: isEdit ? oldUsername : undefined };
+      const userObj = { nama, username, password, role, status, oldUsername: isEdit ? oldUsername : username };
 
       if (isEdit) {
         const idx = appData.users.findIndex(x => x.username.toLowerCase() === oldUsername.toLowerCase());
         if (idx !== -1) appData.users[idx] = { nama, username, password, role, status };
-        showToast('Data pengguna berhasil diperbarui', 'success');
+        showToast('Data pengguna berhasil diperbarui di aplikasi & Google Sheets', 'success');
       } else {
         if (appData.users.some(x => x.username.toLowerCase() === username.toLowerCase())) {
           showToast(`Username ${username} sudah digunakan!`, 'error');
           return;
         }
         appData.users.push({ nama, username, password, role, status });
-        showToast('Pengguna baru berhasil ditambahkan', 'success');
+        showToast('Pengguna baru berhasil ditambahkan ke aplikasi & Google Sheets', 'success');
       }
 
       saveDataToStorage();
@@ -2331,7 +2341,7 @@
 
       showCustomConfirm(
         'Hapus Pengguna',
-        `Apakah Anda yakin ingin menghapus akun "${username}"? Data ini juga akan langsung dihapus dari tab Users Spreadsheet.`,
+        `Apakah Anda yakin ingin menghapus akun "${username}"? Baris akun ini juga akan langsung dihapus dari tab Users Google Spreadsheet.`,
         function() {
           appData.users = appData.users.filter(x => x.username.toLowerCase() !== username.toLowerCase());
           saveDataToStorage();
