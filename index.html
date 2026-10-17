@@ -1679,7 +1679,7 @@
       }
 
       const now = new Date();
-      const waktuStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      const waktuStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
       const status = document.getElementById('presensiJenis')?.value || 'Hadir';
       const catatan = document.getElementById('presensiKeterangan')?.value || '-';
 
@@ -1688,22 +1688,44 @@
         tanggal: tglFormatted,
         waktu: waktuStr,
         nis: String(targetSiswa.username),
+        username: String(targetSiswa.username),
         nama: targetSiswa.nama,
         kelas: targetSiswa.kelas || '-',
         status: status,
         keterangan: catatan
       };
 
+      // 1. Simpan ke data aplikasi lokal
       appData.presensi.unshift(newPresensi);
       saveDataToStorage();
+
+      // 2. Langsung tampilkan di Log Presensi Hari Ini
       renderLivePresensiLog();
+
+      // 3. Langsung perbarui tabel Rekap Kehadiran & kalkulasi paket 12 pertemuan
+      terapkanFilterKehadiran();
+
+      // 4. Perbarui indikator jumlah data
       updateSyncStatsUI();
 
+      // 5. Tampilkan dialog sukses presensi
       showModalPresensiSukses(targetSiswa.nama, targetSiswa.username, targetSiswa.kelas || '-', tglFormatted, waktuStr);
       showToast(`Presensi berhasil: ${targetSiswa.nama}`, 'success');
       clearScanManualInput();
 
-      sendDataToGoogleSheets({ action: 'simpanPresensi', ...newPresensi });
+      // 6. Sinkronisasi langsung ke Google Spreadsheet via Apps Script Web App
+      sendDataToGoogleSheets({ 
+        action: 'simpanPresensi', 
+        id: newPresensi.id,
+        tanggal: newPresensi.tanggal,
+        waktu: newPresensi.waktu,
+        nis: newPresensi.nis,
+        username: newPresensi.nis,
+        nama: newPresensi.nama,
+        kelas: newPresensi.kelas,
+        status: newPresensi.status,
+        keterangan: newPresensi.keterangan
+      });
     }
 
     function renderLivePresensiLog() {
@@ -1724,7 +1746,7 @@
         <tr class="hover:bg-slate-50 transition">
           <td class="py-2.5 px-3 font-mono">${escapeHtml(p.waktu)}</td>
           <td class="py-2.5 px-3">${escapeHtml(formatTanggalIndo(p.tanggal))}</td>
-          <td class="py-2.5 px-3 font-mono font-bold text-indigo-700">${escapeHtml(p.nis)}</td>
+          <td class="py-2.5 px-3 font-mono font-bold text-indigo-700">${escapeHtml(p.nis || p.username || '-')}</td>
           <td class="py-2.5 px-3 font-bold">${escapeHtml(p.nama)}</td>
           <td class="py-2.5 px-3">${escapeHtml(p.kelas || '-')}</td>
           <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">${escapeHtml(p.status)}</span></td>
