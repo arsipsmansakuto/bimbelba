@@ -108,21 +108,21 @@
         <div id="userInfoHeader" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-indigo-800 text-xs">
           <i class="fa-solid fa-circle-user text-amber-400 text-base"></i>
           <div>
-            <div id="currentUserNameDisplay" class="font-semibold text-slate-100">Bunda Ani (Admin)</div>
-            <div id="currentUserRoleDisplay" class="text-[10px] text-amber-300 font-bold uppercase tracking-wider">ADMINISTRATOR</div>
+            <div id="currentUserNameDisplay" class="font-semibold text-slate-100">Silakan Login</div>
+            <div id="currentUserRoleDisplay" class="text-[10px] text-indigo-300 uppercase">BELUM MASUK</div>
           </div>
         </div>
 
-        <!-- Tombol Buka Modal Login / Logout -->
-        <button type="button" onclick="bukaModalLoginManual()" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition border border-indigo-700">
-          <i class="fa-solid fa-arrow-right-to-bracket text-xs text-amber-400"></i>
-          <span>Ganti Akun</span>
+        <!-- Tombol Logout -->
+        <button type="button" onclick="handleLogout()" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-sm border border-rose-500">
+          <i class="fa-solid fa-right-from-bracket text-xs"></i>
+          <span>Logout</span>
         </button>
       </div>
     </div>
 
     <!-- TAB NAVIGASI -->
-    <nav id="adminNavTabs" class="bg-indigo-950/80 border-t border-indigo-800/60 overflow-x-auto no-scrollbar">
+    <nav id="adminNavTabs" class="hidden bg-indigo-950/60 border-t border-indigo-800/60 overflow-x-auto no-scrollbar">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between py-2 gap-2">
         <div class="flex space-x-1 sm:space-x-2">
           <button type="button" id="btnTabScanner" onclick="pindahTab('scanner')" class="nav-tab-btn flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-indigo-600 text-white shadow-sm whitespace-nowrap">
@@ -986,7 +986,7 @@
   </main>
 
   <!-- MODAL LOGIN (DIBUAT OPSIONAL DENGAN TOMBOL BATAL/TUTUP) -->
-  <div id="modalLogin" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4">
+  <div id="modalLogin" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4">
     <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-5 border border-slate-100">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div class="flex items-center gap-2">
@@ -995,9 +995,6 @@
           </div>
           <h2 class="text-base font-bold text-slate-800 font-brand">Masuk SIM BIMBEL BA</h2>
         </div>
-        <button type="button" onclick="tutupModalLogin()" class="text-slate-400 hover:text-slate-600 text-sm">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
       </div>
 
       <form onsubmit="event.preventDefault(); prosesLogin();" class="space-y-3.5">
@@ -1011,12 +1008,9 @@
           <input type="password" id="loginPassword" required autocomplete="off" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="123">
         </div>
 
-        <div class="flex gap-2">
-          <button type="submit" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition">
+        <div>
+          <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition">
             Masuk
-          </button>
-          <button type="button" onclick="tutupModalLogin()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl transition">
-            Batal
           </button>
         </div>
       </form>
@@ -2862,11 +2856,48 @@
       if (elU) elU.textContent = appData.users.length;
     }
 
+    function handleLogout() {
+      if (typeof isCameraScanning !== 'undefined' && isCameraScanning) {
+        stopCameraScanner();
+      }
+
+      appData.currentUser = null;
+
+      const uInput = document.getElementById('loginUsername');
+      const pInput = document.getElementById('loginPassword');
+      if (uInput) uInput.value = '';
+      if (pInput) pInput.value = '';
+
+      const userDisplay = document.getElementById('currentUserNameDisplay');
+      const roleDisplay = document.getElementById('currentUserRoleDisplay');
+      if (userDisplay) userDisplay.textContent = 'Silakan Login';
+      if (roleDisplay) {
+        roleDisplay.textContent = 'BELUM MASUK';
+        roleDisplay.className = 'text-[10px] text-indigo-300 uppercase';
+      }
+
+      // Sembunyikan semua tab konten, navigasi, dan portal siswa
+      ['scanner', 'siswa', 'spp', 'laporan', 'rekapSPP', 'users', 'settings'].forEach(t => {
+        const idSuffix = (t.toLowerCase() === 'rekapspp') ? 'RekapSPP' : (t.charAt(0).toUpperCase() + t.slice(1).toLowerCase());
+        document.getElementById(`tabContent${idSuffix}`)?.classList.add('hidden');
+      });
+      document.getElementById('portalSiswaSection')?.classList.add('hidden');
+      document.getElementById('adminNavTabs')?.classList.add('hidden');
+
+      // Tampilkan modal login
+      const modalLogin = document.getElementById('modalLogin');
+      if (modalLogin) {
+        modalLogin.classList.remove('hidden');
+        if (uInput) setTimeout(() => uInput.focus(), 150);
+      }
+    }
+
     function bukaModalLoginManual() {
-      document.getElementById('modalLogin')?.classList.remove('hidden');
+      handleLogout();
     }
 
     function tutupModalLogin() {
+      if (!appData.currentUser) return;
       document.getElementById('modalLogin')?.classList.add('hidden');
     }
 
@@ -2878,7 +2909,11 @@
       if (user) {
         appData.currentUser = { nama: user.nama, username: user.username, role: user.role };
         document.getElementById('currentUserNameDisplay').textContent = user.nama;
-        document.getElementById('currentUserRoleDisplay').textContent = user.role.toUpperCase();
+        const roleEl = document.getElementById('currentUserRoleDisplay');
+        if (roleEl) {
+          roleEl.textContent = user.role.toUpperCase();
+          roleEl.className = 'text-[10px] text-amber-300 font-bold uppercase tracking-wider';
+        }
         document.getElementById('adminNavTabs')?.classList.remove('hidden');
         document.getElementById('modalLogin').classList.add('hidden');
         pindahTab('scanner');
@@ -2890,7 +2925,11 @@
       if (siswa) {
         appData.currentUser = { nama: siswa.nama, username: siswa.username, role: 'siswa' };
         document.getElementById('currentUserNameDisplay').textContent = siswa.nama;
-        document.getElementById('currentUserRoleDisplay').textContent = 'SISWA';
+        const roleEl = document.getElementById('currentUserRoleDisplay');
+        if (roleEl) {
+          roleEl.textContent = 'SISWA';
+          roleEl.className = 'text-[10px] text-emerald-300 font-bold uppercase tracking-wider';
+        }
         document.getElementById('adminNavTabs')?.classList.add('hidden');
         document.getElementById('modalLogin').classList.add('hidden');
         renderPortalSiswa(siswa);
@@ -3021,8 +3060,8 @@
       renderTableUsers();
       updateSyncStatsUI();
 
-      // Membuka langsung dashboard scanner utama
-      pindahTab('scanner');
+      // Selalu arahkan ke layar login saat halaman pertama kali dimuat atau di-reload
+      handleLogout();
     });
   </script>
 </body>
