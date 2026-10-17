@@ -1140,12 +1140,12 @@
   <script>
     const STORAGE_KEY = 'sim_bimbel_ba_v3_2_state';
     const SETTINGS_KEY = 'sim_bimbel_ba_global_settings';
-    const MASTER_API_URL = 'https://script.google.com/macros/s/AKfycbw-p1ZzDMTE6NvhT29tsW2q6fYMSYorlfrkLG8dgWFEWk-f42sLQw_qPDA0ZqBR_Tvr/exec';
+    const MASTER_API_URL = 'https://script.google.com/macros/s/AKfycbzHY0JQxtVAg9px7n01csLjgHmLrDZEkHJBx2npJOneil-L0Qo0-gzdRkXj3xP13Wfb/exec';
     
     let isCurrentlySyncing = false;
 
     const defaultData = {
-      currentUser: { nama: 'Bunda Ani (Admin)', username: 'admin', role: 'admin' },
+      currentUser: null,
       users: [
         { nama: 'Bunda Ani (Admin)', username: 'admin', password: '123', role: 'admin', status: 'Aktif' },
         { nama: 'Kak Rina (Petugas)', username: 'petugas', password: '123', role: 'petugas', status: 'Aktif' }
@@ -1196,6 +1196,8 @@
         if (raw) {
           const parsed = JSON.parse(raw);
           appData = { ...defaultData, ...parsed };
+          // Pastikan setiap kali reload aplikasi selalu kembali ke posisi belum login (kosong)
+          appData.currentUser = null;
         }
       } catch (e) {
         console.error('Gagal load localStorage:', e);
@@ -2168,16 +2170,81 @@
       }, 100);
     }
 
+    function resetAllFormsAndInputs() {
+      // Kosongkan form Scanner & Presensi manual
+      const inputScanManual = document.getElementById('inputScanManual');
+      const selectedManual = document.getElementById('selectedManualStudentQuery');
+      const presensiKet = document.getElementById('presensiKeterangan');
+      if (inputScanManual) inputScanManual.value = '';
+      if (selectedManual) selectedManual.value = '';
+      if (presensiKet) presensiKet.value = '';
+      document.getElementById('dropdownSiswaManual')?.classList.add('hidden');
+      document.getElementById('btnClearScanManual')?.classList.add('hidden');
+
+      // Kosongkan form SPP
+      clearSppSelectedSiswa();
+      const sppNominal = document.getElementById('sppNominal');
+      const sppSearch = document.getElementById('sppSearchInput');
+      if (sppNominal) sppNominal.value = '';
+      if (sppSearch) sppSearch.value = '';
+      document.getElementById('dropdownSppSiswa')?.classList.add('hidden');
+
+      // Kosongkan form Laporan
+      resetFilterKehadiran();
+
+      // Kosongkan pencarian siswa admin di navbar
+      clearAdminStudentSearch();
+
+      // Kosongkan input login
+      const lUser = document.getElementById('loginUsername');
+      const lPass = document.getElementById('loginPassword');
+      if (lUser) lUser.value = '';
+      if (lPass) lPass.value = '';
+    }
+
     function handleLogout() {
       showCustomConfirm(
         'Konfirmasi Logout',
-        'Keluar dari sistem SIM BIMBEL BA?',
+        'Keluar dari sistem SIM BIMBEL BA dan bersihkan sesi?',
         function() {
-          showToast('Berhasil logout', 'info');
-          document.getElementById('modalLogin')?.classList.remove('hidden');
+          kembalikanKeTampilanAwalKosong();
+          showToast('Berhasil logout. Silakan login kembali.', 'info');
         },
         false
       );
+    }
+
+    function kembalikanKeTampilanAwalKosong() {
+      // Hentikan scanner jika sedang aktif
+      if (isCameraScanning && html5QrScannerInstance) {
+        try { html5QrScannerInstance.stop(); } catch (e) {}
+        isCameraScanning = false;
+        const btnText = document.getElementById('btnToggleCameraText');
+        const btn = document.getElementById('btnToggleCamera');
+        if (btnText) btnText.textContent = 'Aktifkan Kamera';
+        if (btn) btn.className = 'px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-sm transition';
+        document.getElementById('cameraLaserOverlay')?.classList.add('hidden');
+        document.getElementById('cameraPlaceholderText')?.classList.remove('hidden');
+      }
+
+      // Reset state user aktif
+      appData.currentUser = null;
+      saveDataToStorage();
+
+      // Bersihkan seluruh formulir
+      resetAllFormsAndInputs();
+
+      // Update tampilan header
+      const nameDisp = document.getElementById('currentUserNameDisplay');
+      const roleDisp = document.getElementById('currentUserRoleDisplay');
+      if (nameDisp) nameDisp.textContent = 'Belum Login';
+      if (roleDisp) roleDisp.textContent = 'TAMU / KOSONG';
+
+      // Sembunyikan semua tab & portal
+      pindahTab('scanner');
+
+      // Munculkan modal login
+      document.getElementById('modalLogin')?.classList.remove('hidden');
     }
 
     function prosesLogin() {
@@ -2185,18 +2252,22 @@
       const p = document.getElementById('loginPassword')?.value.trim();
       const user = appData.users.find(x => x.username.toLowerCase() === u && x.password === p);
       if (user) {
+        appData.currentUser = user;
+        saveDataToStorage();
         document.getElementById('currentUserNameDisplay').textContent = user.nama;
         document.getElementById('currentUserRoleDisplay').textContent = user.role.toUpperCase();
         document.getElementById('modalLogin')?.classList.add('hidden');
         pindahTab('scanner');
-        showToast('Login berhasil', 'success');
+        showToast(`Selamat datang, ${user.nama}`, 'success');
         return;
       }
       const s = appData.siswa.find(x => x.username.toLowerCase() === u && x.password === p);
       if (s) {
+        appData.currentUser = { nama: s.nama, username: s.username, role: 'siswa' };
+        saveDataToStorage();
         document.getElementById('modalLogin')?.classList.add('hidden');
         renderPortalSiswa(s);
-        showToast(`Selamat datang ${s.nama}`, 'success');
+        showToast(`Selamat datang, ${s.nama}`, 'success');
         return;
       }
       showToast('Username atau password salah', 'error');
@@ -2244,12 +2315,14 @@
       if (document.getElementById('lapFilterTglMulai')) flatpickr('#lapFilterTglMulai', { dateFormat: 'd/m/Y' });
       if (document.getElementById('lapFilterTglSampai')) flatpickr('#lapFilterTglSampai', { dateFormat: 'd/m/Y' });
 
-      pindahTab('scanner');
       renderLivePresensiLog();
       renderTableMasterSiswa();
       renderTableSPP();
       renderTableUsers();
       updateSyncStatsUI();
+
+      // Setiap kali halaman di-reload/refresh, posisikan kembali ke menu utama dalam kondisi kosong dan tampilkan login
+      kembalikanKeTampilanAwalKosong();
 
       syncAllSheetsData(true);
     });
