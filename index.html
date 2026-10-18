@@ -455,8 +455,14 @@
               </h2>
               <p class="text-xs text-slate-500">Filter dan kelola riwayat transaksi</p>
             </div>
-            <div class="text-xs text-slate-500">
-              Total Riwayat: <span id="sppRiwayatCount" class="font-bold text-indigo-700">0</span>
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-xs text-slate-500 mr-1">Total: <b id="sppRiwayatCount" class="font-bold text-indigo-700">0</b></span>
+              <button type="button" onclick="cetakLaporanRiwayatSPP()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition active:scale-95" title="Cetak Laporan Hasil Filter">
+                <i class="fa-solid fa-print"></i> Cetak Laporan
+              </button>
+              <button type="button" onclick="downloadLaporanRiwayatSPPCSV()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition active:scale-95" title="Unduh CSV Hasil Filter">
+                <i class="fa-solid fa-file-excel"></i> Unduh CSV
+              </button>
             </div>
           </div>
 
@@ -1575,7 +1581,6 @@
       const adminOnlyTabIds = [
         'btnTabSiswa',
         'btnTabSpp',
-        'btnTabLaporan',
         'btnTabRekapSPP',
         'btnTabUsers',
         'btnTabSettings',
@@ -1592,30 +1597,26 @@
           }
         }
       });
-
-      const quickSearch = document.getElementById('adminStudentSearchInput')?.closest('.relative.min-w-\\[210px\\]') || document.getElementById('adminStudentSearchInput')?.parentElement?.parentElement;
-      if (quickSearch) {
-        if (roleStr === 'petugas') {
-          quickSearch.classList.add('hidden');
-        } else {
-          quickSearch.classList.remove('hidden');
-        }
-      }
-
-      if (roleStr === 'petugas') {
-        const sectionsToHide = ['tabContentSiswa', 'tabContentSpp', 'tabContentLaporan', 'tabContentRekapSPP', 'tabContentUsers', 'tabContentSettings', 'portalSiswaSection'];
-        sectionsToHide.forEach(secId => {
-          document.getElementById(secId)?.classList.add('hidden');
-        });
-        document.getElementById('tabContentScanner')?.classList.remove('hidden');
-      }
     }
 
-    function prosesLogin() {
+    async function prosesLogin() {
       const u = (document.getElementById('loginUsername')?.value || '').trim();
       const p = (document.getElementById('loginPassword')?.value || '').trim();
 
-      const user = appData.users.find(x => String(x.username).toLowerCase() === u.toLowerCase() && String(x.password) === p);
+      if (!u || !p) {
+        showToast('Masukkan username dan password', 'error');
+        return;
+      }
+
+      // Pastikan data terbaru dari Google Spreadsheet sudah diambil sebelum validasi login
+      try {
+        await syncAllSheetsData(true);
+      } catch (e) {}
+
+      const cleanU = u.toLowerCase();
+
+      // Cek login admin atau petugas
+      const user = (appData.users || []).find(x => String(x.username || '').trim().toLowerCase() === cleanU && String(x.password || '').trim() === p);
       if (user) {
         appData.currentUser = { nama: user.nama, username: user.username, role: user.role };
         document.getElementById('currentUserNameDisplay').textContent = user.nama;
@@ -1633,7 +1634,13 @@
         return;
       }
 
-      const siswa = appData.siswa.find(s => String(s.username).toLowerCase() === u.toLowerCase() && String(s.password) === p);
+      // Cek login Siswa dari data Google Spreadsheet
+      const siswa = (appData.siswa || []).find(s => {
+        const usernameSiswa = String(s.username || '').trim().toLowerCase();
+        const passwordSiswa = String(s.password || '123').trim();
+        return usernameSiswa === cleanU && passwordSiswa === p;
+      });
+
       if (siswa) {
         appData.currentUser = { nama: siswa.nama, username: siswa.username, role: 'siswa' };
         document.getElementById('currentUserNameDisplay').textContent = siswa.nama;
@@ -1687,7 +1694,7 @@
     }
 
     function pindahTab(tabId) {
-      if (appData.currentUser && String(appData.currentUser.role).toLowerCase() === 'petugas' && tabId !== 'scanner') {
+      if (appData.currentUser && String(appData.currentUser.role).toLowerCase() === 'petugas' && tabId !== 'scanner' && tabId !== 'laporan') {
         showToast('Akses dibatasi untuk akun Petugas', 'info');
         return;
       }
@@ -2216,35 +2223,77 @@
       if (!query || String(query).trim() === '') {
         dropdown.classList.add('hidden');
         if (btnClear) btnClear.classList.add('hidden');
+        cachedSortSppFilterResults = [];
         renderTableSPP();
         return;
       }
 
       if (btnClear) btnClear.classList.remove('hidden');
       const q = String(query).trim().toLowerCase();
-      const results = (appData.siswa || []).filter(s => {
-        const n = String(s.nama || '').toLowerCase();
-        const u = String(s.username || '').toLowerCase();
+
+      // Menggabungkan siswa unik dari master siswa dan data riwayat SPP agar seluruh siswa selalu terjangkau
+      const uniqueStudentMap = new Map();
+
+      (appData.siswa || []).forEach(s => {
+        const u = String(s.username || '').trim();
+        const n = String(s.nama || '').trim();
+        if (n && !uniqueStudentMap.has(u || n)) {
+          uniqueStudentMap.set(u || n, { nama: n, username: u });
+        }
+      });
+
+      (appData.spp || []).forEach(sp => {
+        const u = String(sp.nis || '').trim();
+        const n = String(sp.nama || '').trim();
+        if (n && !uniqueStudentMap.has(u || n)) {
+          uniqueStudentMap.set(u || n, { nama: n, username: u });
+        }
+      });
+
+      const allStudents = Array.from(uniqueStudentMap.values());
+      const results = allStudents.filter(s => {
+        const n = s.nama.toLowerCase();
+        const u = s.username.toLowerCase();
         return n.includes(q) || u.includes(q);
       });
 
       if (results.length === 0) {
         dropdown.innerHTML = `<div class="p-2.5 text-xs text-slate-400 text-center">Siswa tidak ditemukan</div>`;
         dropdown.classList.remove('hidden');
+        cachedSortSppFilterResults = [];
         renderTableSPP();
         return;
       }
 
-      dropdown.innerHTML = results.slice(0, 6).map(s => {
-        const safeNama = encodeURIComponent(String(s.nama || ''));
+      cachedSortSppFilterResults = results.slice(0, 10);
+
+      dropdown.innerHTML = cachedSortSppFilterResults.map((s, index) => {
         return `
-          <div onclick="selectSortSppFilterNama('${safeNama}')" class="p-2 hover:bg-amber-50 cursor-pointer flex justify-between items-center text-xs">
+          <div onclick="selectSortSppFilterByIndex(${index})" class="p-2 hover:bg-amber-50 cursor-pointer flex justify-between items-center text-xs transition">
             <span class="font-bold text-slate-800">${escapeHtml(s.nama)}</span>
-            <span class="text-[10px] text-slate-500 font-mono">${escapeHtml(s.username)}</span>
+            <span class="text-[10px] text-slate-500 font-mono">${escapeHtml(s.username || '-')}</span>
           </div>
         `;
       }).join('');
       dropdown.classList.remove('hidden');
+      renderTableSPP();
+    }
+
+    let cachedSortSppFilterResults = [];
+
+    function selectSortSppFilterByIndex(index) {
+      const selected = cachedSortSppFilterResults[index];
+      if (!selected) return;
+
+      const input = document.getElementById('sortSppFilterNama');
+      if (input) input.value = selected.nama;
+
+      const dropdown = document.getElementById('dropdownSortSppSiswa');
+      if (dropdown) dropdown.classList.add('hidden');
+
+      const btnClear = document.getElementById('btnClearSortSppFilterNama');
+      if (btnClear) btnClear.classList.remove('hidden');
+
       renderTableSPP();
     }
 
@@ -2258,14 +2307,11 @@
       document.getElementById('sortSppFilterNama').value = '';
       document.getElementById('dropdownSortSppSiswa')?.classList.add('hidden');
       document.getElementById('btnClearSortSppFilterNama')?.classList.add('hidden');
+      cachedSortSppFilterResults = [];
       renderTableSPP();
     }
 
-    function renderTableSPP() {
-      const tbody = document.getElementById('tbodySPP');
-      const counter = document.getElementById('sppRiwayatCount');
-      if (!tbody) return;
-
+    function getFilteredAndSortedSPPList() {
       const fNama = (document.getElementById('sortSppFilterNama')?.value || '').trim().toLowerCase();
       const fPaket = (document.getElementById('sortSppFilterBulan')?.value || '').trim().toLowerCase();
       const fStatus = (document.getElementById('sortSppFilterStatus')?.value || '').trim().toLowerCase();
@@ -2302,6 +2348,111 @@
       } else if (orderBy === 'nominal-rendah') {
         list.sort((a, b) => Number(a.nominal || 0) - Number(b.nominal || 0));
       }
+
+      return list;
+    }
+
+    function cetakLaporanRiwayatSPP() {
+      const list = getFilteredAndSortedSPPList();
+      const printArea = document.getElementById('printArea');
+      if (!printArea) return;
+
+      const fNama = document.getElementById('sortSppFilterNama')?.value || 'Semua';
+      const fPaket = document.getElementById('sortSppFilterBulan')?.value || 'Semua';
+      const fStatus = document.getElementById('sortSppFilterStatus')?.value || 'Semua';
+      const orderText = document.getElementById('sortSppOrderBy')?.selectedOptions[0]?.text || 'Terbaru';
+
+      let totalNominalLunas = 0;
+      let totalNominalSemua = 0;
+      list.forEach(item => {
+        const nom = Number(item.nominal || 0);
+        totalNominalSemua += nom;
+        if (String(item.status || '').toLowerCase() === 'lunas') totalNominalLunas += nom;
+      });
+
+      printArea.classList.remove('hidden');
+      printArea.innerHTML = `
+        <div style="font-family: Arial, sans-serif; padding: 24px; color: #1e293b;">
+          <div style="text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 14px;">
+            <h2 style="margin: 0; font-size: 18px; font-weight: bold; text-transform: uppercase;">LAPORAN TRANSAKSI SPP BIMBEL BA</h2>
+            <p style="margin: 4px 0 0; font-size: 11px; color: #64748b;">Dicetak pada: ${new Date().toLocaleString('id-ID')}</p>
+          </div>
+
+          <div style="font-size: 11px; margin-bottom: 14px; background: #f8fafc; padding: 8px 12px; border-radius: 6px; border: 1px solid #e2e8f0; display: flex; flex-wrap: wrap; gap: 12px;">
+            <div><b>Filter Siswa:</b> ${escapeHtml(fNama || 'Semua')}</div>
+            <div><b>Filter Paket:</b> ${escapeHtml(fPaket || 'Semua')}</div>
+            <div><b>Status:</b> ${escapeHtml(fStatus ? fStatus.toUpperCase() : 'SEMUA')}</div>
+            <div><b>Urutan:</b> ${escapeHtml(orderText)}</div>
+            <div><b>Total Data:</b> ${list.length}</div>
+          </div>
+
+          <table style="width: 100%; border-collapse: collapse; font-size: 11px;" border="1" cellpadding="6">
+            <thead>
+              <tr style="background-color: #f1f5f9; text-align: left;">
+                <th style="width: 30px; text-align: center;">No</th>
+                <th>No Kuitansi</th>
+                <th>Tanggal</th>
+                <th>Username</th>
+                <th>Nama Siswa</th>
+                <th>Kelas</th>
+                <th>Paket</th>
+                <th style="text-align: right;">Nominal</th>
+                <th>Metode</th>
+                <th style="text-align: center;">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${list.length === 0 ? `
+                <tr><td colspan="10" style="text-align: center; padding: 16px; color: #94a3b8;">Tidak ada data transaksi SPP sesuai filter.</td></tr>
+              ` : list.map((item, idx) => `
+                <tr>
+                  <td style="text-align: center;">${idx + 1}</td>
+                  <td style="font-family: monospace; font-weight: bold;">${escapeHtml(item.id)}</td>
+                  <td>${escapeHtml(formatTanggalIndo(item.tanggal))}</td>
+                  <td style="font-family: monospace;">${escapeHtml(item.nis || '-')}</td>
+                  <td style="font-weight: bold;">${escapeHtml(item.nama)}</td>
+                  <td>${escapeHtml(item.kelas || '-')}</td>
+                  <td>${escapeHtml(item.bulan)} ${escapeHtml(item.tahun || '')}</td>
+                  <td style="text-align: right; font-weight: bold;">Rp ${Number(item.nominal || 0).toLocaleString('id-ID')}</td>
+                  <td>${escapeHtml(item.metode || 'Tunai')}</td>
+                  <td style="text-align: center; font-weight: bold; color: ${String(item.status).toLowerCase() === 'lunas' ? '#047857' : '#b91c1c'};">${escapeHtml(item.status || '-')}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+            <tfoot>
+              <tr style="background-color: #f8fafc; font-weight: bold;">
+                <td colspan="7" style="text-align: right; padding: 8px;">TOTAL LUNAS:</td>
+                <td colspan="3" style="text-align: left; padding: 8px; color: #047857;">Rp ${totalNominalLunas.toLocaleString('id-ID')}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      `;
+
+      setTimeout(() => {
+        window.print();
+      }, 200);
+    }
+
+    function downloadLaporanRiwayatSPPCSV() {
+      const list = getFilteredAndSortedSPPList();
+      if (list.length === 0) {
+        showToast('Tidak ada data untuk diunduh', 'error');
+        return;
+      }
+      let csv = 'No,No Kuitansi,Tanggal,Username,Nama Siswa,Kelas,Paket,Tahun,Nominal,Metode,Status,Keterangan\n';
+      list.forEach((s, idx) => {
+        csv += `${idx + 1},"${s.id}","${formatTanggalIndo(s.tanggal)}","${s.nis || ''}","${s.nama}","${s.kelas || '-'}","${s.bulan}","${s.tahun || ''}",${Number(s.nominal || 0)},"${s.metode || 'Tunai'}","${s.status}","${(s.keterangan || '-').replace(/"/g, '""')}"\n`;
+      });
+      unduhFileBlob(new Blob([csv], { type: 'text/csv;charset=utf-8;' }), 'Laporan_Riwayat_SPP_Filter.csv');
+    }
+
+    function renderTableSPP() {
+      const tbody = document.getElementById('tbodySPP');
+      const counter = document.getElementById('sppRiwayatCount');
+      if (!tbody) return;
+
+      const list = getFilteredAndSortedSPPList();
 
       if (counter) counter.textContent = list.length;
 
@@ -2886,14 +3037,17 @@
         }
       }
 
+      const targetUsername = String(s.username || '').trim().toLowerCase();
+
+      // Sinkronkan Profil Siswa dari data Google Sheets
       document.getElementById('portalSiswaSection')?.classList.remove('hidden');
-      document.getElementById('portalSiswaNama').textContent = s.nama;
-      document.getElementById('portalSiswaNis').textContent = s.username;
+      document.getElementById('portalSiswaNama').textContent = s.nama || '-';
+      document.getElementById('portalSiswaNis').textContent = s.username || '-';
       document.getElementById('portalSiswaKelas').textContent = s.kelas || '-';
       document.getElementById('portalSiswaKategoriBadge').textContent = s.kategori_bimbingan || 'BIMBEL';
 
-      document.getElementById('portalProfilNama').textContent = s.nama;
-      document.getElementById('portalProfilUsername').textContent = s.username;
+      document.getElementById('portalProfilNama').textContent = s.nama || '-';
+      document.getElementById('portalProfilUsername').textContent = s.username || '-';
       document.getElementById('portalProfilKelas').textContent = s.kelas || '-';
       document.getElementById('portalProfilKategori').textContent = s.kategori_bimbingan || 'BIMBEL';
       document.getElementById('portalProfilSekolah').textContent = s.sekolah_asal || '-';
@@ -2901,8 +3055,12 @@
       document.getElementById('portalProfilOrtu').textContent = s.nama_ortu || '-';
       document.getElementById('portalProfilTelp').textContent = s.no_telp || '-';
 
-      const presensiSiswa = appData.presensi.filter(p => p.nis && String(p.nis).toLowerCase() === String(s.username).toLowerCase());
-      const totalHadir = presensiSiswa.filter(p => p.status === 'Hadir').length;
+      // Sinkronkan Riwayat Kehadiran Siswa dari Sheet Presensi
+      const presensiSiswa = (appData.presensi || []).filter(p => {
+        const pNis = String(p.nis || p.username || '').trim().toLowerCase();
+        return pNis === targetUsername;
+      });
+      const totalHadir = presensiSiswa.filter(p => String(p.status || '').trim().toLowerCase() === 'hadir').length;
       const paketSelesai = Math.floor(totalHadir / 12);
       const sesi = totalHadir % 12;
 
@@ -2911,20 +3069,28 @@
 
       const tbodyPresensi = document.getElementById('tbodyPortalPresensi');
       if (tbodyPresensi) {
-        tbodyPresensi.innerHTML = presensiSiswa.map(p => `
-          <tr class="hover:bg-slate-50 transition">
-            <td class="py-2.5 px-3 font-semibold">${escapeHtml(formatTanggalIndo(p.tanggal))}</td>
-            <td class="py-2.5 px-3 font-mono">${escapeHtml(p.waktu)}</td>
-            <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">${escapeHtml(p.status)}</span></td>
-            <td class="py-2.5 px-3 text-slate-500">${escapeHtml(p.keterangan || '-')}</td>
-          </tr>
-        `).join('');
+        if (presensiSiswa.length === 0) {
+          tbodyPresensi.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-slate-400">Belum ada catatan kehadiran di Google Sheets.</td></tr>`;
+        } else {
+          tbodyPresensi.innerHTML = presensiSiswa.map(p => `
+            <tr class="hover:bg-slate-50 transition">
+              <td class="py-2.5 px-3 font-semibold">${escapeHtml(formatTanggalIndo(p.tanggal))}</td>
+              <td class="py-2.5 px-3 font-mono">${escapeHtml(p.waktu)}</td>
+              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${String(p.status).toLowerCase() === 'hadir' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${escapeHtml(p.status)}</span></td>
+              <td class="py-2.5 px-3 text-slate-500">${escapeHtml(p.keterangan || '-')}</td>
+            </tr>
+          `).join('');
+        }
       }
 
-      const sppSiswa = appData.spp.filter(sp => sp.nis && String(sp.nis).toLowerCase() === String(s.username).toLowerCase());
+      // Sinkronkan Rekap SPP Siswa dari Sheet SPP
+      const sppSiswa = (appData.spp || []).filter(sp => {
+        const spNis = String(sp.nis || sp.username || '').trim().toLowerCase();
+        return spNis === targetUsername;
+      });
       const paketNama = `Paket ${paketSelesai + 1}`;
 
-      const transaksiPaketIni = sppSiswa.find(sp => String(sp.bulan || '').toLowerCase() === paketNama.toLowerCase());
+      const transaksiPaketIni = sppSiswa.find(sp => String(sp.bulan || '').trim().toLowerCase() === paketNama.toLowerCase());
 
       const elBulanLabel = document.getElementById('portalSppStatusBulanNama');
       const elBadge = document.getElementById('portalSppStatusBadge');
@@ -2948,22 +3114,26 @@
 
       const tbodySpp = document.getElementById('tbodyPortalSpp');
       if (tbodySpp) {
-        tbodySpp.innerHTML = sppSiswa.map(sp => {
-          const safeDataJson = encodeURIComponent(JSON.stringify(sp));
-          return `
-            <tr class="hover:bg-slate-50 transition">
-              <td class="py-2.5 px-3 font-mono font-bold">${escapeHtml(sp.id)}</td>
-              <td class="py-2.5 px-3">${escapeHtml(formatTanggalIndo(sp.tanggal))}</td>
-              <td class="py-2.5 px-3 font-semibold text-indigo-700">${escapeHtml(sp.bulan)} ${escapeHtml(sp.tahun || '')}</td>
-              <td class="py-2.5 px-3 font-bold">Rp ${Number(sp.nominal || 0).toLocaleString('id-ID')}</td>
-              <td class="py-2.5 px-3">${escapeHtml(sp.metode || 'Tunai')}</td>
-              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${sp.status === 'Lunas' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${escapeHtml(sp.status)}</span></td>
-              <td class="py-2.5 px-3 text-center">
-                <button type="button" onclick="bukaKuitansiByJson('${safeDataJson}')" class="px-2 py-1 bg-amber-500 text-white rounded text-[10px] font-bold">Kuitansi</button>
-              </td>
-            </tr>
-          `;
-        }).join('');
+        if (sppSiswa.length === 0) {
+          tbodySpp.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-slate-400">Belum ada catatan riwayat SPP di Google Sheets.</td></tr>`;
+        } else {
+          tbodySpp.innerHTML = sppSiswa.map(sp => {
+            const safeDataJson = encodeURIComponent(JSON.stringify(sp));
+            return `
+              <tr class="hover:bg-slate-50 transition">
+                <td class="py-2.5 px-3 font-mono font-bold">${escapeHtml(sp.id)}</td>
+                <td class="py-2.5 px-3">${escapeHtml(formatTanggalIndo(sp.tanggal))}</td>
+                <td class="py-2.5 px-3 font-semibold text-indigo-700">${escapeHtml(sp.bulan)} ${escapeHtml(sp.tahun || '')}</td>
+                <td class="py-2.5 px-3 font-bold">Rp ${Number(sp.nominal || 0).toLocaleString('id-ID')}</td>
+                <td class="py-2.5 px-3">${escapeHtml(sp.metode || 'Tunai')}</td>
+                <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${String(sp.status).toLowerCase() === 'lunas' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${escapeHtml(sp.status)}</span></td>
+                <td class="py-2.5 px-3 text-center">
+                  <button type="button" onclick="bukaKuitansiByJson('${safeDataJson}')" class="px-2 py-1 bg-amber-500 hover:bg-amber-600 text-white rounded text-[10px] font-bold transition">Kuitansi</button>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
       }
 
       switchPortalTab('presensi');
