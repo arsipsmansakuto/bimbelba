@@ -1050,6 +1050,136 @@
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
+            <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Kelas</label>
+            <input type="text" id="siswaFormKelas" placeholder="Contoh: 4 SD" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Kategori Bimbingan</label>
+            <select id="siswaFormKategori" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-2 text-xs text-slate-800 focus:outline-none">
+              <option value="BIMBEL">BIMBEL</option>
+              <option value="BIMBA">BIMBA</option>
+              <option value="PRIVAT">PRIVAT</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Sekolah Asal</label>
+          <input type="text" id="siswaFormSekolah" placeholder="Nama sekolah asal..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Alamat</label>
+          <textarea id="siswaFormAlamat" rows="2" placeholder="Alamat tinggal..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none"></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Nama Orang Tua</label>
+            <input type="text" id="siswaFormOrtu" placeholder="Nama wali..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">No. HP / WhatsApp</label>
+            <input type="text" id="siswaFormTelp" placeholder="08..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
+          </div>
+        </div>
+
+        <input type="hidden" id="siswaFormIsEdit" value="0">
+
+        <div class="flex gap-2 pt-2">
+          <button type="submit" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition">
+            Simpan Data Siswa
+          </button>
+          <button type="button" onclick="closeModalFormSiswa()" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-xs rounded-xl transition">
+            Batal
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL FORM PENGGUNA -->
+  <div id="modalFormUser" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-4 my-8">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 id="modalFormUserTitle" class="text-sm font-bold text-slate-800 font-brand">Data Pengguna</h3>
+        <button type="button" onclick="closeModalFormUser()" class="text-slate-400 hover:text-slate-600 text-xs">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <form onsubmit="event.preventDefault(); simpanDataUser();" class="space-y-3">
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Nama Lengkap</label>
+          <input type="text" id="userFormNama" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Username</label>
+          <input type="text" id="userFormUsername" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Password</label>
+          <input type="text" id="userFormPassword" value="123" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Role</label>
+            <select id="userFormRole" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-2 text-xs text-slate-800 focus:outline-none">
+              <option value="petugas">Petugas</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Status</label>
+            <select id="userFormStatus" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-2 text-xs text-slate-800 focus:outline-none">
+              <option value="Aktif">Aktif</option>
+              <option value="Nonaktif">Nonaktif</option>
+            </select>
+          </div>
+        </div>
+
+        <input type="hidden" id="userFormIsEdit" value="0">
+        <input type="hidden" id="userFormOldUsername" value="">
+
+        <div class="flex gap-2 pt-2">
+          <button type="submit" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition">
+            Simpan Pengguna
+          </button>
+          <button type="button" onclick="closeModalFormUser()" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-xs rounded-xl transition">
+            Batal
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL EDIT SPP -->
+  <div id="modalEditSPP" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-4 my-8">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-sm font-bold text-slate-800 font-brand">Edit Transaksi SPP</h3>
+        <button type="button" onclick="closeModalEditSPP()" class="text-slate-400 hover:text-slate-600 text-xs">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <form onsubmit="event.preventDefault(); simpanPerubahanSPP();" class="space-y-3">
+        <input type="hidden" id="editSppId" value="">
+        <input type="hidden" id="editSppNis" value="">
+
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Siswa</label>
+          <input type="text" id="editSppNama" readonly class="w-full bg-slate-100 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-700 font-bold cursor-not-allowed">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Tanggal Bayar</label>
+            <input type="text" id="editSppTanggal" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none cursor-pointer" readonly>
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Kelas</label>
+            <input type="text" id="editSppKelas" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
             <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Paket</label>
             <input type="text" id="editSppBulan" placeholder="Contoh: Paket 1" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 font-semibold focus:outline-none">
           </div>
@@ -1764,8 +1894,10 @@
       document.getElementById('siswaFormPassword').value = '123';
       document.getElementById('siswaFormNama').value = '';
       document.getElementById('siswaFormKelas').value = '';
+      document.getElementById('siswaFormKategori').value = 'BIMBEL';
       document.getElementById('siswaFormAlamat').value = '';
       document.getElementById('siswaFormSekolah').value = '';
+      document.getElementById('siswaFormOrtu').value = '';
       document.getElementById('siswaFormTelp').value = '';
       document.getElementById('modalFormSiswa')?.classList.remove('hidden');
     }
@@ -1773,7 +1905,10 @@
     function editDataSiswa(encodedUsername) {
       const username = decodeURIComponent(encodedUsername);
       const s = (appData.siswa || []).find(x => String(x.username) === username);
-      if (!s) return;
+      if (!s) {
+        showToast('Data siswa tidak ditemukan', 'error');
+        return;
+      }
       document.getElementById('modalFormSiswaTitle').textContent = 'Edit Data Siswa';
       document.getElementById('siswaFormIsEdit').value = '1';
       document.getElementById('siswaFormUsername').value = s.username;
@@ -1782,9 +1917,10 @@
       document.getElementById('siswaFormNama').value = s.nama || '';
       document.getElementById('siswaFormKelas').value = s.kelas || '';
       document.getElementById('siswaFormKategori').value = s.kategori_bimbingan || 'BIMBEL';
-      document.getElementById('siswaFormAlamat').value = s.alamat || '';
-      document.getElementById('siswaFormSekolah').value = s.sekolah_asal || '';
-      document.getElementById('siswaFormTelp').value = s.no_telp || '';
+      document.getElementById('siswaFormAlamat').value = s.alamat !== '-' ? (s.alamat || '') : '';
+      document.getElementById('siswaFormSekolah').value = s.sekolah_asal !== '-' ? (s.sekolah_asal || '') : '';
+      document.getElementById('siswaFormOrtu').value = s.nama_ortu !== '-' ? (s.nama_ortu || '') : '';
+      document.getElementById('siswaFormTelp').value = s.no_telp !== '-' ? (s.no_telp || '') : '';
       document.getElementById('modalFormSiswa')?.classList.remove('hidden');
     }
 
@@ -1801,6 +1937,7 @@
       const alamat = document.getElementById('siswaFormAlamat').value.trim();
       const sekolah = document.getElementById('siswaFormSekolah').value.trim();
       const kategori = document.getElementById('siswaFormKategori').value;
+      const ortu = document.getElementById('siswaFormOrtu').value.trim();
       const telp = document.getElementById('siswaFormTelp').value.trim();
 
       if (!username || !nama) {
@@ -1809,13 +1946,15 @@
       }
 
       const siswaObj = {
-        username, password, nama,
+        username,
+        password,
+        nama,
         kelas: kelas || '-',
         alamat: alamat || '-',
         sekolah_asal: sekolah || '-',
         hobi: '-',
         kategori_bimbingan: kategori,
-        nama_ortu: '-',
+        nama_ortu: ortu || '-',
         no_telp: telp || '-',
         status_akun: 'Aktif'
       };
@@ -1824,10 +1963,23 @@
         const idx = appData.siswa.findIndex(s => String(s.username) === username);
         if (idx !== -1) {
           appData.siswa[idx] = { ...appData.siswa[idx], ...siswaObj };
+          // Perbarui nama & kelas terkait di data presensi dan spp lokal jika diubah
+          (appData.presensi || []).forEach(p => {
+            if (String(p.nis) === username || String(p.username) === username) {
+              p.nama = nama;
+              p.kelas = kelas || '-';
+            }
+          });
+          (appData.spp || []).forEach(sp => {
+            if (String(sp.nis) === username) {
+              sp.nama = nama;
+              sp.kelas = kelas || '-';
+            }
+          });
         }
       } else {
         if (appData.siswa.some(s => String(s.username).toLowerCase() === username.toLowerCase())) {
-          showToast('Username sudah ada', 'error');
+          showToast('Username sudah terdaftar! Gunakan username lain.', 'error');
           return;
         }
         appData.siswa.push(siswaObj);
@@ -1835,24 +1987,32 @@
 
       saveDataToStorage();
       renderTableMasterSiswa();
+      renderLivePresensiLog();
+      renderTableSPP();
+      terapkanFilterKehadiran();
+      terapkanFilterRekapSPP();
       updateSyncStatsUI();
       closeModalFormSiswa();
-      showToast(isEdit ? 'Data siswa berhasil diperbarui' : 'Data siswa berhasil disimpan', 'success');
+      showToast(isEdit ? `Data ${nama} berhasil diperbarui` : `Siswa baru ${nama} berhasil disimpan`, 'success');
 
       sendDataToGoogleSheets({ action: isEdit ? 'updateSiswa' : 'tambahSiswa', ...siswaObj });
     }
 
     function hapusDataSiswa(encodedUsername) {
       const username = decodeURIComponent(encodedUsername);
+      const siswa = (appData.siswa || []).find(s => String(s.username).trim().toLowerCase() === username.trim().toLowerCase());
+      const nama = siswa ? siswa.nama : username;
+
       bukaModalKonfirmasiHapus(
-        'Hapus Siswa',
-        `Apakah Anda yakin ingin menghapus data siswa "${username}"? Data di Google Spreadsheet juga akan terhapus.`,
+        'Hapus Data Siswa',
+        `Apakah Anda yakin ingin menghapus data siswa "${nama}" (${username})? Data di Google Spreadsheet juga akan terhapus.`,
         () => {
           appData.siswa = (appData.siswa || []).filter(s => String(s.username).trim().toLowerCase() !== username.trim().toLowerCase());
           saveDataToStorage();
           renderTableMasterSiswa();
+          renderTableSPP();
           updateSyncStatsUI();
-          showToast(`Siswa ${username} berhasil dihapus dari aplikasi & Sheets`, 'info');
+          showToast(`Siswa ${nama} berhasil dihapus dari aplikasi & Sheets`, 'info');
           sendDataToGoogleSheets({ action: 'hapusSiswa', username: username });
         }
       );
@@ -2060,11 +2220,12 @@
       document.getElementById('editSppNama').value = `${item.nama} (${item.nis || '-'})`;
       document.getElementById('editSppTanggal').value = formatTanggalIndo(item.tanggal);
       document.getElementById('editSppKelas').value = item.kelas || '-';
-      document.getElementById('editSppBulan').value = item.bulan || 'Oktober';
+      document.getElementById('editSppBulan').value = item.bulan || 'Paket 1';
       document.getElementById('editSppTahun').value = item.tahun || '2026';
       document.getElementById('editSppNominal').value = Number(item.nominal || 0);
       document.getElementById('editSppMetode').value = item.metode || 'Tunai';
       document.getElementById('editSppStatus').value = item.status || 'Lunas';
+      document.getElementById('editSppKeterangan').value = item.keterangan !== '-' ? (item.keterangan || '') : '';
 
       document.getElementById('modalEditSPP')?.classList.remove('hidden');
     }
@@ -2077,19 +2238,34 @@
         return;
       }
 
-      appData.spp[idx].tanggal = document.getElementById('editSppTanggal').value;
-      appData.spp[idx].kelas = document.getElementById('editSppKelas').value;
-      appData.spp[idx].bulan = document.getElementById('editSppBulan').value;
-      appData.spp[idx].tahun = document.getElementById('editSppTahun').value;
-      appData.spp[idx].nominal = Number(document.getElementById('editSppNominal').value) || 0;
-      appData.spp[idx].metode = document.getElementById('editSppMetode').value;
-      appData.spp[idx].status = document.getElementById('editSppStatus').value;
+      const tglEdit = document.getElementById('editSppTanggal').value || getTodayDdMmYyyy();
+      const kelasEdit = document.getElementById('editSppKelas').value.trim() || '-';
+      const paketEdit = (document.getElementById('editSppBulan').value || 'Paket 1').trim();
+      const tahunEdit = String(document.getElementById('editSppTahun').value || '2026').trim();
+      const nominalEdit = Number(document.getElementById('editSppNominal').value) || 0;
+      const metodeEdit = document.getElementById('editSppMetode').value;
+      const statusEdit = document.getElementById('editSppStatus').value;
+      const ketEdit = (document.getElementById('editSppKeterangan')?.value || '-').trim() || '-';
+
+      if (nominalEdit <= 0) {
+        showToast('Nominal pembayaran wajib diisi!', 'error');
+        return;
+      }
+
+      appData.spp[idx].tanggal = tglEdit;
+      appData.spp[idx].kelas = kelasEdit;
+      appData.spp[idx].bulan = paketEdit;
+      appData.spp[idx].tahun = tahunEdit;
+      appData.spp[idx].nominal = nominalEdit;
+      appData.spp[idx].metode = metodeEdit;
+      appData.spp[idx].status = statusEdit;
+      appData.spp[idx].keterangan = ketEdit;
 
       saveDataToStorage();
       renderTableSPP();
       terapkanFilterRekapSPP();
       closeModalEditSPP();
-      showToast('Perubahan transaksi SPP berhasil disimpan', 'success');
+      showToast(`Perubahan transaksi ${id} berhasil disimpan`, 'success');
 
       sendDataToGoogleSheets({ action: 'updateSPP', ...appData.spp[idx] });
     }
@@ -2102,14 +2278,14 @@
 
       bukaModalKonfirmasiHapus(
         'Hapus Transaksi SPP',
-        `Apakah Anda yakin ingin menghapus transaksi kuitansi ${kuitansi} untuk ${nama}? Data di Google Spreadsheet juga akan terhapus.`,
+        `Apakah Anda yakin ingin menghapus transaksi ${kuitansi} untuk ${nama}? Data di Google Spreadsheet juga akan dihapus.`,
         () => {
           appData.spp = (appData.spp || []).filter(s => String(s.id).trim() !== idSpp.trim());
           saveDataToStorage();
           renderTableSPP();
           terapkanFilterRekapSPP();
           updateSyncStatsUI();
-          showToast(`Transaksi SPP ${kuitansi} berhasil dihapus dari aplikasi & Sheets`, 'info');
+          showToast(`Transaksi SPP ${kuitansi} berhasil dihapus`, 'info');
           sendDataToGoogleSheets({ action: 'hapusSPP', id: idSpp });
         }
       );
@@ -2209,14 +2385,14 @@
 
       bukaModalKonfirmasiHapus(
         'Hapus Catatan Presensi',
-        `Apakah Anda yakin ingin menghapus presensi ${nama} pada tanggal ${tgl}? Data di Google Spreadsheet juga akan terhapus.`,
+        `Apakah Anda yakin ingin menghapus catatan presensi ${nama} pada tanggal ${tgl}? Data di Google Spreadsheet juga akan terhapus.`,
         () => {
           appData.presensi = (appData.presensi || []).filter(p => String(p.id).trim().toLowerCase() !== id.trim().toLowerCase());
           saveDataToStorage();
           terapkanFilterKehadiran();
           renderLivePresensiLog();
           updateSyncStatsUI();
-          showToast(`Presensi ${nama} berhasil dihapus dari aplikasi & Sheets`, 'info');
+          showToast(`Presensi ${nama} berhasil dihapus`, 'info');
           sendDataToGoogleSheets({ action: 'hapusPresensi', id: id });
         }
       );
