@@ -457,11 +457,15 @@
 
           <!-- Bilah Filter & Sortir Interaktif -->
           <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs">
-            <div>
+            <div class="relative">
               <label class="block text-[10px] font-bold text-slate-600 uppercase mb-0.5">Filter Nama Siswa</label>
               <div class="relative">
-                <input type="text" id="sortSppFilterNama" oninput="renderTableSPP()" placeholder="Ketik nama / NIS..." class="w-full bg-white border border-slate-300 rounded-lg px-2 py-1.5 text-xs text-slate-700 focus:outline-none">
+                <input type="text" id="sortSppFilterNama" oninput="handleSortSppNamaInput(this.value)" autocomplete="off" placeholder="Pilih / ketik nama / NIS..." class="w-full bg-white border border-slate-300 rounded-lg pl-2 pr-7 py-1.5 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <button type="button" id="btnClearSortSppFilterNama" onclick="clearSortSppFilterNama()" class="hidden absolute right-2 top-1.5 text-slate-400 hover:text-slate-600 text-xs">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
               </div>
+              <div id="dropdownSortSppFilterNama" class="hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-xl z-30 divide-y divide-slate-100"></div>
             </div>
             <div>
               <label class="block text-[10px] font-bold text-slate-600 uppercase mb-0.5">Filter Paket</label>
@@ -1272,6 +1276,61 @@
     let cachedSppSearchResults = [];
     let cachedManualSearchResults = [];
     let aksiKonfirmasiHapusCallback = null;
+
+    function handleSortSppNamaInput(query) {
+      const dropdown = document.getElementById('dropdownSortSppFilterNama');
+      const btnClear = document.getElementById('btnClearSortSppFilterNama');
+      renderTableSPP();
+
+      if (!dropdown) return;
+      if (!query || String(query).trim() === '') {
+        dropdown.classList.add('hidden');
+        if (btnClear) btnClear.classList.add('hidden');
+        return;
+      }
+
+      if (btnClear) btnClear.classList.remove('hidden');
+      const q = String(query).trim().toLowerCase();
+      const results = (appData.siswa || []).filter(s => {
+        const n = String(s.nama || '').toLowerCase();
+        const u = String(s.username || '').toLowerCase();
+        return n.includes(q) || u.includes(q);
+      });
+
+      if (results.length === 0) {
+        dropdown.innerHTML = `<div class="p-2.5 text-xs text-slate-400 text-center">Siswa tidak ditemukan</div>`;
+        dropdown.classList.remove('hidden');
+        return;
+      }
+
+      dropdown.innerHTML = results.slice(0, 6).map(s => {
+        const safeNama = encodeURIComponent(String(s.nama || ''));
+        return `
+          <div onclick="selectSortSppFilterNama('${safeNama}')" class="p-2 hover:bg-indigo-50 cursor-pointer flex justify-between items-center transition">
+            <span class="font-bold text-slate-800 text-xs">${escapeHtml(s.nama)}</span>
+            <span class="text-[10px] text-slate-500 font-mono">${escapeHtml(s.username)}</span>
+          </div>
+        `;
+      }).join('');
+      dropdown.classList.remove('hidden');
+    }
+
+    function selectSortSppFilterNama(encodedNama) {
+      const nama = decodeURIComponent(encodedNama);
+      const input = document.getElementById('sortSppFilterNama');
+      if (input) input.value = nama;
+      document.getElementById('dropdownSortSppFilterNama')?.classList.add('hidden');
+      document.getElementById('btnClearSortSppFilterNama')?.classList.remove('hidden');
+      renderTableSPP();
+    }
+
+    function clearSortSppFilterNama() {
+      const input = document.getElementById('sortSppFilterNama');
+      if (input) input.value = '';
+      document.getElementById('dropdownSortSppFilterNama')?.classList.add('hidden');
+      document.getElementById('btnClearSortSppFilterNama')?.classList.add('hidden');
+      renderTableSPP();
+    }
 
     function bukaModalKonfirmasiHapus(judul, pesan, onConfirm) {
       aksiKonfirmasiHapusCallback = onConfirm;
