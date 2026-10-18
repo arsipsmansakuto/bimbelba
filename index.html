@@ -393,21 +393,8 @@
 
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1">Bulan</label>
-                <select id="sppBulan" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-2 text-xs font-medium text-slate-800 focus:outline-none">
-                  <option value="Januari">Januari</option>
-                  <option value="Februari">Februari</option>
-                  <option value="Maret">Maret</option>
-                  <option value="April">April</option>
-                  <option value="Mei">Mei</option>
-                  <option value="Juni">Juni</option>
-                  <option value="Juli">Juli</option>
-                  <option value="Agustus">Agustus</option>
-                  <option value="September">September</option>
-                  <option value="Oktober" selected>Oktober</option>
-                  <option value="November">November</option>
-                  <option value="Desember">Desember</option>
-                </select>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Paket Bimbingan</label>
+                <input type="text" id="sppBulan" placeholder="Contoh: Paket 1" value="Paket 1" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
               </div>
               <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Tahun</label>
@@ -443,6 +430,11 @@
               </div>
             </div>
 
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Keterangan / Catatan</label>
+              <input type="text" id="sppKeterangan" placeholder="Contoh: Pembayaran cicilan ke-1 / Lunas paket 12 sesi" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+
             <button type="submit" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2">
               <i class="fa-solid fa-receipt"></i> Simpan Transaksi SPP
             </button>
@@ -472,22 +464,8 @@
               </div>
             </div>
             <div>
-              <label class="block text-[10px] font-bold text-slate-600 uppercase mb-0.5">Filter Bulan</label>
-              <select id="sortSppFilterBulan" onchange="renderTableSPP()" class="w-full bg-white border border-slate-300 rounded-lg px-2 py-1.5 text-xs text-slate-700 focus:outline-none">
-                <option value="">Semua Bulan</option>
-                <option value="januari">Januari</option>
-                <option value="februari">Februari</option>
-                <option value="maret">Maret</option>
-                <option value="april">April</option>
-                <option value="mei">Mei</option>
-                <option value="juni">Juni</option>
-                <option value="juli">Juli</option>
-                <option value="agustus">Agustus</option>
-                <option value="september">September</option>
-                <option value="oktober">Oktober</option>
-                <option value="november">November</option>
-                <option value="desember">Desember</option>
-              </select>
+              <label class="block text-[10px] font-bold text-slate-600 uppercase mb-0.5">Filter Paket</label>
+              <input type="text" id="sortSppFilterBulan" oninput="renderTableSPP()" placeholder="Cari paket (mis. Paket 1)..." class="w-full bg-white border border-slate-300 rounded-lg px-2 py-1.5 text-xs text-slate-700 focus:outline-none">
             </div>
             <div>
               <label class="block text-[10px] font-bold text-slate-600 uppercase mb-0.5">Filter Status</label>
@@ -501,8 +479,8 @@
               <label class="block text-[10px] font-bold text-slate-600 uppercase mb-0.5">Urutkan (Sortir)</label>
               <select id="sortSppOrderBy" onchange="renderTableSPP()" class="w-full bg-white border border-slate-300 rounded-lg px-2 py-1.5 text-xs text-slate-700 focus:outline-none">
                 <option value="terbaru">Terbaru Dicatat</option>
-                <option value="bulan-asc">Bulan (Jan - Des)</option>
-                <option value="bulan-desc">Bulan (Des - Jan)</option>
+                <option value="paket-asc">Paket (A - Z)</option>
+                <option value="paket-desc">Paket (Z - A)</option>
                 <option value="status-lunas">Status: Lunas Dahulu</option>
                 <option value="status-belum">Status: Belum Lunas Dahulu</option>
                 <option value="nominal-tinggi">Nominal Tertinggi</option>
@@ -518,9 +496,10 @@
                   <th class="py-2.5 px-3">No Kuitansi</th>
                   <th class="py-2.5 px-3">Tanggal</th>
                   <th class="py-2.5 px-3">Nama</th>
-                  <th class="py-2.5 px-3">Bulan</th>
+                  <th class="py-2.5 px-3">Paket</th>
                   <th class="py-2.5 px-3">Nominal</th>
                   <th class="py-2.5 px-3">Status</th>
+                  <th class="py-2.5 px-3">Keterangan</th>
                   <th class="py-2.5 px-3 text-center">Aksi</th>
                 </tr>
               </thead>
@@ -1067,147 +1046,8 @@
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Kelas</label>
-            <input type="text" id="siswaFormKelas" placeholder="4 SD" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
-          </div>
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Kategori</label>
-            <select id="siswaFormKategori" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-2 text-xs text-slate-800 focus:outline-none">
-              <option value="BIMBEL">BIMBEL</option>
-              <option value="BIMBA">BIMBA</option>
-              <option value="PRIVAT">PRIVAT</option>
-            </select>
-          </div>
-        </div>
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Alamat</label>
-          <textarea id="siswaFormAlamat" rows="2" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none"></textarea>
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Sekolah</label>
-            <input type="text" id="siswaFormSekolah" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
-          </div>
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">No. Telp</label>
-            <input type="text" id="siswaFormTelp" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
-          </div>
-        </div>
-
-        <input type="hidden" id="siswaFormIsEdit" value="0">
-
-        <div class="flex gap-2 pt-2">
-          <button type="submit" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition">
-            Simpan Data
-          </button>
-          <button type="button" onclick="closeModalFormSiswa()" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-xs rounded-xl transition">
-            Batal
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAL FORM PENGGUNA -->
-  <div id="modalFormUser" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 overflow-y-auto">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-4 my-8">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 id="modalFormUserTitle" class="text-sm font-bold text-slate-800 font-brand">Data Pengguna</h3>
-        <button type="button" onclick="closeModalFormUser()" class="text-slate-400 hover:text-slate-600 text-xs">
-          <i class="fa-solid fa-xmark text-sm"></i>
-        </button>
-      </div>
-
-      <form onsubmit="event.preventDefault(); simpanDataUser();" class="space-y-3">
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Nama Lengkap</label>
-          <input type="text" id="userFormNama" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
-        </div>
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Username</label>
-          <input type="text" id="userFormUsername" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
-        </div>
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Password</label>
-          <input type="text" id="userFormPassword" value="123" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Role</label>
-            <select id="userFormRole" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-2 text-xs text-slate-800 focus:outline-none">
-              <option value="petugas">Petugas</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Status</label>
-            <select id="userFormStatus" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-2 text-xs text-slate-800 focus:outline-none">
-              <option value="Aktif">Aktif</option>
-              <option value="Nonaktif">Nonaktif</option>
-            </select>
-          </div>
-        </div>
-
-        <input type="hidden" id="userFormIsEdit" value="0">
-        <input type="hidden" id="userFormOldUsername" value="">
-
-        <div class="flex gap-2 pt-2">
-          <button type="submit" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition">
-            Simpan Pengguna
-          </button>
-          <button type="button" onclick="closeModalFormUser()" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-xs rounded-xl transition">
-            Batal
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAL EDIT SPP -->
-  <div id="modalEditSPP" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 overflow-y-auto">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-4 my-8">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 class="text-sm font-bold text-slate-800 font-brand">Edit Transaksi SPP</h3>
-        <button type="button" onclick="closeModalEditSPP()" class="text-slate-400 hover:text-slate-600 text-xs">
-          <i class="fa-solid fa-xmark text-sm"></i>
-        </button>
-      </div>
-
-      <form onsubmit="event.preventDefault(); simpanPerubahanSPP();" class="space-y-3">
-        <input type="hidden" id="editSppId" value="">
-        <input type="hidden" id="editSppNis" value="">
-
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Siswa</label>
-          <input type="text" id="editSppNama" readonly class="w-full bg-slate-100 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-700 font-bold cursor-not-allowed">
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Tanggal Bayar</label>
-            <input type="text" id="editSppTanggal" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none cursor-pointer" readonly>
-          </div>
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Kelas</label>
-            <input type="text" id="editSppKelas" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
-          </div>
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Bulan</label>
-            <select id="editSppBulan" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-2 text-xs text-slate-800 focus:outline-none">
-              <option value="Januari">Januari</option>
-              <option value="Februari">Februari</option>
-              <option value="Maret">Maret</option>
-              <option value="April">April</option>
-              <option value="Mei">Mei</option>
-              <option value="Juni">Juni</option>
-              <option value="Juli">Juli</option>
-              <option value="Agustus">Agustus</option>
-              <option value="September">September</option>
-              <option value="Oktober">Oktober</option>
-              <option value="November">November</option>
-              <option value="Desember">Desember</option>
-            </select>
+            <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Paket</label>
+            <input type="text" id="editSppBulan" placeholder="Contoh: Paket 1" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 font-semibold focus:outline-none">
           </div>
           <div>
             <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Tahun</label>
@@ -1234,6 +1074,10 @@
               <option value="Belum Lunas">Belum Lunas</option>
             </select>
           </div>
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Keterangan / Catatan</label>
+          <input type="text" id="editSppKeterangan" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
         </div>
 
         <div class="flex gap-2 pt-2">
@@ -1367,7 +1211,8 @@
         <div class="space-y-1 text-[11px]">
           <div class="flex justify-between"><span class="text-slate-500">Nama:</span><span id="kuitansiNama" class="font-bold">-</span></div>
           <div class="flex justify-between"><span class="text-slate-500">Kelas:</span><span id="kuitansiKelas">-</span></div>
-          <div class="flex justify-between"><span class="text-slate-500">Bulan:</span><span id="kuitansiPeriode" class="font-bold text-amber-700">-</span></div>
+          <div class="flex justify-between"><span class="text-slate-500">Paket:</span><span id="kuitansiPeriode" class="font-bold text-amber-700">-</span></div>
+          <div class="flex justify-between"><span class="text-slate-500">Keterangan:</span><span id="kuitansiKeterangan" class="text-slate-700">-</span></div>
           <div class="flex justify-between"><span class="text-slate-500">Status:</span><span id="kuitansiStatus" class="font-bold text-emerald-600 uppercase">LUNAS</span></div>
         </div>
 
@@ -3271,21 +3116,6 @@
       if (presensiTglEl) presensiTglEl.value = getTodayDdMmYyyy();
       if (sppTglEl) sppTglEl.value = getTodayDdMmYyyy();
 
-      // Secara default masuk langsung sebagai Admin
-      if (appData.currentUser) {
-        document.getElementById('currentUserNameDisplay').textContent = appData.currentUser.nama;
-        const roleEl = document.getElementById('currentUserRoleDisplay');
-        if (roleEl) {
-          roleEl.textContent = appData.currentUser.role.toUpperCase();
-          roleEl.className = 'text-[10px] text-amber-300 font-bold uppercase tracking-wider';
-        }
-        document.getElementById('adminNavTabs')?.classList.remove('hidden');
-        document.getElementById('modalLogin')?.classList.add('hidden');
-        pindahTab('scanner');
-      } else {
-        handleLogout();
-      }
-
       renderLivePresensiLog();
       renderTableMasterSiswa();
       renderTableSPP();
@@ -3293,7 +3123,9 @@
       terapkanFilterRekapSPP();
       renderTableUsers();
       updateSyncStatsUI();
-      updateAuthButtonUI();
+
+      // Selalu arahkan ke popup login saat aplikasi dibuka atau direload
+      handleLogout();
     });
   </script>
 </body>
