@@ -89,84 +89,84 @@
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
 
   <!-- HEADER UTAMA -->
   <header class="bg-indigo-900 text-white shadow-md sticky top-0 z-40 border-b border-indigo-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-      <div class="flex items-center space-x-3 cursor-pointer" onclick="pindahTab('scanner')">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-400 to-amber-300 flex items-center justify-center text-indigo-950 font-bold text-xl shadow-md">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between h-14 sm:h-16">
+      <div class="flex items-center space-x-2 sm:space-x-3 cursor-pointer min-w-0" onclick="pindahTab('scanner')">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-amber-400 to-amber-300 flex items-center justify-center text-indigo-950 font-bold text-base sm:text-xl shadow-md shrink-0">
           <i class="fa-solid fa-graduation-cap"></i>
         </div>
-        <div>
-          <h1 class="text-lg font-bold font-brand tracking-wide flex items-center gap-2">
-            SIM BIMBEL BA
-            <span class="text-xs bg-amber-400 text-slate-900 font-semibold px-2 py-0.5 rounded-full uppercase">v3.2</span>
+        <div class="truncate">
+          <h1 class="text-sm sm:text-base md:text-lg font-bold font-brand tracking-wide flex items-center gap-1.5 sm:gap-2">
+            <span class="truncate">BIMBEL BA</span>
+            <span class="text-[9px] sm:text-xs bg-amber-400 text-slate-900 font-semibold px-1.5 py-0.2 sm:px-2 sm:py-0.5 rounded-full uppercase shrink-0">v3.2</span>
           </h1>
-          <p class="text-xs text-indigo-200">Sistem Presensi & SPP Terpadu</p>
+          <p class="text-[10px] sm:text-xs text-indigo-200 truncate hidden xs:block">Presensi & SPP Terpadu</p>
         </div>
       </div>
 
-      <div class="flex items-center space-x-3">
+      <div class="flex items-center space-x-1.5 sm:space-x-3 shrink-0">
         <!-- Status Indikator Sinkronisasi -->
-        <div id="cloudSyncStatusBadge" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-950 text-emerald-400 text-[11px] font-mono border border-indigo-800" title="Sinkronisasi Google Sheets">
-          <span id="cloudSyncIndicatorDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span id="cloudSyncStatusText">Sheets Siap</span>
+        <div id="cloudSyncStatusBadge" class="flex items-center gap-1 sm:gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-indigo-950 text-emerald-400 text-[10px] sm:text-[11px] font-mono border border-indigo-800" title="Sinkronisasi Google Sheets">
+          <span id="cloudSyncIndicatorDot" class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="cloudSyncStatusText" class="hidden sm:inline">Sheets Siap</span>
         </div>
 
         <!-- Info Sesi Pengguna -->
-        <div id="userInfoHeader" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-indigo-800 text-xs">
-          <i class="fa-solid fa-circle-user text-amber-400 text-base"></i>
-          <div>
-            <div id="currentUserNameDisplay" class="font-semibold text-slate-100">Silakan Login</div>
-            <div id="currentUserRoleDisplay" class="text-[10px] text-indigo-300 uppercase">BELUM MASUK</div>
+        <div id="userInfoHeader" class="flex items-center gap-1.5 sm:gap-2 px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-indigo-800 text-xs">
+          <i class="fa-solid fa-circle-user text-amber-400 text-sm sm:text-base shrink-0"></i>
+          <div class="max-w-[85px] sm:max-w-[130px] truncate">
+            <div id="currentUserNameDisplay" class="font-semibold text-slate-100 truncate text-[11px] sm:text-xs">Silakan Login</div>
+            <div id="currentUserRoleDisplay" class="text-[9px] sm:text-[10px] text-indigo-300 uppercase leading-none">BELUM MASUK</div>
           </div>
         </div>
 
         <!-- Tombol Logout -->
-        <button type="button" onclick="handleLogout()" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-sm border border-rose-500">
+        <button type="button" onclick="handleLogout()" class="px-2.5 py-1 sm:px-3.5 sm:py-1.5 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white rounded-lg text-xs font-semibold flex items-center gap-1 sm:gap-1.5 transition shadow-sm border border-rose-500 shrink-0">
           <i class="fa-solid fa-right-from-bracket text-xs"></i>
-          <span>Logout</span>
+          <span class="hidden sm:inline">Logout</span>
         </button>
       </div>
     </div>
 
     <!-- TAB NAVIGASI -->
-    <nav id="adminNavTabs" class="bg-indigo-950/60 border-t border-indigo-800/60 overflow-x-auto no-scrollbar">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between py-2 gap-2">
-        <div class="flex space-x-1 sm:space-x-2">
-          <button type="button" id="btnTabScanner" onclick="pindahTab('scanner')" class="nav-tab-btn flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-indigo-600 text-white shadow-sm whitespace-nowrap">
-            <i class="fa-solid fa-barcode"></i> Scanner & Presensi
+    <nav id="adminNavTabs" class="bg-indigo-950/70 border-t border-indigo-800/60 overflow-x-auto no-scrollbar scroll-smooth">
+      <div class="max-w-7xl mx-auto px-3 sm:px-6 flex items-center justify-between py-1.5 sm:py-2 gap-2">
+        <div class="flex space-x-1 sm:space-x-1.5 shrink-0 py-0.5">
+          <button type="button" id="btnTabScanner" onclick="pindahTab('scanner')" class="nav-tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-indigo-600 text-white shadow-sm whitespace-nowrap active:scale-95">
+            <i class="fa-solid fa-barcode text-xs"></i> Scanner
           </button>
-          <button type="button" id="btnTabSiswa" onclick="pindahTab('siswa')" class="nav-tab-btn flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap">
-            <i class="fa-solid fa-users"></i> Data Siswa
+          <button type="button" id="btnTabSiswa" onclick="pindahTab('siswa')" class="nav-tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap active:scale-95">
+            <i class="fa-solid fa-users text-xs"></i> Siswa
           </button>
-          <button type="button" id="btnTabSpp" onclick="pindahTab('spp')" class="nav-tab-btn flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap">
-            <i class="fa-solid fa-money-bill-wave text-amber-400"></i> SPP
+          <button type="button" id="btnTabSpp" onclick="pindahTab('spp')" class="nav-tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap active:scale-95">
+            <i class="fa-solid fa-money-bill-wave text-amber-400 text-xs"></i> SPP
           </button>
-          <button type="button" id="btnTabLaporan" onclick="pindahTab('laporan')" class="nav-tab-btn flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap">
-            <i class="fa-solid fa-clipboard-user"></i> Rekap Kehadiran
+          <button type="button" id="btnTabLaporan" onclick="pindahTab('laporan')" class="nav-tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap active:scale-95">
+            <i class="fa-solid fa-clipboard-user text-xs"></i> Rekap
           </button>
-          <button type="button" id="btnTabRekapSPP" onclick="pindahTab('rekapSPP')" class="nav-tab-btn flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap">
-            <i class="fa-solid fa-receipt"></i> Laporan SPP
+          <button type="button" id="btnTabRekapSPP" onclick="pindahTab('rekapSPP')" class="nav-tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap active:scale-95">
+            <i class="fa-solid fa-receipt text-xs"></i> Laporan SPP
           </button>
-          <button type="button" id="btnTabUsers" onclick="pindahTab('users')" class="nav-tab-btn flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap">
-            <i class="fa-solid fa-user-gear"></i> Pengguna
+          <button type="button" id="btnTabUsers" onclick="pindahTab('users')" class="nav-tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap active:scale-95">
+            <i class="fa-solid fa-user-gear text-xs"></i> Pengguna
           </button>
-          <button type="button" id="btnTabSettings" onclick="pindahTab('settings')" class="nav-tab-btn flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap">
-            <i class="fa-solid fa-cloud-arrow-up"></i> Pengaturan Sheets
+          <button type="button" id="btnTabSettings" onclick="pindahTab('settings')" class="nav-tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap active:scale-95">
+            <i class="fa-solid fa-cloud-arrow-up text-xs"></i> Sheets
           </button>
-          <button type="button" id="btnTabPortalPreview" onclick="bukaPreviewPortalSiswa()" class="nav-tab-btn flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-emerald-300 hover:text-white hover:bg-indigo-800 whitespace-nowrap">
-            <i class="fa-solid fa-id-card-clip"></i> Portal Siswa
+          <button type="button" id="btnTabPortalPreview" onclick="bukaPreviewPortalSiswa()" class="nav-tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-emerald-300 hover:text-white hover:bg-indigo-800 whitespace-nowrap active:scale-95">
+            <i class="fa-solid fa-id-card-clip text-xs"></i> Portal Siswa
           </button>
         </div>
 
         <!-- Quick Search Siswa (Hanya Admin) -->
-        <div class="relative min-w-[210px] sm:min-w-[260px] hidden md:block">
+        <div class="relative min-w-[200px] sm:min-w-[240px] hidden md:block shrink-0">
           <div class="relative">
-            <input type="text" id="adminStudentSearchInput" oninput="handleAdminStudentSearch(this.value)" autocomplete="off" placeholder="Pratinjau siswa..." class="w-full bg-indigo-900/90 text-white placeholder-indigo-300 border border-indigo-700/80 rounded-xl pl-8 pr-7 py-1 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none">
-            <i class="fa-solid fa-eye absolute left-2.5 top-2 text-amber-300 text-xs"></i>
-            <button type="button" id="btnClearAdminStudentSearch" onclick="clearAdminStudentSearch()" class="hidden absolute right-2.5 top-1.5 text-indigo-300 hover:text-white text-xs">
+            <input type="text" id="adminStudentSearchInput" oninput="handleAdminStudentSearch(this.value)" autocomplete="off" placeholder="Cari pratinjau siswa..." class="w-full bg-indigo-900/90 text-white placeholder-indigo-300 border border-indigo-700/80 rounded-xl pl-8 pr-7 py-1.5 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none">
+            <i class="fa-solid fa-eye absolute left-2.5 top-2.5 text-amber-300 text-xs"></i>
+            <button type="button" id="btnClearAdminStudentSearch" onclick="clearAdminStudentSearch()" class="hidden absolute right-2.5 top-2 text-indigo-300 hover:text-white text-xs">
               <i class="fa-solid fa-xmark"></i>
             </button>
           </div>
@@ -177,51 +177,51 @@
   </header>
 
   <!-- KONTEN APLIKASI -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+  <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 lg:p-8">
 
     <!-- TAB 1: SCANNER & PRESENSI -->
-    <section id="tabContentScanner" class="space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <section id="tabContentScanner" class="space-y-4 sm:space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
         
         <!-- Scanner Barcode -->
-        <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-4">
-          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-3 sm:space-y-4">
+          <div class="flex flex-col xs:flex-row xs:items-center justify-between gap-2 border-b border-slate-100 pb-3">
             <div>
-              <h2 class="text-base font-bold text-slate-800 flex items-center gap-2 font-brand">
+              <h2 class="text-sm sm:text-base font-bold text-slate-800 flex items-center gap-2 font-brand">
                 <i class="fa-solid fa-camera text-indigo-600"></i> Kamera Barcode Scanner
               </h2>
-              <p class="text-xs text-slate-500">Scan barcode kartu siswa secara otomatis atau gunakan input manual</p>
+              <p class="text-[11px] sm:text-xs text-slate-500">Scan barcode otomatis atau gunakan input manual</p>
             </div>
-            <div class="flex gap-2">
-              <button type="button" id="btnToggleCamera" onclick="toggleCameraScanner()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-sm transition">
+            <div class="flex gap-2 self-start xs:self-auto">
+              <button type="button" id="btnToggleCamera" onclick="toggleCameraScanner()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-sm transition">
                 <i class="fa-solid fa-play"></i> <span id="btnToggleCameraText">Aktifkan Kamera</span>
               </button>
             </div>
           </div>
 
-          <div class="relative w-full h-[320px] sm:h-[380px] bg-slate-950 rounded-2xl overflow-hidden border-2 border-slate-800 shadow-inner flex items-center justify-center">
+          <div class="relative w-full h-[240px] xs:h-[280px] sm:h-[350px] bg-slate-950 rounded-2xl overflow-hidden border-2 border-slate-800 shadow-inner flex items-center justify-center">
             <div id="cameraReader"></div>
             <div id="cameraLaserOverlay" class="hidden absolute inset-0 pointer-events-none z-20">
               <div class="laser-line-animated"></div>
-              <div class="absolute top-4 left-4 w-8 h-8 border-t-4 border-l-4 border-rose-500 rounded-tl-lg"></div>
-              <div class="absolute top-4 right-4 w-8 h-8 border-t-4 border-r-4 border-rose-500 rounded-tr-lg"></div>
-              <div class="absolute bottom-4 left-4 w-8 h-8 border-b-4 border-l-4 border-rose-500 rounded-bl-lg"></div>
-              <div class="absolute bottom-4 right-4 w-8 h-8 border-b-4 border-r-4 border-rose-500 rounded-br-lg"></div>
+              <div class="absolute top-4 left-4 w-6 h-6 sm:w-8 sm:h-8 border-t-4 border-l-4 border-rose-500 rounded-tl-lg"></div>
+              <div class="absolute top-4 right-4 w-6 h-6 sm:w-8 sm:h-8 border-t-4 border-r-4 border-rose-500 rounded-tr-lg"></div>
+              <div class="absolute bottom-4 left-4 w-6 h-6 sm:w-8 sm:h-8 border-b-4 border-l-4 border-rose-500 rounded-bl-lg"></div>
+              <div class="absolute bottom-4 right-4 w-6 h-6 sm:w-8 sm:h-8 border-b-4 border-r-4 border-rose-500 rounded-br-lg"></div>
             </div>
-            <div id="cameraPlaceholderText" class="text-center p-6 text-slate-400 space-y-2">
-              <i class="fa-solid fa-barcode text-5xl text-indigo-400/50 mb-2 block"></i>
-              <p class="text-xs font-medium">Klik <b>"Aktifkan Kamera"</b> untuk scan otomatis atau gunakan form input manual di samping kanan.</p>
+            <div id="cameraPlaceholderText" class="text-center p-4 sm:p-6 text-slate-400 space-y-2">
+              <i class="fa-solid fa-barcode text-4xl sm:text-5xl text-indigo-400/50 mb-1 sm:mb-2 block"></i>
+              <p class="text-xs font-medium max-w-xs mx-auto">Klik <b>"Aktifkan Kamera"</b> untuk scan barcode kartu siswa atau ketik nama pada formulir manual.</p>
             </div>
           </div>
 
-          <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-3 flex items-center gap-3 text-xs text-indigo-900">
-            <i class="fa-solid fa-circle-info text-indigo-600 text-base"></i>
-            <span>Setiap scan divalidasi dengan audio, proteksi hari yang sama, dan langsung tersimpan ke Google Sheets.</span>
+          <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-2.5 sm:p-3 flex items-start sm:items-center gap-2.5 text-xs text-indigo-900">
+            <i class="fa-solid fa-circle-info text-indigo-600 text-sm sm:text-base shrink-0 mt-0.5 sm:mt-0"></i>
+            <span class="text-[11px] sm:text-xs leading-relaxed">Tervalidasi proteksi presensi 1x sehari & data tersimpan otomatis ke Sheets.</span>
           </div>
         </div>
 
         <!-- Presensi Manual -->
-        <div class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-4">
+        <div class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-3 sm:space-y-4">
           <div class="border-b border-slate-100 pb-3">
             <h2 class="text-base font-bold text-slate-800 flex items-center gap-2 font-brand">
               <i class="fa-solid fa-keyboard text-emerald-600"></i> Presensi Manual
@@ -461,7 +461,7 @@
           </div>
 
           <!-- Bilah Filter & Sortir Interaktif -->
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs">
+          <div class="bg-slate-50 p-2.5 sm:p-3 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
             <div class="relative">
               <label class="block text-[10px] font-bold text-slate-600 uppercase mb-0.5">Filter Nama Siswa</label>
               <div class="relative">
@@ -985,8 +985,8 @@
   </main>
 
   <!-- MODAL LOGIN -->
-  <div id="modalLogin" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-5 border border-slate-100 relative">
+  <div id="modalLogin" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-5 sm:p-6 space-y-4 sm:space-y-5 border border-slate-100 relative my-auto">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold">
@@ -1008,7 +1008,7 @@
         </div>
 
         <div class="pt-2">
-          <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition">
+          <button type="submit" class="w-full py-2.5 sm:py-3 bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white font-bold text-xs sm:text-sm rounded-xl shadow-md transition">
             Masuk ke Sistem
           </button>
         </div>
@@ -1017,11 +1017,11 @@
   </div>
 
   <!-- MODAL FORM SISWA -->
-  <div id="modalFormSiswa" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 overflow-y-auto">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 space-y-4 my-8">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+  <div id="modalFormSiswa" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-4 sm:p-6 space-y-3 sm:space-y-4 my-auto max-h-[92vh] overflow-y-auto no-scrollbar">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-2 sm:pb-3 sticky top-0 bg-white z-10">
         <h3 id="modalFormSiswaTitle" class="text-sm font-bold text-slate-800 font-brand">Data Siswa</h3>
-        <button type="button" onclick="closeModalFormSiswa()" class="text-slate-400 hover:text-slate-600 text-xs">
+        <button type="button" onclick="closeModalFormSiswa()" class="text-slate-400 hover:text-slate-600 text-xs p-1">
           <i class="fa-solid fa-xmark text-sm"></i>
         </button>
       </div>
@@ -1039,7 +1039,7 @@
           <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Nama Siswa</label>
           <input type="text" id="siswaFormNama" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
         </div>
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 xs:grid-cols-2 gap-3">
           <div>
             <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Kelas</label>
             <input type="text" id="siswaFormKelas" placeholder="4 SD" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
@@ -1057,7 +1057,7 @@
           <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Alamat</label>
           <textarea id="siswaFormAlamat" rows="2" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none"></textarea>
         </div>
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 xs:grid-cols-2 gap-3">
           <div>
             <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Sekolah</label>
             <input type="text" id="siswaFormSekolah" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none">
@@ -1083,11 +1083,11 @@
   </div>
 
   <!-- MODAL FORM PENGGUNA -->
-  <div id="modalFormUser" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 overflow-y-auto">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-4 my-8">
+  <div id="modalFormUser" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-5 sm:p-6 space-y-4 my-auto max-h-[92vh] overflow-y-auto no-scrollbar">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <h3 id="modalFormUserTitle" class="text-sm font-bold text-slate-800 font-brand">Data Pengguna</h3>
-        <button type="button" onclick="closeModalFormUser()" class="text-slate-400 hover:text-slate-600 text-xs">
+        <button type="button" onclick="closeModalFormUser()" class="text-slate-400 hover:text-slate-600 text-xs p-1">
           <i class="fa-solid fa-xmark text-sm"></i>
         </button>
       </div>
@@ -1138,11 +1138,11 @@
   </div>
 
   <!-- MODAL EDIT SPP -->
-  <div id="modalEditSPP" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 overflow-y-auto">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-4 my-8">
+  <div id="modalEditSPP" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-5 sm:p-6 space-y-4 my-auto max-h-[92vh] overflow-y-auto no-scrollbar">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <h3 class="text-sm font-bold text-slate-800 font-brand">Edit Transaksi SPP</h3>
-        <button type="button" onclick="closeModalEditSPP()" class="text-slate-400 hover:text-slate-600 text-xs">
+        <button type="button" onclick="closeModalEditSPP()" class="text-slate-400 hover:text-slate-600 text-xs p-1">
           <i class="fa-solid fa-xmark text-sm"></i>
         </button>
       </div>
@@ -1215,13 +1215,13 @@
 
   <!-- MODAL KONFIRMASI HAPUS -->
   <div id="modalKonfirmasiHapus" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border border-slate-100">
-      <div class="w-14 h-14 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-2xl mx-auto shadow-sm">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-5 sm:p-6 text-center space-y-4 border border-slate-100 my-auto">
+      <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-xl sm:text-2xl mx-auto shadow-sm">
         <i class="fa-solid fa-triangle-exclamation"></i>
       </div>
       <div>
-        <h3 id="konfirmasiHapusJudul" class="text-base font-bold text-slate-800 font-brand">Konfirmasi Hapus</h3>
-        <p id="konfirmasiHapusPesan" class="text-xs text-slate-500 mt-1">Apakah Anda yakin ingin menghapus data ini?</p>
+        <h3 id="konfirmasiHapusJudul" class="text-sm sm:text-base font-bold text-slate-800 font-brand">Konfirmasi Hapus</h3>
+        <p id="konfirmasiHapusPesan" class="text-xs text-slate-500 mt-1 leading-relaxed">Apakah Anda yakin ingin menghapus data ini?</p>
       </div>
       <div class="flex gap-2 pt-2">
         <button type="button" id="btnKonfirmasiHapusYa" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md transition">
@@ -1236,22 +1236,22 @@
 
   <!-- MODAL PRESENSI BERHASIL -->
   <div id="modalDialogPresensiSukses" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border-2 border-emerald-500">
-      <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl mx-auto shadow-md ring-8 ring-emerald-50">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-5 sm:p-6 text-center space-y-3 sm:space-y-4 border-2 border-emerald-500 my-auto">
+      <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl sm:text-3xl mx-auto shadow-md ring-8 ring-emerald-50">
         <i class="fa-solid fa-circle-check"></i>
       </div>
       <div>
         <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 text-[10px] font-extrabold rounded-full uppercase tracking-wider mb-1">
           SUKSES TERCATAT
         </span>
-        <h3 class="text-lg font-black text-slate-800 font-brand">Terima Kasih!</h3>
+        <h3 class="text-base sm:text-lg font-black text-slate-800 font-brand">Terima Kasih!</h3>
         <p class="text-xs text-emerald-700 font-medium">Presensi Anda telah berhasil dicatat ke sistem.</p>
       </div>
 
-      <div class="bg-emerald-50/70 border border-emerald-100 rounded-2xl p-4 text-left text-xs space-y-2">
+      <div class="bg-emerald-50/70 border border-emerald-100 rounded-2xl p-3.5 sm:p-4 text-left text-xs space-y-2">
         <div class="flex justify-between">
           <span class="text-slate-500">Nama Siswa:</span>
-          <span id="dialogSuksesNama" class="font-bold text-emerald-950">-</span>
+          <span id="dialogSuksesNama" class="font-bold text-emerald-950 truncate max-w-[170px] text-right">-</span>
         </div>
         <div class="flex justify-between">
           <span class="text-slate-500">Username:</span>
@@ -1267,7 +1267,7 @@
         </div>
       </div>
 
-      <button type="button" onclick="closeModalPresensiSukses()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md transition">
+      <button type="button" onclick="closeModalPresensiSukses()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold text-xs rounded-xl shadow-md transition">
         Selesai
       </button>
     </div>
@@ -1275,22 +1275,22 @@
 
   <!-- MODAL SUDAH PRESENSI HARI INI -->
   <div id="modalDialogSudahPresensi" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border-2 border-rose-500">
-      <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-3xl mx-auto ring-8 ring-rose-50">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-5 sm:p-6 text-center space-y-3 sm:space-y-4 border-2 border-rose-500 my-auto">
+      <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-2xl sm:text-3xl mx-auto ring-8 ring-rose-50">
         <i class="fa-solid fa-triangle-exclamation"></i>
       </div>
       <div>
         <span class="inline-block px-3 py-1 bg-rose-100 text-rose-800 text-[10px] font-extrabold rounded-full uppercase tracking-wider mb-1">
           PERINGATAN PRESENSI
         </span>
-        <h3 class="text-lg font-black text-rose-700 font-brand">Anda Sudah Presensi Hari Ini</h3>
+        <h3 class="text-base sm:text-lg font-black text-rose-700 font-brand">Anda Sudah Presensi Hari Ini</h3>
         <p class="text-xs text-slate-500">Data kehadiran untuk siswa ini sudah tercatat sebelumnya.</p>
       </div>
 
-      <div class="bg-rose-50 border border-rose-200 rounded-2xl p-4 text-left text-xs space-y-2">
+      <div class="bg-rose-50 border border-rose-200 rounded-2xl p-3.5 sm:p-4 text-left text-xs space-y-2">
         <div class="flex justify-between">
           <span class="text-slate-600">Nama Siswa:</span>
-          <span id="dialogSudahNama" class="font-bold text-rose-950">-</span>
+          <span id="dialogSudahNama" class="font-bold text-rose-950 truncate max-w-[170px] text-right">-</span>
         </div>
         <div class="flex justify-between">
           <span class="text-slate-600">Username:</span>
@@ -1306,18 +1306,18 @@
         </div>
       </div>
 
-      <button type="button" onclick="closeModalSudahPresensi()" class="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md transition">
+      <button type="button" onclick="closeModalSudahPresensi()" class="w-full py-2.5 bg-rose-600 hover:bg-rose-700 active:scale-[0.98] text-white font-bold text-xs rounded-xl shadow-md transition">
         Mengerti
       </button>
     </div>
   </div>
 
   <!-- MODAL KUITANSI SPP -->
-  <div id="modalKuitansiSPP" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-4 border border-slate-100">
+  <div id="modalKuitansiSPP" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-5 sm:p-6 space-y-4 border border-slate-100 my-auto max-h-[92vh] overflow-y-auto no-scrollbar">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <h3 class="text-sm font-bold text-slate-800 font-brand">Kuitansi Pembayaran SPP</h3>
-        <button type="button" onclick="closeModalKuitansiSPP()" class="text-slate-400 hover:text-slate-600 text-xs">
+        <button type="button" onclick="closeModalKuitansiSPP()" class="text-slate-400 hover:text-slate-600 text-xs p-1">
           <i class="fa-solid fa-xmark text-sm"></i>
         </button>
       </div>
@@ -1330,11 +1330,11 @@
         </div>
 
         <div class="space-y-1 text-[11px]">
-          <div class="flex justify-between"><span class="text-slate-500">Nama:</span><span id="kuitansiNama" class="font-bold">-</span></div>
+          <div class="flex justify-between"><span class="text-slate-500">Nama:</span><span id="kuitansiNama" class="font-bold text-right truncate max-w-[180px]">-</span></div>
           <div class="flex justify-between"><span class="text-slate-500">Kelas:</span><span id="kuitansiKelas">-</span></div>
           <div class="flex justify-between"><span class="text-slate-500">Paket:</span><span id="kuitansiPeriode" class="font-bold text-amber-700">-</span></div>
           <div class="flex justify-between"><span class="text-slate-500">Status:</span><span id="kuitansiStatus" class="font-bold text-emerald-600 uppercase">LUNAS</span></div>
-          <div class="flex justify-between"><span class="text-slate-500">Keterangan:</span><span id="kuitansiKeterangan" class="font-semibold text-slate-700">-</span></div>
+          <div class="flex justify-between"><span class="text-slate-500">Keterangan:</span><span id="kuitansiKeterangan" class="font-semibold text-slate-700 text-right truncate max-w-[160px]">-</span></div>
         </div>
 
         <div class="border-t border-dashed border-slate-300 pt-2 flex justify-between items-center text-sm">
@@ -1344,7 +1344,7 @@
       </div>
 
       <div class="flex gap-2">
-        <button type="button" onclick="cetakKuitansiLangsung()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition">
+        <button type="button" onclick="cetakKuitansiLangsung()" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white font-bold text-xs rounded-xl shadow-md transition">
           <i class="fa-solid fa-print"></i> Cetak Kuitansi
         </button>
       </div>
@@ -1386,8 +1386,10 @@
       ]
     };
 
+    const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbxT7IWkz_pHVuWC5foOg_ORlB3kDYPmZJ0dN8DhLNgzntllVlOznEA3Fe2CMk255IU/exec';
+
     let globalSettings = {
-      apiUrl: 'https://script.google.com/macros/s/AKfycbxT7IWkz_pHVuWC5foOg_ORlB3kDYPmZJ0dN8DhLNgzntllVlOznEA3Fe2CMk255IU/exec'
+      apiUrl: DEFAULT_API_URL
     };
 
     let cachedSppSearchResults = [];
@@ -1417,7 +1419,12 @@
     function loadDataFromStorage() {
       try {
         const rawSettings = localStorage.getItem(SETTINGS_KEY);
-        if (rawSettings) globalSettings = JSON.parse(rawSettings);
+        if (rawSettings) {
+          const parsedSettings = JSON.parse(rawSettings);
+          globalSettings.apiUrl = parsedSettings.apiUrl || DEFAULT_API_URL;
+        } else {
+          globalSettings.apiUrl = DEFAULT_API_URL;
+        }
 
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
@@ -1481,7 +1488,7 @@
     }
 
     async function syncAllSheetsData(silent = true) {
-      const apiUrl = globalSettings.apiUrl;
+      const apiUrl = globalSettings.apiUrl || DEFAULT_API_URL;
       if (!apiUrl) return;
 
       const dot = document.getElementById('cloudSyncIndicatorDot');
@@ -1489,38 +1496,64 @@
       if (dot) dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-ping';
       if (statusText) statusText.textContent = 'Syncing...';
 
+      const applyData = (data) => {
+        if (!data) return;
+        if (Array.isArray(data.siswa) && data.siswa.length > 0) appData.siswa = data.siswa;
+        if (Array.isArray(data.presensi)) appData.presensi = data.presensi;
+        if (Array.isArray(data.spp)) appData.spp = data.spp;
+        if (Array.isArray(data.users) && data.users.length > 0) appData.users = data.users;
+
+        saveDataToStorage();
+        renderTableMasterSiswa();
+        renderLivePresensiLog();
+        renderTableSPP();
+        terapkanFilterKehadiran();
+        terapkanFilterRekapSPP();
+        renderTableUsers();
+        updateSyncStatsUI();
+
+        if (dot) dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
+        if (statusText) statusText.textContent = 'Sheets Terhubung';
+        if (!silent) addSyncLog('Sinkronisasi data Google Sheets selesai', 'success');
+      };
+
       try {
         const response = await fetch(`${apiUrl}?action=getAllData&_t=${Date.now()}`);
         const result = await response.json();
-
         if (result && (result.status === 'success' || result.success) && result.data) {
-          if (Array.isArray(result.data.siswa) && result.data.siswa.length > 0) appData.siswa = result.data.siswa;
-          if (Array.isArray(result.data.presensi)) appData.presensi = result.data.presensi;
-          if (Array.isArray(result.data.spp)) appData.spp = result.data.spp;
-          if (Array.isArray(result.data.users) && result.data.users.length > 0) appData.users = result.data.users;
-
-          saveDataToStorage();
-          renderTableMasterSiswa();
-          renderLivePresensiLog();
-          renderTableSPP();
-          terapkanFilterKehadiran();
-          terapkanFilterRekapSPP();
-          renderTableUsers();
-          updateSyncStatsUI();
-
-          if (dot) dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
-          if (statusText) statusText.textContent = 'Sheets Terhubung';
-          if (!silent) addSyncLog('Sinkronisasi data Google Sheets selesai', 'success');
+          applyData(result.data);
+          return;
         }
+        throw new Error('Respons tidak valid');
       } catch (err) {
-        if (dot) dot.className = 'w-2 h-2 rounded-full bg-emerald-500';
-        if (statusText) statusText.textContent = 'Sheets Siap';
-        if (!silent) addSyncLog('Gagal sync online: ' + err.message, 'error');
+        // Fallback JSONP jika fetch dibatasi kebijakan browser / mobile cross-origin
+        const cbName = 'sheets_cb_' + Date.now();
+        window[cbName] = function(res) {
+          try {
+            if (res && (res.status === 'success' || res.success) && res.data) {
+              applyData(res.data);
+            }
+          } finally {
+            delete window[cbName];
+            const scr = document.getElementById(cbName);
+            if (scr) scr.remove();
+          }
+        };
+
+        const script = document.createElement('script');
+        script.id = cbName;
+        script.src = `${apiUrl}?action=getAllData&callback=${cbName}&_t=${Date.now()}`;
+        script.onerror = () => {
+          if (dot) dot.className = 'w-2 h-2 rounded-full bg-emerald-500';
+          if (statusText) statusText.textContent = 'Sheets Siap';
+          if (!silent) addSyncLog('Gagal sync online: ' + err.message, 'error');
+        };
+        document.body.appendChild(script);
       }
     }
 
     function sendDataToGoogleSheets(payload) {
-      const url = globalSettings.apiUrl;
+      const url = globalSettings.apiUrl || DEFAULT_API_URL;
       if (!url) return;
       try {
         fetch(url, {
@@ -1530,6 +1563,7 @@
           body: JSON.stringify(payload)
         }).then(() => {
           addSyncLog(`Data (${payload.action}) terkirim ke Google Sheets.`, 'success');
+          setTimeout(() => syncAllSheetsData(true), 1200);
         }).catch(err => {
           addSyncLog(`Gagal sync: ${err.message}`, 'error');
         });
@@ -3273,10 +3307,8 @@
     document.addEventListener('DOMContentLoaded', () => {
       loadDataFromStorage();
 
-      if (globalSettings.apiUrl) {
-        const urlEl = document.getElementById('inputAppsScriptUrl');
-        if (urlEl) urlEl.value = globalSettings.apiUrl;
-      }
+      const urlEl = document.getElementById('inputAppsScriptUrl');
+      if (urlEl) urlEl.value = globalSettings.apiUrl || DEFAULT_API_URL;
 
       if (typeof flatpickr !== 'undefined') {
         try {
@@ -3301,6 +3333,14 @@
       terapkanFilterRekapSPP();
       renderTableUsers();
       updateSyncStatsUI();
+
+      // Sinkronisasi data Google Sheets otomatis saat aplikasi dibuka di perangkat manapun
+      syncAllSheetsData(true);
+
+      // Auto-polling pembaruan data tiap 30 detik agar tampilan antar perangkat selalu sinkron
+      setInterval(() => {
+        syncAllSheetsData(true);
+      }, 30000);
 
       // Memastikan saat aplikasi dimuat atau direload langsung masuk ke menu login bersih
       handleLogout();
