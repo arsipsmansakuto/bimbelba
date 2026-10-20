@@ -927,19 +927,19 @@
       <!-- Riwayat Kehadiran Siswa -->
       <div id="portalSubTabPresensi" class="space-y-4">
         <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm space-y-4">
-          <h3 class="text-sm font-bold text-slate-800 font-brand">Daftar Kehadiran</h3>
-          <div class="overflow-x-auto -mx-4 sm:mx-0">
-            <table class="w-full text-left text-xs text-slate-700 divide-y divide-slate-200 min-w-[480px]">
-              <thead class="bg-slate-50 text-slate-600 font-semibold uppercase text-[10px]">
-                <tr>
-                  <th class="py-2.5 px-3">Tanggal</th>
-                  <th class="py-2.5 px-3">Waktu</th>
-                  <th class="py-2.5 px-3">Status</th>
-                  <th class="py-2.5 px-3">Keterangan</th>
-                </tr>
-              </thead>
-              <tbody id="tbodyPortalPresensi" class="divide-y divide-slate-100"></tbody>
-            </table>
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+            <div>
+              <h3 class="text-sm font-bold text-slate-800 font-brand flex items-center gap-2">
+                <i class="fa-solid fa-folder-tree text-indigo-600"></i> Riwayat Kehadiran Per Paket
+              </h3>
+              <p class="text-[11px] sm:text-xs text-slate-500">Klik folder paket untuk melihat rincian 12 pertemuan</p>
+            </div>
+            <div class="text-[11px] font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg">
+              Sistem Paket: <span class="text-indigo-700 font-bold">12 Sesi / Paket</span>
+            </div>
+          </div>
+          <div id="portalContainerPresensiPaket" class="space-y-3">
+            <!-- Folder paket presensi (12 pertemuan per paket) dirender otomatis di sini -->
           </div>
         </div>
       </div>
@@ -3085,19 +3085,99 @@
       document.getElementById('portalProgressPaketText').textContent = `${sesi} / 12 Pertemuan (Paket ke-${paketSelesai + 1})`;
       document.getElementById('portalProgressBar').style.width = `${Math.round((sesi / 12) * 100)}%`;
 
-      const tbodyPresensi = document.getElementById('tbodyPortalPresensi');
-      if (tbodyPresensi) {
+      const containerPaket = document.getElementById('portalContainerPresensiPaket');
+      if (containerPaket) {
         if (presensiSiswa.length === 0) {
-          tbodyPresensi.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-slate-400">Belum ada catatan kehadiran untuk Anda.</td></tr>`;
+          containerPaket.innerHTML = `
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm text-center text-xs text-slate-400">
+              Belum ada catatan kehadiran untuk Anda.
+            </div>
+          `;
         } else {
-          tbodyPresensi.innerHTML = presensiSiswa.map(p => `
-            <tr class="hover:bg-slate-50 transition">
-              <td class="py-2.5 px-3 font-semibold">${escapeHtml(formatTanggalIndo(p.tanggal))}</td>
-              <td class="py-2.5 px-3 font-mono font-medium">${escapeHtml(formatHanyaJam(p.waktu))}</td>
-              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">${escapeHtml(p.status)}</span></td>
-              <td class="py-2.5 px-3 text-slate-500">${escapeHtml(p.keterangan || '-')}</td>
-            </tr>
-          `).join('');
+          // Buat salinan terurut kronologis (dari pertama hadir) untuk menghitung sesi paket 12x
+          const kronologis = [...presensiSiswa].sort((a, b) => parseDateTimeKehadiran(a) - parseDateTimeKehadiran(b));
+          const groupedPackages = [];
+          for (let i = 0; i < kronologis.length; i += 12) {
+            const batch = kronologis.slice(i, i + 12);
+            // Tiap folder tetap menyajikan baris tanggal dari yang terbaru ke yang lama
+            const batchSortedDesc = [...batch].sort((a, b) => parseDateTimeKehadiran(b) - parseDateTimeKehadiran(a));
+            groupedPackages.push({
+              paketNomor: Math.floor(i / 12) + 1,
+              items: batchSortedDesc,
+              isComplete: batch.length === 12,
+              jumlahSesi: batch.length
+            });
+          }
+
+          // Tampilkan folder paket terbaru di posisi paling atas
+          groupedPackages.reverse();
+
+          containerPaket.innerHTML = groupedPackages.map((pkg, idx) => {
+            // Semua folder terlipat rapi agar daftar tidak panjang; klik folder untuk membuka 12 pertemuannya
+            const isOpenDefault = false;
+            const folderId = `folderPaketContent_${pkg.paketNomor}`;
+            const iconId = `folderPaketIcon_${pkg.paketNomor}`;
+            const chevronId = `folderChevron_${pkg.paketNomor}`;
+
+            return `
+              <div class="bg-white rounded-2xl border ${pkg.isComplete ? 'border-emerald-200' : 'border-indigo-200'} shadow-sm overflow-hidden transition-all duration-200">
+                <!-- Header Folder Interaktif -->
+                <div onclick="toggleFolderPaket('${pkg.paketNomor}')" class="p-3.5 sm:p-4 bg-slate-50 hover:bg-slate-100/80 cursor-pointer flex items-center justify-between gap-3 select-none transition border-b border-slate-100">
+                  <div class="flex items-center gap-2.5 sm:gap-3">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl ${pkg.isComplete ? 'bg-emerald-100 text-emerald-700' : 'bg-indigo-100 text-indigo-700'} flex items-center justify-center text-base sm:text-lg flex-shrink-0 shadow-sm">
+                      <i id="${iconId}" class="fa-solid ${isOpenDefault ? 'fa-folder-open' : 'fa-folder'}"></i>
+                    </div>
+                    <div>
+                      <div class="flex items-center gap-2">
+                        <h4 class="text-xs sm:text-sm font-bold text-slate-800 font-brand">Folder Paket ke-${pkg.paketNomor}</h4>
+                        <span class="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full ${pkg.isComplete ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-indigo-50 text-indigo-700 border border-indigo-200'}">
+                          ${pkg.jumlahSesi}/12 Sesi
+                        </span>
+                      </div>
+                      <p class="text-[10px] sm:text-[11px] text-slate-500 mt-0.5">
+                        ${pkg.isComplete ? 'Paket selesai (12 pertemuan). Klik untuk lihat rincian.' : 'Paket sedang berjalan. Klik untuk lihat rincian sesi.'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-2">
+                    <span class="hidden xs:inline-block px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase ${pkg.isComplete ? 'bg-emerald-500 text-white' : 'bg-amber-500 text-white'} shadow-sm">
+                      ${pkg.isComplete ? '<i class="fa-solid fa-circle-check"></i> Selesai' : '<i class="fa-solid fa-spinner fa-spin"></i> Berjalan'}
+                    </span>
+                    <div class="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-500 text-xs shadow-sm">
+                      <i id="${chevronId}" class="fa-solid fa-chevron-${isOpenDefault ? 'up' : 'down'} transition-transform duration-200"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Konten Folder (Daftar Riwayat Sesi) -->
+                <div id="${folderId}" class="${isOpenDefault ? '' : 'hidden'} p-3 sm:p-4 space-y-3 bg-white">
+                  <div class="overflow-x-auto -mx-3 sm:mx-0">
+                    <table class="w-full text-left text-xs text-slate-700 divide-y divide-slate-200 min-w-[480px]">
+                      <thead class="bg-slate-50 text-slate-600 font-semibold uppercase text-[10px]">
+                        <tr>
+                          <th class="py-2.5 px-3">Tanggal</th>
+                          <th class="py-2.5 px-3">Waktu</th>
+                          <th class="py-2.5 px-3">Status</th>
+                          <th class="py-2.5 px-3">Keterangan</th>
+                        </tr>
+                      </thead>
+                      <tbody class="divide-y divide-slate-100">
+                        ${pkg.items.map(p => `
+                          <tr class="hover:bg-slate-50 transition">
+                            <td class="py-2.5 px-3 font-semibold text-slate-800">${escapeHtml(formatTanggalIndo(p.tanggal))}</td>
+                            <td class="py-2.5 px-3 font-mono font-medium">${escapeHtml(formatHanyaJam(p.waktu))}</td>
+                            <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">${escapeHtml(p.status)}</span></td>
+                            <td class="py-2.5 px-3 text-slate-500">${escapeHtml(p.keterangan || '-')}</td>
+                          </tr>
+                        `).join('')}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
         }
       }
 
@@ -3166,6 +3246,24 @@
       document.getElementById(`portalSubTab${tab.charAt(0).toUpperCase() + tab.slice(1)}`)?.classList.remove('hidden');
       const btn = document.getElementById(`btnPortalTab${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
       if (btn) btn.className = 'portal-tab-btn flex-1 min-w-[110px] py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 bg-indigo-600 text-white shadow-sm';
+    }
+
+    function toggleFolderPaket(paketNomor) {
+      const content = document.getElementById(`folderPaketContent_${paketNomor}`);
+      const icon = document.getElementById(`folderPaketIcon_${paketNomor}`);
+      const chevron = document.getElementById(`folderChevron_${paketNomor}`);
+      if (!content) return;
+
+      const isHidden = content.classList.contains('hidden');
+      if (isHidden) {
+        content.classList.remove('hidden');
+        if (icon) icon.className = 'fa-solid fa-folder-open';
+        if (chevron) chevron.className = 'fa-solid fa-chevron-up transition-transform duration-200';
+      } else {
+        content.classList.add('hidden');
+        if (icon) icon.className = 'fa-solid fa-folder';
+        if (chevron) chevron.className = 'fa-solid fa-chevron-down transition-transform duration-200';
+      }
     }
 
     function cetakSemuaKartuA4() {
