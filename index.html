@@ -94,7 +94,7 @@
   <!-- HEADER UTAMA -->
   <header class="bg-indigo-900 text-white shadow-md sticky top-0 z-40 border-b border-indigo-800">
     <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between h-14 sm:h-16">
-      <div class="flex items-center space-x-2.5 sm:space-x-3 cursor-pointer" onclick="pindahTab('scanner')">
+      <div class="flex items-center space-x-2 sm:space-x-3 cursor-pointer" onclick="pindahTab('scanner')">
         <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-amber-400 to-amber-300 flex items-center justify-center text-indigo-950 font-bold text-base sm:text-xl shadow-md flex-shrink-0">
           <i class="fa-solid fa-graduation-cap"></i>
         </div>
@@ -103,28 +103,28 @@
             SIM BIMBEL BA
             <span class="text-[9px] sm:text-xs bg-amber-400 text-slate-900 font-semibold px-1.5 sm:px-2 py-0.5 rounded-full uppercase">v3.2</span>
           </h1>
-          <p class="text-[10px] sm:text-xs text-indigo-200">Sistem Presensi & SPP Terpadu</p>
+          <p class="text-[10px] sm:text-xs text-indigo-200 hidden xs:block">Sistem Presensi & SPP Terpadu</p>
         </div>
       </div>
 
       <div class="flex items-center space-x-1.5 sm:space-x-3">
         <!-- Status Indikator Sinkronisasi -->
-        <div id="cloudSyncStatusBadge" class="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-full bg-indigo-950 text-emerald-400 text-[10px] sm:text-[11px] font-mono border border-indigo-800" title="Sinkronisasi Google Sheets">
+        <div id="cloudSyncStatusBadge" class="flex items-center gap-1.5 px-2 py-1 rounded-full bg-indigo-950 text-emerald-400 text-[10px] sm:text-[11px] font-mono border border-indigo-800" title="Sinkronisasi Google Sheets">
           <span id="cloudSyncIndicatorDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span id="cloudSyncStatusText" class="hidden xs:inline">Sheets Siap</span>
+          <span id="cloudSyncStatusText" class="hidden sm:inline">Sheets Siap</span>
         </div>
 
         <!-- Info Sesi Pengguna -->
-        <div id="userInfoHeader" class="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg bg-indigo-800 text-[11px] sm:text-xs">
+        <div id="userInfoHeader" class="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg bg-indigo-800 text-xs">
           <i class="fa-solid fa-circle-user text-amber-400 text-sm sm:text-base"></i>
           <div>
-            <div id="currentUserNameDisplay" class="font-semibold text-slate-100 max-w-[80px] sm:max-w-[120px] truncate">Silakan Login</div>
+            <div id="currentUserNameDisplay" class="font-semibold text-slate-100 text-[11px] sm:text-xs max-w-[90px] sm:max-w-[140px] truncate">Silakan Login</div>
             <div id="currentUserRoleDisplay" class="text-[9px] sm:text-[10px] text-indigo-300 uppercase">BELUM MASUK</div>
           </div>
         </div>
 
         <!-- Tombol Logout -->
-        <button type="button" onclick="handleLogout()" class="px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-sm border border-rose-500">
+        <button type="button" onclick="handleLogout()" class="px-2.5 sm:px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1 transition shadow-sm border border-rose-500">
           <i class="fa-solid fa-right-from-bracket text-xs"></i>
           <span class="hidden sm:inline">Logout</span>
         </button>
@@ -135,34 +135,34 @@
     <nav id="adminNavTabs" class="bg-indigo-950/60 border-t border-indigo-800/60 overflow-x-auto no-scrollbar">
       <div class="max-w-7xl mx-auto px-3 sm:px-6 flex items-center justify-between py-1.5 sm:py-2 gap-2">
         <div class="flex space-x-1 sm:space-x-2">
-          <button type="button" id="btnTabScanner" onclick="pindahTab('scanner')" class="nav-tab-btn flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-indigo-600 text-white shadow-sm whitespace-nowrap">
+          <button type="button" id="btnTabScanner" onclick="pindahTab('scanner')" class="nav-tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-indigo-600 text-white shadow-sm whitespace-nowrap">
             <i class="fa-solid fa-barcode"></i> Presensi
           </button>
-          <button type="button" id="btnTabSiswa" onclick="pindahTab('siswa')" class="nav-tab-btn flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap">
+          <button type="button" id="btnTabSiswa" onclick="pindahTab('siswa')" class="nav-tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap">
             <i class="fa-solid fa-users"></i> Data Siswa
           </button>
-          <button type="button" id="btnTabSpp" onclick="pindahTab('spp')" class="nav-tab-btn flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap">
+          <button type="button" id="btnTabSpp" onclick="pindahTab('spp')" class="nav-tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap">
             <i class="fa-solid fa-money-bill-wave text-amber-400"></i> SPP
           </button>
-          <button type="button" id="btnTabLaporan" onclick="pindahTab('laporan')" class="nav-tab-btn flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap">
+          <button type="button" id="btnTabLaporan" onclick="pindahTab('laporan')" class="nav-tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap">
             <i class="fa-solid fa-clipboard-user"></i> Rekap Kehadiran
           </button>
-          <button type="button" id="btnTabRekapSPP" onclick="pindahTab('rekapSPP')" class="nav-tab-btn flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap">
+          <button type="button" id="btnTabRekapSPP" onclick="pindahTab('rekapSPP')" class="nav-tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap">
             <i class="fa-solid fa-receipt"></i> Laporan SPP
           </button>
-          <button type="button" id="btnTabUsers" onclick="pindahTab('users')" class="nav-tab-btn flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap">
+          <button type="button" id="btnTabUsers" onclick="pindahTab('users')" class="nav-tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap">
             <i class="fa-solid fa-user-gear"></i> Pengguna
           </button>
-          <button type="button" id="btnTabSettings" onclick="pindahTab('settings')" class="nav-tab-btn flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap">
-            <i class="fa-solid fa-cloud-arrow-up"></i> Pengaturan Sheets
+          <button type="button" id="btnTabSettings" onclick="pindahTab('settings')" class="nav-tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Pengaturan
           </button>
-          <button type="button" id="btnTabPortalPreview" onclick="bukaPreviewPortalSiswa()" class="nav-tab-btn flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-emerald-300 hover:text-white hover:bg-indigo-800 whitespace-nowrap">
+          <button type="button" id="btnTabPortalPreview" onclick="bukaPreviewPortalSiswa()" class="nav-tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-emerald-300 hover:text-white hover:bg-indigo-800 whitespace-nowrap">
             <i class="fa-solid fa-id-card-clip"></i> Portal Siswa
           </button>
         </div>
 
-        <!-- Quick Search Siswa (Hanya Admin) -->
-        <div class="relative min-w-[210px] sm:min-w-[260px] hidden md:block">
+        <!-- Quick Search Siswa (Admin) -->
+        <div class="relative min-w-[180px] sm:min-w-[240px] hidden md:block">
           <div class="relative">
             <input type="text" id="adminStudentSearchInput" oninput="handleAdminStudentSearch(this.value)" autocomplete="off" placeholder="Pratinjau siswa..." class="w-full bg-indigo-900/90 text-white placeholder-indigo-300 border border-indigo-700/80 rounded-xl pl-8 pr-7 py-1 text-xs focus:ring-2 focus:ring-amber-400 focus:outline-none">
             <i class="fa-solid fa-eye absolute left-2.5 top-2 text-amber-300 text-xs"></i>
@@ -184,17 +184,19 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
         
         <!-- Scanner Barcode -->
-        <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-4">
+        <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-3 sm:space-y-4">
           <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
               <h2 class="text-sm sm:text-base font-bold text-slate-800 flex items-center gap-2 font-brand">
                 <i class="fa-solid fa-camera text-indigo-600"></i> Kamera Barcode Scanner
               </h2>
-              <p class="text-[11px] sm:text-xs text-slate-500">Scan barcode kartu siswa secara otomatis</p>
+              <p class="text-[11px] sm:text-xs text-slate-500">Scan barcode kartu siswa secara otomatis atau presensi manual</p>
             </div>
-            <button type="button" id="btnToggleCamera" onclick="toggleCameraScanner()" class="px-3 py-1.5 sm:px-3.5 sm:py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-sm transition">
-              <i class="fa-solid fa-play"></i> <span id="btnToggleCameraText">Aktifkan Kamera</span>
-            </button>
+            <div class="flex gap-2">
+              <button type="button" id="btnToggleCamera" onclick="toggleCameraScanner()" class="px-3 py-1.5 sm:px-3.5 sm:py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 shadow-sm transition">
+                <i class="fa-solid fa-play"></i> <span id="btnToggleCameraText">Aktifkan Kamera</span>
+              </button>
+            </div>
           </div>
 
           <div class="relative w-full h-[240px] xs:h-[280px] sm:h-[350px] bg-slate-950 rounded-2xl overflow-hidden border-2 border-slate-800 shadow-inner flex items-center justify-center">
@@ -206,20 +208,20 @@
               <div class="absolute bottom-4 left-4 w-7 h-7 border-b-4 border-l-4 border-rose-500 rounded-bl-lg"></div>
               <div class="absolute bottom-4 right-4 w-7 h-7 border-b-4 border-r-4 border-rose-500 rounded-br-lg"></div>
             </div>
-            <div id="cameraPlaceholderText" class="text-center p-4 text-slate-400 space-y-2">
-              <i class="fa-solid fa-barcode text-4xl sm:text-5xl text-indigo-400/50 mb-1 block"></i>
-              <p class="text-xs font-medium">Klik <b>"Aktifkan Kamera"</b> untuk scan otomatis atau gunakan form di samping.</p>
+            <div id="cameraPlaceholderText" class="text-center p-4 sm:p-6 text-slate-400 space-y-2">
+              <i class="fa-solid fa-barcode text-4xl sm:text-5xl text-indigo-400/50 mb-2 block"></i>
+              <p class="text-xs font-medium">Klik <b>"Aktifkan Kamera"</b> untuk scan kartu atau gunakan form manual di bawah/samping.</p>
             </div>
           </div>
 
-          <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-2.5 sm:p-3 flex items-center gap-2.5 text-xs text-indigo-900">
-            <i class="fa-solid fa-circle-info text-indigo-600 text-sm"></i>
-            <span>Setiap scan divalidasi langsung ke Google Spreadsheet.</span>
+          <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-3 flex items-center gap-2.5 text-xs text-indigo-900">
+            <i class="fa-solid fa-circle-info text-indigo-600 text-sm sm:text-base flex-shrink-0"></i>
+            <span>Setiap scan divalidasi dengan proteksi hari yang sama dan langsung tersimpan ke Google Sheets.</span>
           </div>
         </div>
 
         <!-- Presensi Manual -->
-        <div class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-4">
+        <div class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-3 sm:space-y-4">
           <div class="border-b border-slate-100 pb-3">
             <h2 class="text-sm sm:text-base font-bold text-slate-800 flex items-center gap-2 font-brand">
               <i class="fa-solid fa-keyboard text-emerald-600"></i> Presensi Manual
@@ -227,7 +229,7 @@
             <p class="text-[11px] sm:text-xs text-slate-500">Pilih nama atau ketik username siswa</p>
           </div>
 
-          <form id="formPresensiManual" onsubmit="event.preventDefault(); submitPresensiManual();" class="space-y-3 sm:space-y-4">
+          <form id="formPresensiManual" onsubmit="event.preventDefault(); submitPresensiManual();" class="space-y-3">
             <div>
               <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Presensi (dd/mm/yyyy)</label>
               <div class="relative">
@@ -252,7 +254,7 @@
 
             <div>
               <label class="block text-xs font-semibold text-slate-700 mb-1">Status Kehadiran</label>
-              <select id="presensiJenis" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-semibold text-emerald-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+              <select id="presensiJenis" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-semibold text-emerald-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                 <option value="Hadir">Hadir</option>
                 <option value="Izin">Izin</option>
                 <option value="Sakit">Sakit</option>
@@ -264,7 +266,7 @@
               <input type="text" id="presensiKeterangan" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-xs text-slate-800 focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Catatan singkat...">
             </div>
 
-            <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2">
+            <button type="submit" class="w-full py-2.5 sm:py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2">
               <i class="fa-solid fa-check-circle text-sm"></i> Simpan Presensi
             </button>
           </form>
@@ -272,10 +274,10 @@
       </div>
 
       <!-- Log Presensi Hari Ini -->
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-4">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-3 sm:space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
           <div class="flex items-center gap-2">
-            <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
+            <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
             <h3 class="text-sm font-bold text-slate-800 font-brand">Log Presensi Hari Ini</h3>
           </div>
           <div class="text-xs text-slate-500">
@@ -307,7 +309,7 @@
     </section>
 
     <!-- TAB 2: DATA SISWA -->
-    <section id="tabContentSiswa" class="hidden space-y-6">
+    <section id="tabContentSiswa" class="hidden space-y-4 sm:space-y-6">
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-4">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-100 pb-4">
           <div>
@@ -317,13 +319,13 @@
             <p class="text-xs text-slate-500">Kelola akun dan cetak kartu barcode A4</p>
           </div>
           <div class="flex flex-wrap items-center gap-2">
-            <button type="button" onclick="openModalTambahSiswa()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+            <button type="button" onclick="openModalTambahSiswa()" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
               <i class="fa-solid fa-user-plus"></i> Tambah Siswa
             </button>
-            <button type="button" onclick="cetakSemuaKartuA4()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition">
+            <button type="button" onclick="cetakSemuaKartuA4()" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition">
               <i class="fa-solid fa-print"></i> Cetak Kartu (A4)
             </button>
-            <button type="button" onclick="exportDataSiswaCSV()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+            <button type="button" onclick="exportDataSiswaCSV()" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
               <i class="fa-solid fa-file-excel"></i> Ekspor CSV
             </button>
           </div>
@@ -355,10 +357,10 @@
     </section>
 
     <!-- TAB 3: SPP -->
-    <section id="tabContentSpp" class="hidden space-y-6">
+    <section id="tabContentSpp" class="hidden space-y-4 sm:space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
         <!-- Form SPP -->
-        <div class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-4">
+        <div class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-3 sm:space-y-4">
           <div class="border-b border-slate-100 pb-3">
             <h2 class="text-sm sm:text-base font-bold text-slate-800 font-brand flex items-center gap-2">
               <i class="fa-solid fa-hand-holding-dollar text-amber-500"></i> Catat Pembayaran SPP
@@ -366,7 +368,7 @@
             <p class="text-[11px] sm:text-xs text-slate-500">Pencatatan transaksi SPP paket / bulanan</p>
           </div>
 
-          <form id="formCatatSPP" onsubmit="event.preventDefault(); submitCatatSPP();" class="space-y-3 sm:space-y-4">
+          <form id="formCatatSPP" onsubmit="event.preventDefault(); submitCatatSPP();" class="space-y-3">
             <div>
               <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Bayar</label>
               <div class="relative">
@@ -394,7 +396,7 @@
               <input type="hidden" id="sppSelectedKelasValue" value="">
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 gap-2 sm:gap-3">
               <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Paket (Bulan / Sesi)</label>
                 <input type="text" id="sppBulan" placeholder="Contoh: Paket 1" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
@@ -415,7 +417,7 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 gap-2 sm:gap-3">
               <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Metode</label>
                 <select id="sppMetode" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-2 text-xs text-slate-800 focus:outline-none">
@@ -445,26 +447,29 @@
         </div>
 
         <!-- Tabel Riwayat SPP dengan Filter & Sortir -->
-        <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-4">
+        <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-3 sm:space-y-4">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
             <div>
               <h2 class="text-sm sm:text-base font-bold text-slate-800 font-brand flex items-center gap-2">
                 <i class="fa-solid fa-clock-rotate-left text-indigo-600"></i> Riwayat Transaksi SPP
               </h2>
-              <p class="text-[11px] sm:text-xs text-slate-500">Filter dan kelola riwayat transaksi</p>
+              <p class="text-[11px] sm:text-xs text-slate-500">Filter, sortir, dan cetak laporan hasil filter</p>
             </div>
-            <div class="flex flex-wrap items-center gap-1.5">
-              <button type="button" onclick="cetakRiwayatSPPFiltered()" class="px-2.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1 shadow-sm transition">
-                <i class="fa-solid fa-print"></i> Cetak Laporan
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="cetakLaporanRiwayatSPP()" class="px-2.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg flex items-center gap-1 shadow-sm transition">
+                <i class="fa-solid fa-print"></i> Cetak
               </button>
-              <button type="button" onclick="unduhRiwayatSPPCSVFiltered()" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1 shadow-sm transition">
-                <i class="fa-solid fa-file-excel"></i> Unduh CSV
+              <button type="button" onclick="unduhCSVRiwayatSPP()" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg flex items-center gap-1 shadow-sm transition">
+                <i class="fa-solid fa-file-excel"></i> CSV
               </button>
+              <div class="text-xs text-slate-500 ml-1">
+                Data: <span id="sppRiwayatCount" class="font-bold text-indigo-700">0</span>
+              </div>
             </div>
           </div>
 
           <!-- Bilah Filter & Sortir Interaktif -->
-          <div class="bg-slate-50 p-2.5 sm:p-3 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs">
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
             <div class="relative">
               <label class="block text-[10px] font-bold text-slate-600 uppercase mb-0.5">Filter Nama Siswa</label>
               <div class="relative">
@@ -523,8 +528,8 @@
     </section>
 
     <!-- TAB 4: REKAP KEHADIRAN -->
-    <section id="tabContentLaporan" class="hidden space-y-6">
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-4">
+    <section id="tabContentLaporan" class="hidden space-y-4 sm:space-y-6">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-4 sm:space-y-5">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-100 pb-4">
           <div>
             <h2 class="text-base font-bold text-slate-800 font-brand flex items-center gap-2">
@@ -533,10 +538,18 @@
             <p class="text-xs text-slate-500">Hitungan kehadiran dan status paket 12 pertemuan</p>
           </div>
           <div class="flex items-center gap-2">
-            <button type="button" onclick="cetakLaporanPresensiPDF()" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+            <div class="bg-slate-100 p-1 rounded-xl flex items-center border border-slate-200">
+              <button type="button" id="btnViewModeLapTabel" onclick="switchAdminLaporanViewMode('tabel')" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-indigo-700 shadow-sm transition flex items-center gap-1.5">
+                <i class="fa-solid fa-table-list"></i> <span class="hidden sm:inline">Tabel</span>
+              </button>
+              <button type="button" id="btnViewModeLapFolder" onclick="switchAdminLaporanViewMode('folder')" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
+                <i class="fa-solid fa-folder-tree"></i> <span class="hidden sm:inline">Folder Paket</span>
+              </button>
+            </div>
+            <button type="button" onclick="cetakLaporanPresensiPDF()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
               <i class="fa-solid fa-print"></i> Cetak Laporan
             </button>
-            <button type="button" onclick="downloadLaporanPresensiCSV()" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+            <button type="button" onclick="downloadLaporanPresensiCSV()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
               <i class="fa-solid fa-file-excel"></i> Unduh CSV
             </button>
           </div>
@@ -544,7 +557,7 @@
 
         <!-- Filter Rekap Kehadiran -->
         <div class="bg-slate-50 rounded-xl p-3 sm:p-4 border border-slate-200">
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 sm:gap-3">
             <div class="relative">
               <label class="block text-[11px] font-semibold text-slate-700 mb-1">Nama Siswa</label>
               <div class="relative">
@@ -555,6 +568,16 @@
                 </button>
               </div>
               <div id="dropdownLapSiswa" class="hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-xl z-30 divide-y divide-slate-100"></div>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-700 mb-1">Kategori</label>
+              <select id="lapFilterKategori" class="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-2 text-xs text-slate-800 focus:outline-none">
+                <option value="">Semua Kategori</option>
+                <option value="BIMBEL">BIMBEL</option>
+                <option value="BIMBA">BIMBA</option>
+                <option value="PRIVAT">PRIVAT</option>
+              </select>
             </div>
 
             <div>
@@ -591,11 +614,11 @@
               </select>
             </div>
 
-            <div class="sm:col-span-2 flex items-end gap-2">
-              <button type="button" onclick="terapkanFilterKehadiran()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
+            <div class="sm:col-span-2 lg:col-span-5 flex items-end justify-end gap-2 pt-1">
+              <button type="button" onclick="terapkanFilterKehadiran()" class="w-full sm:w-auto px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
                 <i class="fa-solid fa-filter"></i> Terapkan
               </button>
-              <button type="button" onclick="resetFilterKehadiran()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-semibold transition">
+              <button type="button" onclick="resetFilterKehadiran()" class="w-full sm:w-auto px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-semibold transition">
                 Reset
               </button>
             </div>
@@ -604,32 +627,32 @@
 
         <!-- Indikator Paket 12X -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-          <div class="bg-indigo-50/70 border border-indigo-100 rounded-xl p-3.5 sm:p-4 flex items-center gap-3">
-            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-base sm:text-lg">
+          <div class="bg-indigo-50/70 border border-indigo-100 rounded-xl p-3 sm:p-4 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-lg flex-shrink-0">
               <i class="fa-solid fa-list-check"></i>
             </div>
             <div>
-              <div class="text-[10px] sm:text-[11px] font-semibold text-indigo-700 uppercase">Total Baris Presensi</div>
-              <div id="lapMetrikTotalData" class="text-lg sm:text-xl font-extrabold text-indigo-950">0</div>
+              <div class="text-[11px] font-semibold text-indigo-700 uppercase">Total Baris Presensi</div>
+              <div id="lapMetrikTotalData" class="text-xl font-extrabold text-indigo-950">0</div>
             </div>
           </div>
 
-          <div class="bg-emerald-50/70 border border-emerald-100 rounded-xl p-3.5 sm:p-4 flex items-center gap-3">
-            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-base sm:text-lg">
+          <div class="bg-emerald-50/70 border border-emerald-100 rounded-xl p-3 sm:p-4 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-lg flex-shrink-0">
               <i class="fa-solid fa-user-check"></i>
             </div>
             <div>
-              <div class="text-[10px] sm:text-[11px] font-semibold text-emerald-700 uppercase">Total Kehadiran</div>
-              <div id="lapMetrikHadir" class="text-lg sm:text-xl font-extrabold text-emerald-950">0</div>
+              <div class="text-[11px] font-semibold text-emerald-700 uppercase">Total Kehadiran</div>
+              <div id="lapMetrikHadir" class="text-xl font-extrabold text-emerald-950">0</div>
             </div>
           </div>
 
-          <div class="bg-rose-50/80 border-2 border-rose-200 rounded-xl p-3.5 sm:p-4 flex items-center gap-3 shadow-sm">
-            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-rose-600 text-white flex items-center justify-center text-base sm:text-lg">
+          <div class="bg-rose-50/80 border-2 border-rose-200 rounded-xl p-3 sm:p-4 flex items-center gap-3 shadow-sm">
+            <div class="w-10 h-10 rounded-lg bg-rose-600 text-white flex items-center justify-center text-lg flex-shrink-0">
               <i class="fa-solid fa-award"></i>
             </div>
             <div>
-              <div class="text-[10px] font-bold text-rose-700 tracking-wider uppercase">Paket Bimbel (12x)</div>
+              <div class="text-[10px] font-bold text-rose-700 tracking-wider uppercase">Paket Bimbel (12x Pertemuan)</div>
               <div id="lapMetrikPaket" class="text-xs sm:text-sm font-black text-rose-600 uppercase tracking-tight">
                 0 PAKET SELESAI (0/12 SESI BERJALAN)
               </div>
@@ -637,8 +660,11 @@
           </div>
         </div>
 
-        <!-- Tabel Laporan Kehadiran -->
-        <div class="overflow-x-auto">
+        <!-- Tampilan Mode Folder Paket Rekap Admin -->
+        <div id="containerAdminLaporanFolder" class="hidden space-y-4"></div>
+
+        <!-- Tabel Laporan Kehadiran (Mode Tabel) -->
+        <div id="wrapperAdminLaporanTable" class="overflow-x-auto">
           <table class="w-full text-left text-xs text-slate-700 divide-y divide-slate-200">
             <thead class="bg-slate-50 text-slate-600 font-semibold uppercase text-[10px]">
               <tr>
@@ -648,6 +674,7 @@
                 <th class="py-2.5 px-3">Username</th>
                 <th class="py-2.5 px-3">Nama</th>
                 <th class="py-2.5 px-3">Kelas</th>
+                <th class="py-2.5 px-3">Kategori</th>
                 <th class="py-2.5 px-3">Status</th>
                 <th class="py-2.5 px-3">Keterangan</th>
                 <th class="py-2.5 px-3 text-center">Aksi</th>
@@ -660,8 +687,8 @@
     </section>
 
     <!-- TAB 5: LAPORAN SPP -->
-    <section id="tabContentRekapSPP" class="hidden space-y-6">
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-4">
+    <section id="tabContentRekapSPP" class="hidden space-y-4 sm:space-y-6">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-4 sm:space-y-5">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-100 pb-4">
           <div>
             <h2 class="text-base font-bold text-slate-800 font-brand flex items-center gap-2">
@@ -670,10 +697,10 @@
             <p class="text-xs text-slate-500">Total pemasukan, status kuitansi, filter, dan pengelolaan data</p>
           </div>
           <div class="flex items-center gap-2">
-            <button type="button" onclick="cetakLaporanSPPPDF()" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+            <button type="button" onclick="cetakLaporanSPPPDF()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
               <i class="fa-solid fa-print"></i> Cetak Laporan
             </button>
-            <button type="button" onclick="downloadRekapSPPCSV()" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+            <button type="button" onclick="downloadRekapSPPCSV()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
               <i class="fa-solid fa-file-excel"></i> Unduh CSV
             </button>
           </div>
@@ -681,7 +708,7 @@
 
         <!-- Bilah Filter Laporan SPP -->
         <div class="bg-slate-50 rounded-xl p-3 sm:p-4 border border-slate-200">
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 sm:gap-3">
             <div class="relative">
               <label class="block text-[11px] font-semibold text-slate-700 mb-1">Nama Siswa / NIS</label>
               <div class="relative">
@@ -695,12 +722,41 @@
             </div>
 
             <div>
+              <label class="block text-[11px] font-semibold text-slate-700 mb-1">Kategori</label>
+              <select id="rekapSppFilterKategori" onchange="terapkanFilterRekapSPP()" class="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                <option value="">Semua Kategori</option>
+                <option value="BIMBEL">BIMBEL</option>
+                <option value="BIMBA">BIMBA</option>
+                <option value="PRIVAT">PRIVAT</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-700 mb-1">Bulan Bayar</label>
+              <select id="rekapSppFilterBulanBayar" onchange="terapkanFilterRekapSPP()" class="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                <option value="">Semua Bulan</option>
+                <option value="01">Januari</option>
+                <option value="02">Februari</option>
+                <option value="03">Maret</option>
+                <option value="04">April</option>
+                <option value="05">Mei</option>
+                <option value="06">Juni</option>
+                <option value="07">Juli</option>
+                <option value="08">Agustus</option>
+                <option value="09">September</option>
+                <option value="10">Oktober</option>
+                <option value="11">November</option>
+                <option value="12">Desember</option>
+              </select>
+            </div>
+
+            <div>
               <label class="block text-[11px] font-semibold text-slate-700 mb-1">Paket</label>
               <input type="text" id="rekapSppFilterBulan" oninput="terapkanFilterRekapSPP()" placeholder="Cari paket..." class="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
             </div>
 
             <div>
-              <label class="block text-[11px] font-semibold text-slate-700 mb-1">Status Pembayaran</label>
+              <label class="block text-[11px] font-semibold text-slate-700 mb-1">Status</label>
               <select id="rekapSppFilterStatus" onchange="terapkanFilterRekapSPP()" class="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
                 <option value="">Semua Status</option>
                 <option value="Lunas">Lunas</option>
@@ -708,43 +764,52 @@
               </select>
             </div>
 
-            <div class="flex items-end gap-2">
-              <button type="button" onclick="terapkanFilterRekapSPP()" class="flex-1 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
+            <div class="sm:col-span-2 lg:col-span-5 flex items-end justify-end gap-2 pt-1">
+              <button type="button" onclick="terapkanFilterRekapSPP()" class="w-full sm:w-auto px-6 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
                 <i class="fa-solid fa-filter"></i> Terapkan
               </button>
-              <button type="button" onclick="resetFilterRekapSPP()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-semibold transition">
+              <button type="button" onclick="resetFilterRekapSPP()" class="w-full sm:w-auto px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-semibold transition">
                 Reset
               </button>
             </div>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-          <div class="bg-amber-50/70 border border-amber-100 rounded-xl p-3.5 sm:p-4 flex items-center gap-3">
-            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-amber-500 text-white flex items-center justify-center text-base sm:text-lg">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div class="bg-amber-50/70 border border-amber-100 rounded-xl p-3 sm:p-4 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-amber-500 text-white flex items-center justify-center text-lg flex-shrink-0">
               <i class="fa-solid fa-coins"></i>
             </div>
             <div>
-              <div class="text-[10px] sm:text-[11px] font-semibold text-amber-700 uppercase">Total SPP Lunas (Filter)</div>
-              <div id="rekapSppMetrikTotalLunas" class="text-lg sm:text-xl font-extrabold text-amber-950">Rp 0</div>
+              <div class="text-[11px] font-semibold text-amber-700 uppercase">Total SPP Lunas (Hasil Filter)</div>
+              <div id="rekapSppMetrikTotalLunas" class="text-xl font-extrabold text-amber-950">Rp 0</div>
             </div>
           </div>
-          <div class="bg-slate-100 border border-slate-200 rounded-xl p-3.5 sm:p-4 flex items-center gap-3">
-            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-slate-600 text-white flex items-center justify-center text-base sm:text-lg">
+          <div class="bg-slate-100 border border-slate-200 rounded-xl p-3 sm:p-4 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-slate-600 text-white flex items-center justify-center text-lg flex-shrink-0">
               <i class="fa-solid fa-receipt"></i>
             </div>
             <div>
-              <div class="text-[10px] sm:text-[11px] font-semibold text-slate-600 uppercase">Jumlah Transaksi</div>
-              <div id="rekapSppMetrikTotalCount" class="text-lg sm:text-xl font-extrabold text-slate-900">0</div>
+              <div class="text-[11px] font-semibold text-slate-600 uppercase">Jumlah Transaksi</div>
+              <div id="rekapSppMetrikTotalCount" class="text-xl font-extrabold text-slate-900">0</div>
             </div>
           </div>
-          <div class="bg-rose-50/70 border border-rose-100 rounded-xl p-3.5 sm:p-4 flex items-center gap-3">
-            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-rose-500 text-white flex items-center justify-center text-base sm:text-lg">
+          <div class="bg-emerald-50/70 border border-emerald-100 rounded-xl p-3 sm:p-4 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-lg flex-shrink-0">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+              <div class="text-[11px] font-semibold text-emerald-700 uppercase">Jumlah Lunas</div>
+              <div id="rekapSppMetrikTotalCountLunas" class="text-xl font-extrabold text-emerald-950">0</div>
+            </div>
+          </div>
+          <div class="bg-rose-50/70 border border-rose-100 rounded-xl p-3 sm:p-4 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-rose-500 text-white flex items-center justify-center text-lg flex-shrink-0">
               <i class="fa-solid fa-hourglass-half"></i>
             </div>
             <div>
-              <div class="text-[10px] sm:text-[11px] font-semibold text-rose-700 uppercase">Belum Lunas</div>
-              <div id="rekapSppMetrikTotalBelumLunas" class="text-lg sm:text-xl font-extrabold text-rose-950">0</div>
+              <div class="text-[11px] font-semibold text-rose-700 uppercase">Belum Lunas</div>
+              <div id="rekapSppMetrikTotalBelumLunas" class="text-xl font-extrabold text-rose-950">0</div>
             </div>
           </div>
         </div>
@@ -758,6 +823,7 @@
                 <th class="py-2.5 px-3">Username</th>
                 <th class="py-2.5 px-3">Nama Siswa</th>
                 <th class="py-2.5 px-3">Kelas</th>
+                <th class="py-2.5 px-3">Kategori</th>
                 <th class="py-2.5 px-3">Paket</th>
                 <th class="py-2.5 px-3">Nominal</th>
                 <th class="py-2.5 px-3">Metode</th>
@@ -773,7 +839,7 @@
     </section>
 
     <!-- TAB 6: PENGGUNA -->
-    <section id="tabContentUsers" class="hidden space-y-6">
+    <section id="tabContentUsers" class="hidden space-y-4 sm:space-y-6">
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
           <div>
@@ -782,7 +848,7 @@
             </h2>
             <p class="text-xs text-slate-500">Kelola akun Admin & Petugas (Sinkron Google Sheets)</p>
           </div>
-          <button type="button" onclick="openModalTambahUser()" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+          <button type="button" onclick="openModalTambahUser()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
             <i class="fa-solid fa-user-plus"></i> Tambah Pengguna
           </button>
         </div>
@@ -805,8 +871,8 @@
     </section>
 
     <!-- TAB 7: PENGATURAN SHEETS -->
-    <section id="tabContentSettings" class="hidden space-y-6">
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-4">
+    <section id="tabContentSettings" class="hidden space-y-4 sm:space-y-6">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 space-y-4 sm:space-y-5">
         <div class="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <h2 class="text-base font-bold text-slate-800 font-brand flex items-center gap-2">
@@ -816,7 +882,7 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
             <div class="text-[10px] text-slate-500 font-bold uppercase">Siswa Terdaftar</div>
             <div id="syncStatSiswa" class="text-lg font-black text-indigo-700">0</div>
@@ -835,7 +901,7 @@
           </div>
         </div>
 
-        <div class="space-y-3.5 max-w-2xl">
+        <div class="space-y-4 max-w-2xl">
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">Web App URL (Apps Script /exec)</label>
             <input type="text" id="inputAppsScriptUrl" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-mono text-slate-800 focus:outline-none">
@@ -864,17 +930,17 @@
     </section>
 
     <!-- PORTAL SISWA MANDIRI -->
-    <section id="portalSiswaSection" class="hidden space-y-5 sm:space-y-6">
+    <section id="portalSiswaSection" class="hidden space-y-4 sm:space-y-6">
       <div class="bg-gradient-to-r from-indigo-700 to-indigo-900 rounded-3xl p-4 sm:p-6 text-white shadow-lg space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div class="flex items-center gap-3 sm:gap-4">
             <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-amber-400 text-indigo-950 flex items-center justify-center text-2xl sm:text-3xl font-bold shadow-md flex-shrink-0">
               <i class="fa-solid fa-graduation-cap"></i>
             </div>
             <div>
               <div class="text-[11px] sm:text-xs text-indigo-200 uppercase font-semibold">Selamat Datang,</div>
-              <h2 id="portalSiswaNama" class="text-base sm:text-2xl font-bold font-brand leading-tight">Nama Siswa</h2>
-              <div class="text-[11px] sm:text-xs text-indigo-200 flex flex-wrap items-center gap-1.5 sm:gap-2 mt-0.5">
+              <h2 id="portalSiswaNama" class="text-lg sm:text-2xl font-bold font-brand leading-tight">Nama Siswa</h2>
+              <div class="text-[11px] sm:text-xs text-indigo-200 flex flex-wrap items-center gap-2 mt-0.5">
                 <span>Username: <b id="portalSiswaNis" class="text-white font-mono">-</b></span>
                 <span>•</span>
                 <span>Kelas: <b id="portalSiswaKelas" class="text-white">-</b></span>
@@ -883,7 +949,7 @@
               </div>
             </div>
           </div>
-          <button type="button" id="btnKembaliKeAdmin" onclick="pindahTab('scanner')" class="self-start sm:self-auto px-3.5 py-1.5 bg-white/10 hover:bg-white/20 active:bg-white/30 rounded-xl text-xs font-semibold transition flex items-center gap-2">
+          <button type="button" id="btnKembaliKeAdmin" onclick="pindahTab('scanner')" class="self-start sm:self-auto px-4 py-2 bg-white/10 hover:bg-white/20 active:bg-white/30 rounded-xl text-xs font-semibold transition flex items-center gap-2">
             <i class="fa-solid fa-arrow-left"></i> Kembali ke Menu Admin
           </button>
         </div>
@@ -896,7 +962,7 @@
           <div class="w-full bg-indigo-900/80 rounded-full h-3 overflow-hidden border border-indigo-700/50">
             <div id="portalProgressBar" class="bg-gradient-to-r from-amber-400 to-amber-300 h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
           </div>
-          <!-- Rekap SPP berdasarkan status pembayaran paket / bulan -->
+          
           <div class="border-t border-indigo-800/80 pt-2.5 mt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
             <div class="flex items-center gap-2 flex-wrap">
               <i class="fa-solid fa-receipt text-amber-400"></i>
@@ -905,7 +971,7 @@
             </div>
             <div id="portalSppStatusBadgeContainer">
               <span id="portalSppStatusBadge" class="px-3 py-1 rounded-full text-[11px] font-extrabold uppercase bg-slate-800 text-slate-300 border border-slate-700 inline-block">
-                Memuat Status...
+                SILAHKAN CEK DI MENU REKAP SPP
               </span>
             </div>
           </div>
@@ -913,34 +979,21 @@
       </div>
 
       <div class="bg-white rounded-2xl p-2 shadow-sm border border-slate-200 flex flex-wrap gap-2">
-        <button type="button" id="btnPortalTabPresensi" onclick="switchPortalTab('presensi')" class="portal-tab-btn flex-1 min-w-[110px] py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 bg-indigo-600 text-white shadow-sm">
+        <button type="button" id="btnPortalTabPresensi" onclick="switchPortalTab('presensi')" class="portal-tab-btn flex-1 min-w-[120px] py-2.5 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 bg-indigo-600 text-white shadow-sm">
           <i class="fa-solid fa-clipboard-user"></i> Riwayat Kehadiran
         </button>
-        <button type="button" id="btnPortalTabSpp" onclick="switchPortalTab('spp')" class="portal-tab-btn flex-1 min-w-[110px] py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 text-slate-600 hover:bg-slate-100">
+        <button type="button" id="btnPortalTabSpp" onclick="switchPortalTab('spp')" class="portal-tab-btn flex-1 min-w-[120px] py-2.5 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 text-slate-600 hover:bg-slate-100">
           <i class="fa-solid fa-receipt"></i> Rekap SPP
         </button>
-        <button type="button" id="btnPortalTabProfil" onclick="switchPortalTab('profil')" class="portal-tab-btn flex-1 min-w-[110px] py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 text-slate-600 hover:bg-slate-100">
+        <button type="button" id="btnPortalTabProfil" onclick="switchPortalTab('profil')" class="portal-tab-btn flex-1 min-w-[120px] py-2.5 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 text-slate-600 hover:bg-slate-100">
           <i class="fa-solid fa-id-card"></i> Profil Siswa
         </button>
       </div>
 
-      <!-- Riwayat Kehadiran Siswa -->
+      <!-- Riwayat Kehadiran Siswa: Berkelompok per Folder Paket (12x Pertemuan) -->
       <div id="portalSubTabPresensi" class="space-y-4">
-        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm space-y-4">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-            <div>
-              <h3 class="text-sm font-bold text-slate-800 font-brand flex items-center gap-2">
-                <i class="fa-solid fa-folder-tree text-indigo-600"></i> Riwayat Kehadiran Per Paket
-              </h3>
-              <p class="text-[11px] sm:text-xs text-slate-500">Klik folder paket untuk melihat rincian 12 pertemuan</p>
-            </div>
-            <div class="text-[11px] font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg">
-              Sistem Paket: <span class="text-indigo-700 font-bold">12 Sesi / Paket</span>
-            </div>
-          </div>
-          <div id="portalContainerPresensiPaket" class="space-y-3">
-            <!-- Folder paket presensi (12 pertemuan per paket) dirender otomatis di sini -->
-          </div>
+        <div id="portalContainerPresensiPaket" class="space-y-3">
+          <div class="p-6 text-center text-slate-400 bg-white rounded-2xl border border-slate-200">Memuat riwayat kehadiran...</div>
         </div>
       </div>
 
@@ -1001,8 +1054,8 @@
 
       <form onsubmit="event.preventDefault(); prosesLogin();" class="space-y-3.5">
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Username</label>
-          <input type="text" id="loginUsername" required autocomplete="off" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="admin / petugas / siswa">
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Username / NIS</label>
+          <input type="text" id="loginUsername" required autocomplete="off" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="admin / petugas / NIS siswa">
         </div>
 
         <div>
@@ -1218,7 +1271,7 @@
 
   <!-- MODAL KONFIRMASI HAPUS -->
   <div id="modalKonfirmasiHapus" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border border-slate-100">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border border-slate-100 max-h-[92vh] overflow-y-auto">
       <div class="w-14 h-14 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-2xl mx-auto shadow-sm">
         <i class="fa-solid fa-triangle-exclamation"></i>
       </div>
@@ -1239,7 +1292,7 @@
 
   <!-- MODAL PRESENSI BERHASIL -->
   <div id="modalDialogPresensiSukses" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border-2 border-emerald-500">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border-2 border-emerald-500 max-h-[92vh] overflow-y-auto">
       <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl mx-auto shadow-md ring-8 ring-emerald-50">
         <i class="fa-solid fa-circle-check"></i>
       </div>
@@ -1278,7 +1331,7 @@
 
   <!-- MODAL SUDAH PRESENSI HARI INI -->
   <div id="modalDialogSudahPresensi" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border-2 border-rose-500">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border-2 border-rose-500 max-h-[92vh] overflow-y-auto">
       <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-3xl mx-auto ring-8 ring-rose-50">
         <i class="fa-solid fa-triangle-exclamation"></i>
       </div>
@@ -1370,7 +1423,7 @@
     const SETTINGS_KEY = 'sim_bimbel_ba_global_settings';
     const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbxT7IWkz_pHVuWC5foOg_ORlB3kDYPmZJ0dN8DhLNgzntllVlOznEA3Fe2CMk255IU/exec';
 
-    // Global in-memory application store
+    // In-memory data store default
     let appData = {
       currentUser: null,
       users: [
@@ -1400,36 +1453,68 @@
     let aksiKonfirmasiHapusCallback = null;
     let html5QrScannerInstance = null;
     let isCameraScanning = false;
+    let adminLaporanViewMode = 'tabel';
 
-    // Helper sanitasi & waktu
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    function switchAdminLaporanViewMode(mode) {
+      adminLaporanViewMode = mode;
+      const btnTabel = document.getElementById('btnViewModeLapTabel');
+      const btnFolder = document.getElementById('btnViewModeLapFolder');
+      const tableWrapper = document.getElementById('wrapperAdminLaporanTable');
+      const folderContainer = document.getElementById('containerAdminLaporanFolder');
+
+      if (mode === 'folder') {
+        tableWrapper?.classList.add('hidden');
+        folderContainer?.classList.remove('hidden');
+        if (btnFolder) btnFolder.className = 'px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-indigo-700 shadow-sm transition flex items-center gap-1.5';
+        if (btnTabel) btnTabel.className = 'px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5';
+      } else {
+        tableWrapper?.classList.remove('hidden');
+        folderContainer?.classList.add('hidden');
+        if (btnTabel) btnTabel.className = 'px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-indigo-700 shadow-sm transition flex items-center gap-1.5';
+        if (btnFolder) btnFolder.className = 'px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5';
+      }
+
+      renderAdminLaporanFolders();
     }
 
-    function formatHanyaJam(waktuRaw) {
-      if (!waktuRaw) return '-';
-      const str = String(waktuRaw).trim();
-      const match = str.match(/(\d{1,2})[:.](\d{2})/);
-      if (match) {
-        return `${match[1].padStart(2, '0')}:${match[2]}`;
-      }
-      return str;
+    function closeModalKonfirmasiHapus() {
+      document.getElementById('modalKonfirmasiHapus')?.classList.add('hidden');
+      aksiKonfirmasiHapusCallback = null;
     }
 
-    function parseDateTimeKehadiran(item) {
-      if (!item) return 0;
-      const tglFormatted = formatTanggalIndo(item.tanggal);
-      const parts = tglFormatted.split('/');
-      let timeParts = [0, 0];
-      if (item.waktu) {
-        const timeMatch = String(item.waktu).match(/(\d{1,2})[:.](\d{2})/);
-        if (timeMatch) timeParts = [parseInt(timeMatch[1], 10), parseInt(timeMatch[2], 10)];
+    document.getElementById('btnKonfirmasiHapusYa')?.addEventListener('click', () => {
+      const callback = aksiKonfirmasiHapusCallback;
+      closeModalKonfirmasiHapus();
+      if (typeof callback === 'function') callback();
+    });
+
+    function loadDataFromStorage() {
+      try {
+        const rawSettings = localStorage.getItem(SETTINGS_KEY);
+        if (rawSettings) {
+          const parsedSettings = JSON.parse(rawSettings);
+          globalSettings = { ...globalSettings, ...parsedSettings };
+        }
+        if (!globalSettings.apiUrl || globalSettings.apiUrl.trim() === '') {
+          globalSettings.apiUrl = DEFAULT_API_URL;
+        }
+
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') {
+            appData = { ...appData, ...parsed };
+          }
+        }
+      } catch (e) {
+        console.warn('Gagal memuat local data:', e);
       }
-      if (parts.length === 3) {
-        return new Date(parts[2], parts[1] - 1, parts[0], timeParts[0], timeParts[1]).getTime();
-      }
-      return 0;
+    }
+
+    function saveDataToStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+      } catch (e) {}
     }
 
     function getTodayDdMmYyyy() {
@@ -1451,6 +1536,35 @@
         }
       }
       return getTodayDdMmYyyy();
+    }
+
+    function formatHanyaJam(input) {
+      if (!input) return '00:00';
+      const str = String(input).trim();
+      const match = str.match(/(\d{1,2})[:.](\d{2})/);
+      if (match) {
+        return `${String(match[1]).padStart(2, '0')}:${match[2]}`;
+      }
+      return str;
+    }
+
+    function parseTanggalDanWaktuTimestamp(tglStr, waktuStr) {
+      const formattedTgl = formatTanggalIndo(tglStr);
+      const parts = formattedTgl.split('/');
+      let jam = 0, menit = 0;
+      const cleanWaktu = formatHanyaJam(waktuStr);
+      const wParts = cleanWaktu.split(':');
+      if (wParts.length >= 2) {
+        jam = parseInt(wParts[0], 10) || 0;
+        menit = parseInt(wParts[1], 10) || 0;
+      }
+      if (parts.length === 3) {
+        const d = parseInt(parts[0], 10) || 1;
+        const m = (parseInt(parts[1], 10) || 1) - 1;
+        const y = parseInt(parts[2], 10) || 2026;
+        return new Date(y, m, d, jam, menit).getTime();
+      }
+      return 0;
     }
 
     function showToast(message, type = 'success') {
@@ -1475,78 +1589,34 @@
       term.prepend(div);
     }
 
-    function unduhFileBlob(blob, filename) {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      a.click();
-    }
-
-    function bukaModalKonfirmasiHapus(judul, pesan, onConfirm) {
-      aksiKonfirmasiHapusCallback = onConfirm;
-      document.getElementById('konfirmasiHapusJudul').textContent = judul;
-      document.getElementById('konfirmasiHapusPesan').textContent = pesan;
-      document.getElementById('modalKonfirmasiHapus')?.classList.remove('hidden');
-    }
-
-    function closeModalKonfirmasiHapus() {
-      document.getElementById('modalKonfirmasiHapus')?.classList.add('hidden');
-      aksiKonfirmasiHapusCallback = null;
-    }
-
-    document.getElementById('btnKonfirmasiHapusYa')?.addEventListener('click', () => {
-      const callback = aksiKonfirmasiHapusCallback;
-      closeModalKonfirmasiHapus();
-      if (typeof callback === 'function') callback();
-    });
-
-    function loadDataFromStorage() {
-      try {
-        const rawSettings = localStorage.getItem(SETTINGS_KEY);
-        if (rawSettings) {
-          const parsedSettings = JSON.parse(rawSettings);
-          if (parsedSettings && parsedSettings.apiUrl && parsedSettings.apiUrl.trim() !== '') {
-            globalSettings.apiUrl = parsedSettings.apiUrl;
-          }
-        }
-        if (!globalSettings.apiUrl) globalSettings.apiUrl = DEFAULT_API_URL;
-
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (parsed && typeof parsed === 'object') {
-            appData = { ...appData, ...parsed };
-          }
-        }
-      } catch (e) {
-        console.warn('Gagal memuat local data:', e);
-      }
-    }
-
-    function saveDataToStorage() {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
-      } catch (e) {}
-    }
-
-    function fetchWithJsonp(url) {
+    function fetchSheetsJsonp(url) {
       return new Promise((resolve, reject) => {
-        const callbackName = 'cb_' + Math.round(100000 * Math.random());
-        const sep = url.includes('?') ? '&' : '?';
+        const callbackName = 'sheetsCallback_' + Math.round(100000 * Math.random());
         const script = document.createElement('script');
-        script.src = `${url}${sep}callback=${callbackName}`;
+        const sep = url.includes('?') ? '&' : '?';
+        script.src = `${url}${sep}callback=${callbackName}&_t=${Date.now()}`;
         
-        window[callbackName] = function(data) {
+        const timeout = setTimeout(() => {
+          cleanup();
+          reject(new Error('Koneksi timeout (JSONP)'));
+        }, 12000);
+
+        function cleanup() {
+          clearTimeout(timeout);
+          if (script.parentNode) script.parentNode.removeChild(script);
           delete window[callbackName];
-          document.body.removeChild(script);
+        }
+
+        window[callbackName] = function(data) {
+          cleanup();
           resolve(data);
         };
+
         script.onerror = function() {
-          delete window[callbackName];
-          try { document.body.removeChild(script); } catch(e) {}
-          reject(new Error('JSONP Script Load Error'));
+          cleanup();
+          reject(new Error('Gagal memuat script JSONP'));
         };
+
         document.body.appendChild(script);
       });
     }
@@ -1560,38 +1630,40 @@
       if (dot) dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-ping';
       if (statusText) statusText.textContent = 'Syncing...';
 
+      let result = null;
+
       try {
-        let result = null;
+        const response = await fetch(`${apiUrl}?action=getAllData&_t=${Date.now()}`, { cache: 'no-cache' });
+        result = await response.json();
+      } catch (errCors) {
         try {
-          const response = await fetch(`${apiUrl}?action=getAllData&_t=${Date.now()}`);
-          result = await response.json();
-        } catch (fetchErr) {
-          result = await fetchWithJsonp(`${apiUrl}?action=getAllData&_t=${Date.now()}`);
+          result = await fetchSheetsJsonp(`${apiUrl}?action=getAllData`);
+        } catch (errJsonp) {
+          if (dot) dot.className = 'w-2 h-2 rounded-full bg-emerald-500';
+          if (statusText) statusText.textContent = 'Sheets Siap';
+          if (!silent) addSyncLog('Gagal sync online: ' + errJsonp.message, 'error');
+          return;
         }
+      }
 
-        if (result && (result.status === 'success' || result.success) && result.data) {
-          if (Array.isArray(result.data.siswa) && result.data.siswa.length > 0) appData.siswa = result.data.siswa;
-          if (Array.isArray(result.data.presensi)) appData.presensi = result.data.presensi;
-          if (Array.isArray(result.data.spp)) appData.spp = result.data.spp;
-          if (Array.isArray(result.data.users) && result.data.users.length > 0) appData.users = result.data.users;
+      if (result && (result.status === 'success' || result.success) && result.data) {
+        if (Array.isArray(result.data.siswa) && result.data.siswa.length > 0) appData.siswa = result.data.siswa;
+        if (Array.isArray(result.data.presensi)) appData.presensi = result.data.presensi;
+        if (Array.isArray(result.data.spp)) appData.spp = result.data.spp;
+        if (Array.isArray(result.data.users) && result.data.users.length > 0) appData.users = result.data.users;
 
-          saveDataToStorage();
-          renderTableMasterSiswa();
-          renderLivePresensiLog();
-          renderTableSPP();
-          terapkanFilterKehadiran();
-          terapkanFilterRekapSPP();
-          renderTableUsers();
-          updateSyncStatsUI();
+        saveDataToStorage();
+        renderTableMasterSiswa();
+        renderLivePresensiLog();
+        renderTableSPP();
+        terapkanFilterKehadiran();
+        terapkanFilterRekapSPP();
+        renderTableUsers();
+        updateSyncStatsUI();
 
-          if (dot) dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
-          if (statusText) statusText.textContent = 'Sheets Terhubung';
-          if (!silent) addSyncLog('Sinkronisasi data Google Sheets selesai', 'success');
-        }
-      } catch (err) {
-        if (dot) dot.className = 'w-2 h-2 rounded-full bg-emerald-500';
-        if (statusText) statusText.textContent = 'Sheets Siap';
-        if (!silent) addSyncLog('Gagal sync online: ' + err.message, 'error');
+        if (dot) dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
+        if (statusText) statusText.textContent = 'Sheets Terhubung';
+        if (!silent) addSyncLog('Sinkronisasi data Google Sheets berhasil!', 'success');
       }
     }
 
@@ -1615,7 +1687,6 @@
 
     function applyRoleAccessControl(role) {
       const roleStr = String(role || '').toLowerCase();
-      // Tab Rekap Kehadiran (btnTabLaporan) diizinkan untuk admin & petugas
       const adminOnlyTabIds = [
         'btnTabSiswa',
         'btnTabSpp',
@@ -1636,7 +1707,12 @@
         }
       });
 
-      const quickSearch = document.getElementById('adminStudentSearchInput')?.closest('.relative.min-w-\\[210px\\]') || document.getElementById('adminStudentSearchInput')?.parentElement?.parentElement;
+      const btnTabLaporan = document.getElementById('btnTabLaporan');
+      if (btnTabLaporan) {
+        btnTabLaporan.classList.remove('hidden');
+      }
+
+      const quickSearch = document.getElementById('adminStudentSearchInput')?.closest('.relative.min-w-\\[180px\\]') || document.getElementById('adminStudentSearchInput')?.parentElement?.parentElement;
       if (quickSearch) {
         if (roleStr === 'petugas') {
           quickSearch.classList.add('hidden');
@@ -1650,6 +1726,7 @@
         sectionsToHide.forEach(secId => {
           document.getElementById(secId)?.classList.add('hidden');
         });
+        document.getElementById('tabContentScanner')?.classList.remove('hidden');
       }
     }
 
@@ -1657,10 +1734,14 @@
       const u = (document.getElementById('loginUsername')?.value || '').trim();
       const p = (document.getElementById('loginPassword')?.value || '').trim();
 
-      // Sinkronisasi data online sebelum verifikasi login
+      if (!u || !p) {
+        showToast('Masukkan username dan password', 'error');
+        return;
+      }
+
       try {
         await syncAllSheetsData(true);
-      } catch (err) {}
+      } catch (e) {}
 
       const user = appData.users.find(x => String(x.username).toLowerCase() === u.toLowerCase() && String(x.password) === p);
       if (user) {
@@ -1680,13 +1761,10 @@
         return;
       }
 
-      const cleanU = u.toLowerCase().replace(/[^a-z0-9]/g, '');
-      const siswa = (appData.siswa || []).find(s => {
-        const sUser = String(s.username || '').toLowerCase();
-        const sClean = sUser.replace(/[^a-z0-9]/g, '');
-        const pass = String(s.password || '123');
-        return (sUser === u.toLowerCase() || sClean === cleanU) && pass === p;
-      });
+      const siswa = (appData.siswa || []).find(s => 
+        (String(s.username || '').toLowerCase() === u.toLowerCase() || String(s.username || '').replace(/\D/g, '') === u.replace(/\D/g, '')) &&
+        String(s.password || '123') === p
+      );
 
       if (siswa) {
         appData.currentUser = { nama: siswa.nama, username: siswa.username, role: 'siswa' };
@@ -1741,10 +1819,11 @@
     }
 
     function pindahTab(tabId) {
-      // Role petugas diizinkan mengakses tab scanner dan laporan kehadiran
-      if (appData.currentUser && String(appData.currentUser.role).toLowerCase() === 'petugas' && tabId !== 'scanner' && tabId !== 'laporan') {
-        showToast('Akses dibatasi untuk akun Petugas', 'info');
-        return;
+      if (appData.currentUser && String(appData.currentUser.role).toLowerCase() === 'petugas') {
+        if (tabId !== 'scanner' && tabId !== 'laporan') {
+          showToast('Akses dibatasi untuk akun Petugas', 'info');
+          return;
+        }
       }
 
       document.getElementById('portalSiswaSection')?.classList.add('hidden');
@@ -1754,13 +1833,13 @@
         const idSuffix = (t.toLowerCase() === 'rekapspp') ? 'RekapSPP' : (t.charAt(0).toUpperCase() + t.slice(1).toLowerCase());
         document.getElementById(`tabContent${idSuffix}`)?.classList.add('hidden');
         const b = document.getElementById(`btnTab${idSuffix}`);
-        if (b) b.className = 'nav-tab-btn flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap';
+        if (b) b.className = 'nav-tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-indigo-200 hover:text-white hover:bg-indigo-800 whitespace-nowrap';
       });
 
       const targetSuffix = (tabId.toLowerCase() === 'rekapspp') ? 'RekapSPP' : (tabId.charAt(0).toUpperCase() + tabId.slice(1).toLowerCase());
       document.getElementById(`tabContent${targetSuffix}`)?.classList.remove('hidden');
       const activeBtn = document.getElementById(`btnTab${targetSuffix}`);
-      if (activeBtn) activeBtn.className = 'nav-tab-btn flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-indigo-600 text-white shadow-sm whitespace-nowrap';
+      if (activeBtn) activeBtn.className = 'nav-tab-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-indigo-600 text-white shadow-sm whitespace-nowrap';
 
       if (tabId === 'siswa') renderTableMasterSiswa();
       if (tabId === 'spp') renderTableSPP();
@@ -1927,6 +2006,8 @@
       const todayStr = getTodayDdMmYyyy();
       const logsToday = (appData.presensi || []).filter(p => formatTanggalIndo(p.tanggal) === todayStr);
 
+      logsToday.sort((a, b) => parseTanggalDanWaktuTimestamp(b.tanggal, b.waktu) - parseTanggalDanWaktuTimestamp(a.tanggal, a.waktu));
+
       if (counter) counter.textContent = logsToday.length;
       if (logsToday.length === 0) {
         tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-slate-400">Belum ada presensi yang tercatat hari ini.</td></tr>`;
@@ -1935,7 +2016,7 @@
 
       tbody.innerHTML = logsToday.map(p => `
         <tr class="hover:bg-slate-50 transition">
-          <td class="py-2.5 px-3 font-mono font-medium">${escapeHtml(formatHanyaJam(p.waktu))}</td>
+          <td class="py-2.5 px-3 font-mono">${escapeHtml(formatHanyaJam(p.waktu))}</td>
           <td class="py-2.5 px-3">${escapeHtml(formatTanggalIndo(p.tanggal))}</td>
           <td class="py-2.5 px-3 font-mono font-bold text-indigo-700">${escapeHtml(p.nis || p.username || '-')}</td>
           <td class="py-2.5 px-3 font-bold">${escapeHtml(p.nama)}</td>
@@ -2279,27 +2360,21 @@
       if (btnClear) btnClear.classList.remove('hidden');
       const q = String(query).trim().toLowerCase();
 
-      // Gabungkan master siswa dan data transaksi SPP agar nama selalu dapat ditemukan
-      const kumpulanSiswa = [];
-      const nisMap = new Set();
-
+      const studentMap = new Map();
       (appData.siswa || []).forEach(s => {
-        const u = String(s.username || '').trim();
-        if (u && !nisMap.has(u.toLowerCase())) {
-          nisMap.add(u.toLowerCase());
-          kumpulanSiswa.push({ nama: s.nama || '', username: u });
+        const key = String(s.username || '').toLowerCase();
+        if (key && !studentMap.has(key)) {
+          studentMap.set(key, { nama: s.nama, username: s.username });
         }
       });
-
       (appData.spp || []).forEach(sp => {
-        const u = String(sp.nis || '').trim();
-        if (u && !nisMap.has(u.toLowerCase())) {
-          nisMap.add(u.toLowerCase());
-          kumpulanSiswa.push({ nama: sp.nama || '', username: u });
+        const key = String(sp.nis || '').toLowerCase();
+        if (key && !studentMap.has(key)) {
+          studentMap.set(key, { nama: sp.nama, username: sp.nis });
         }
       });
 
-      cachedSortSppFilterResults = kumpulanSiswa.filter(s => {
+      cachedSortSppFilterResults = Array.from(studentMap.values()).filter(s => {
         const n = String(s.nama || '').toLowerCase();
         const u = String(s.username || '').toLowerCase();
         return n.includes(q) || u.includes(q);
@@ -2323,9 +2398,9 @@
     }
 
     function selectSortSppFilterByIndex(index) {
-      const selected = cachedSortSppFilterResults[index];
-      if (!selected) return;
-      document.getElementById('sortSppFilterNama').value = selected.nama;
+      const item = cachedSortSppFilterResults[index];
+      if (!item) return;
+      document.getElementById('sortSppFilterNama').value = item.nama;
       document.getElementById('dropdownSortSppSiswa')?.classList.add('hidden');
       renderTableSPP();
     }
@@ -2362,7 +2437,9 @@
         list = list.filter(item => String(item.status || '').trim().toLowerCase() === fStatus);
       }
 
-      if (orderBy === 'paket-asc') {
+      if (orderBy === 'terbaru') {
+        list.sort((a, b) => parseTanggalDanWaktuTimestamp(b.tanggal, '00:00') - parseTanggalDanWaktuTimestamp(a.tanggal, '00:00'));
+      } else if (orderBy === 'paket-asc') {
         list.sort((a, b) => String(a.bulan || '').localeCompare(String(b.bulan || '')));
       } else if (orderBy === 'paket-desc') {
         list.sort((a, b) => String(b.bulan || '').localeCompare(String(a.bulan || '')));
@@ -2417,86 +2494,68 @@
       }).join('');
     }
 
-    function cetakRiwayatSPPFiltered() {
-      const data = getFilteredAndSortedSPPList();
+    function cetakLaporanRiwayatSPP() {
+      const list = getFilteredAndSortedSPPList();
       const printArea = document.getElementById('printArea');
       if (!printArea) return;
 
-      const fNama = document.getElementById('sortSppFilterNama')?.value || 'Semua Siswa';
-      const fPaket = document.getElementById('sortSppFilterBulan')?.value || 'Semua Paket';
-      const fStatus = document.getElementById('sortSppFilterStatus')?.value || 'Semua Status';
-      const orderBy = document.getElementById('sortSppOrderBy')?.options[document.getElementById('sortSppOrderBy')?.selectedIndex]?.text || '-';
-
-      let totalNominalLunas = 0;
-      data.forEach(d => {
-        if (String(d.status).toLowerCase() === 'lunas') totalNominalLunas += Number(d.nominal || 0);
+      let totalNominal = 0;
+      list.forEach(item => {
+        if (String(item.status || '').toLowerCase() === 'lunas') {
+          totalNominal += Number(item.nominal || 0);
+        }
       });
 
       printArea.innerHTML = `
-        <div style="font-family: Arial, sans-serif; padding: 24px; color: #1e293b;">
-          <div style="text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 16px;">
-            <h2 style="margin: 0; font-size: 18px; font-weight: bold; text-transform: uppercase;">Laporan Transaksi SPP BIMBEL BA</h2>
-            <p style="margin: 4px 0 0; font-size: 11px; color: #64748b;">Dicetak pada: ${new Date().toLocaleString('id-ID')}</p>
-          </div>
-
-          <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 14px; background: #f8fafc; padding: 10px; border-radius: 8px;">
-            <div>
-              <div><strong>Filter Nama:</strong> ${escapeHtml(fNama)}</div>
-              <div><strong>Filter Paket:</strong> ${escapeHtml(fPaket)}</div>
-            </div>
-            <div>
-              <div><strong>Status:</strong> ${escapeHtml(fStatus)}</div>
-              <div><strong>Urutan:</strong> ${escapeHtml(orderBy)}</div>
-            </div>
-          </div>
-
+        <div style="font-family: Arial, sans-serif; padding: 20px;">
+          <h2 style="text-align: center; margin-bottom: 4px;">LAPORAN RIWAYAT TRANSAKSI SPP BIMBEL BA</h2>
+          <p style="text-align: center; font-size: 11px; color: #475569; margin-bottom: 16px;">Dicetak pada: ${new Date().toLocaleString('id-ID')} | Total Transaksi: ${list.length}</p>
           <table style="width: 100%; border-collapse: collapse; font-size: 11px;" border="1" cellpadding="6">
             <thead>
-              <tr style="background-color: #f1f5f9; text-align: left;">
-                <th style="width: 30px; text-align: center;">No</th>
-                <th>No Kuitansi</th>
-                <th>Tanggal</th>
-                <th>Nama Siswa (NIS)</th>
-                <th>Paket</th>
-                <th>Nominal</th>
-                <th>Metode</th>
-                <th>Status</th>
+              <tr style="background: #f1f5f9;">
+                <th style="padding: 6px;">No</th>
+                <th style="padding: 6px;">No Kuitansi</th>
+                <th style="padding: 6px;">Tanggal</th>
+                <th style="padding: 6px;">Nama Siswa</th>
+                <th style="padding: 6px;">Paket</th>
+                <th style="padding: 6px;">Nominal</th>
+                <th style="padding: 6px;">Status</th>
+                <th style="padding: 6px;">Keterangan</th>
               </tr>
             </thead>
             <tbody>
-              ${data.length === 0 ? '<tr><td colspan="8" style="text-align:center; padding: 16px;">Tidak ada transaksi sesuai filter.</td></tr>' : data.map((d, i) => `
+              ${list.map((item, idx) => `
                 <tr>
-                  <td style="text-align: center;">${i + 1}</td>
-                  <td style="font-family: monospace;">${escapeHtml(d.id)}</td>
-                  <td>${escapeHtml(formatTanggalIndo(d.tanggal))}</td>
-                  <td><strong>${escapeHtml(d.nama)}</strong> <span style="color:#64748b;">(${escapeHtml(d.nis || '-')})</span></td>
-                  <td>${escapeHtml(d.bulan)} ${escapeHtml(d.tahun || '')}</td>
-                  <td style="font-weight: bold;">Rp ${Number(d.nominal || 0).toLocaleString('id-ID')}</td>
-                  <td>${escapeHtml(d.metode || 'Tunai')}</td>
-                  <td><span style="font-weight: bold; color: ${String(d.status).toLowerCase() === 'lunas' ? '#15803d' : '#b91c1c'};">${escapeHtml(d.status)}</span></td>
+                  <td style="padding: 5px; text-align: center;">${idx + 1}</td>
+                  <td style="padding: 5px; font-family: monospace;">${item.id}</td>
+                  <td style="padding: 5px;">${formatTanggalIndo(item.tanggal)}</td>
+                  <td style="padding: 5px; font-weight: bold;">${item.nama} (${item.nis || '-'})</td>
+                  <td style="padding: 5px;">${item.bulan} ${item.tahun || ''}</td>
+                  <td style="padding: 5px; font-weight: bold;">Rp ${Number(item.nominal || 0).toLocaleString('id-ID')}</td>
+                  <td style="padding: 5px;">${item.status}</td>
+                  <td style="padding: 5px;">${item.keterangan || '-'}</td>
                 </tr>
               `).join('')}
             </tbody>
             <tfoot>
               <tr style="background: #f8fafc; font-weight: bold;">
-                <td colspan="5" style="text-align: right;">TOTAL SPP LUNAS:</td>
-                <td colspan="3" style="color: #0f172a;">Rp ${totalNominalLunas.toLocaleString('id-ID')}</td>
+                <td colspan="5" style="padding: 6px; text-align: right;">TOTAL SPP LUNAS:</td>
+                <td colspan="3" style="padding: 6px;">Rp ${totalNominal.toLocaleString('id-ID')}</td>
               </tr>
             </tfoot>
           </table>
         </div>
       `;
-      printArea.classList.remove('hidden');
       window.print();
     }
 
-    function unduhRiwayatSPPCSVFiltered() {
-      const data = getFilteredAndSortedSPPList();
+    function unduhCSVRiwayatSPP() {
+      const list = getFilteredAndSortedSPPList();
       let csv = 'No Kuitansi,Tanggal,Username,Nama Siswa,Kelas,Paket,Tahun,Nominal,Metode,Status,Keterangan\n';
-      data.forEach(s => {
-        csv += `"${s.id}","${s.tanggal}","${s.nis}","${s.nama}","${s.kelas}","${s.bulan}","${s.tahun}",${s.nominal},"${s.metode}","${s.status}","${s.keterangan || '-'}"\n`;
+      list.forEach(s => {
+        csv += `"${s.id}","${formatTanggalIndo(s.tanggal)}","${s.nis}","${s.nama}","${s.kelas || '-'}","${s.bulan}","${s.tahun || ''}",${s.nominal},"${s.metode}","${s.status}","${s.keterangan || '-'}"\n`;
       });
-      unduhFileBlob(new Blob([csv], { type: 'text/csv;charset=utf-8;' }), 'Riwayat_SPP_Filtered.csv');
+      unduhFileBlob(new Blob([csv], { type: 'text/csv;charset=utf-8;' }), 'Riwayat_SPP_Terfilter.csv');
     }
 
     function bukaKuitansiByJson(encodedJson) {
@@ -2606,17 +2665,26 @@
       window.print();
     }
 
-    function terapkanFilterKehadiran() {
+    function getFilteredKehadiranList() {
       const qNama = (document.getElementById('lapFilterName')?.value || '').trim().toLowerCase();
+      const qKategori = (document.getElementById('lapFilterKategori')?.value || '').trim().toUpperCase();
       const qBulan = document.getElementById('lapFilterBulan')?.value || '';
       const qTahun = (document.getElementById('lapFilterTahun')?.value || '').trim();
       const qStatus = document.getElementById('lapFilterStatus')?.value || '';
 
-      const filtered = (appData.presensi || []).filter(p => {
+      const list = (appData.presensi || []).filter(p => {
         const pNama = String(p.nama || '').toLowerCase();
         const pNis = String(p.nis || '').toLowerCase();
         if (qNama && !pNama.includes(qNama) && !pNis.includes(qNama)) return false;
         if (qStatus && p.status !== qStatus) return false;
+
+        const siswaObj = (appData.siswa || []).find(s => 
+          String(s.username || '').toLowerCase() === pNis || 
+          String(s.nama || '').toLowerCase() === pNama
+        );
+        const kategoriSiswa = (siswaObj && siswaObj.kategori_bimbingan ? siswaObj.kategori_bimbingan : 'BIMBEL').toUpperCase();
+        if (qKategori && kategoriSiswa !== qKategori) return false;
+
         const parts = formatTanggalIndo(p.tanggal).split('/');
         if (parts.length === 3) {
           if (qBulan && parts[1] !== qBulan) return false;
@@ -2625,8 +2693,12 @@
         return true;
       });
 
-      // Urutkan dari tanggal & waktu terbaru ke paling lama
-      filtered.sort((a, b) => parseDateTimeKehadiran(b) - parseDateTimeKehadiran(a));
+      list.sort((a, b) => parseTanggalDanWaktuTimestamp(b.tanggal, b.waktu) - parseTanggalDanWaktuTimestamp(a.tanggal, a.waktu));
+      return list;
+    }
+
+    function terapkanFilterKehadiran() {
+      const filtered = getFilteredKehadiranList();
 
       const mTotal = document.getElementById('lapMetrikTotalData');
       const mHadir = document.getElementById('lapMetrikHadir');
@@ -2643,22 +2715,32 @@
         mPaket.textContent = `${paketPenuh} PAKET SELESAI (${sisa}/12 SESI BERJALAN)`;
       }
 
+      renderAdminLaporanFolders();
+
       if (!tbody) return;
       if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" class="py-6 text-center text-slate-400">Tidak ada data kehadiran yang sesuai filter.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="10" class="py-6 text-center text-slate-400">Tidak ada data kehadiran yang sesuai filter.</td></tr>`;
         return;
       }
 
       tbody.innerHTML = filtered.map((p, idx) => {
         const safeId = encodeURIComponent(String(p.id || ''));
+        const nis = String(p.nis || '').toLowerCase();
+        const nama = String(p.nama || '').toLowerCase();
+        const siswaObj = (appData.siswa || []).find(s => 
+          String(s.username || '').toLowerCase() === nis || 
+          String(s.nama || '').toLowerCase() === nama
+        );
+        const kat = escapeHtml(siswaObj && siswaObj.kategori_bimbingan ? siswaObj.kategori_bimbingan : 'BIMBEL');
         return `
           <tr class="hover:bg-slate-50 transition">
             <td class="py-2.5 px-3">${idx + 1}</td>
             <td class="py-2.5 px-3 font-semibold">${escapeHtml(formatTanggalIndo(p.tanggal))}</td>
-            <td class="py-2.5 px-3 font-mono font-medium">${escapeHtml(formatHanyaJam(p.waktu))}</td>
+            <td class="py-2.5 px-3 font-mono">${escapeHtml(formatHanyaJam(p.waktu))}</td>
             <td class="py-2.5 px-3 font-mono font-bold">${escapeHtml(p.nis)}</td>
             <td class="py-2.5 px-3 font-bold">${escapeHtml(p.nama)}</td>
             <td class="py-2.5 px-3">${escapeHtml(p.kelas || '-')}</td>
+            <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-indigo-100 text-indigo-800">${kat}</span></td>
             <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">${escapeHtml(p.status)}</span></td>
             <td class="py-2.5 px-3 text-slate-500">${escapeHtml(p.keterangan || '-')}</td>
             <td class="py-2.5 px-3 text-center">
@@ -2667,6 +2749,138 @@
           </tr>
         `;
       }).join('');
+    }
+
+    function renderAdminLaporanFolders() {
+      const container = document.getElementById('containerAdminLaporanFolder');
+      if (!container) return;
+
+      const filtered = getFilteredKehadiranList();
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="p-8 text-center text-slate-400 bg-slate-50 rounded-2xl border border-slate-200">Tidak ada data kehadiran yang sesuai filter.</div>`;
+        return;
+      }
+
+      // Kelompokkan data kehadiran berdasarkan siswa (username/NIS)
+      const studentGroups = new Map();
+      filtered.forEach(p => {
+        const nis = String(p.nis || p.username || '').toLowerCase();
+        if (!studentGroups.has(nis)) {
+          studentGroups.set(nis, []);
+        }
+        studentGroups.get(nis).push(p);
+      });
+
+      let html = '';
+      studentGroups.forEach((presensiList, nis) => {
+        const sample = presensiList[0];
+        const siswaObj = (appData.siswa || []).find(s => 
+          String(s.username || '').toLowerCase() === nis || 
+          String(s.nama || '').toLowerCase() === String(sample.nama || '').toLowerCase()
+        );
+        const namaSiswa = sample.nama || (siswaObj ? siswaObj.nama : 'Siswa');
+        const kelasSiswa = sample.kelas || (siswaObj ? siswaObj.kelas : '-');
+        const katSiswa = siswaObj && siswaObj.kategori_bimbingan ? siswaObj.kategori_bimbingan : 'BIMBEL';
+
+        // Urutkan kronologis ascending untuk membagi paket 12 sesi dengan tepat
+        const presensiAsc = [...presensiList].sort((a, b) => parseTanggalDanWaktuTimestamp(a.tanggal, a.waktu) - parseTanggalDanWaktuTimestamp(b.tanggal, b.waktu));
+        const paketGroups = [];
+        for (let i = 0; i < presensiAsc.length; i += 12) {
+          paketGroups.push(presensiAsc.slice(i, i + 12));
+        }
+
+        html += `
+          <div class="bg-slate-50/70 border border-slate-200 rounded-2xl p-3 sm:p-4 space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-2.5">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-xs flex-shrink-0">
+                  <i class="fa-solid fa-user-graduate"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-slate-800 text-xs sm:text-sm font-brand">${escapeHtml(namaSiswa)}</h4>
+                  <div class="text-[10px] text-slate-500 font-mono">NIS: ${escapeHtml(sample.nis || '-')} • Kelas: ${escapeHtml(kelasSiswa)}</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 uppercase">${escapeHtml(katSiswa)}</span>
+                <span class="text-[10px] font-semibold text-slate-600 bg-white border border-slate-200 px-2 py-0.5 rounded-full">${presensiList.length} Total Sesi</span>
+              </div>
+            </div>
+
+            <div class="space-y-2.5">
+              ${paketGroups.map((group, idx) => {
+                const noPaket = idx + 1;
+                const jumlahSesi = group.length;
+                const isCompleted = jumlahSesi >= 12;
+                const groupDesc = [...group].sort((a, b) => parseTanggalDanWaktuTimestamp(b.tanggal, b.waktu) - parseTanggalDanWaktuTimestamp(a.tanggal, a.waktu));
+
+                return `
+                  <div class="folder-paket-card bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden transition">
+                    <div onclick="toggleFolderPaket(this)" class="p-3 bg-white hover:bg-slate-50 cursor-pointer flex items-center justify-between transition border-b border-slate-100 select-none">
+                      <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center text-sm flex-shrink-0">
+                          <i class="icon-folder-status fa-solid fa-folder text-amber-500"></i>
+                        </div>
+                        <div>
+                          <div class="font-bold text-slate-800 text-xs font-brand flex items-center gap-1.5 sm:gap-2">
+                            <span>Folder Paket ke-${noPaket}</span>
+                            <span class="text-[9px] px-2 py-0.5 rounded-full font-bold ${isCompleted ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : 'bg-indigo-100 text-indigo-800 border border-indigo-200'}">
+                              ${isCompleted ? 'Selesai (12/12)' : `Berjalan (${jumlahSesi}/12)`}
+                            </span>
+                          </div>
+                          <div class="text-[10px] text-slate-500">Klik untuk melihat 12 pertemuan paket ini</div>
+                        </div>
+                      </div>
+                      <div class="flex items-center gap-2 text-slate-400">
+                        <span class="text-[10px] font-semibold text-slate-500">${jumlahSesi} Sesi</span>
+                        <i class="icon-chevron-status fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                      </div>
+                    </div>
+
+                    <div class="folder-paket-content hidden overflow-x-auto p-0">
+                      <table class="w-full text-left text-xs text-slate-700 divide-y divide-slate-100">
+                        <thead class="bg-indigo-50/50 text-indigo-900 font-bold uppercase text-[9px]">
+                          <tr>
+                            <th class="py-2 px-3">Pertemuan</th>
+                            <th class="py-2 px-3">Tanggal</th>
+                            <th class="py-2 px-3">Waktu</th>
+                            <th class="py-2 px-3">Status</th>
+                            <th class="py-2 px-3">Keterangan</th>
+                            <th class="py-2 px-3 text-center">Aksi</th>
+                          </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                          ${groupDesc.map((p, pIdx) => {
+                            const safeId = encodeURIComponent(String(p.id || ''));
+                            return `
+                              <tr class="hover:bg-slate-50 transition">
+                                <td class="py-2 px-3 font-bold text-slate-800">Sesi ke-${jumlahSesi - pIdx}</td>
+                                <td class="py-2 px-3 font-semibold text-slate-800">${escapeHtml(formatTanggalIndo(p.tanggal))}</td>
+                                <td class="py-2 px-3 font-mono text-slate-600">${escapeHtml(formatHanyaJam(p.waktu))}</td>
+                                <td class="py-2 px-3">
+                                  <span class="px-2 py-0.5 rounded-full text-[9px] font-bold ${p.status === 'Hadir' ? 'bg-emerald-100 text-emerald-800' : (p.status === 'Izin' ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-800')}">
+                                    ${escapeHtml(p.status)}
+                                  </span>
+                                </td>
+                                <td class="py-2 px-3 text-slate-500">${escapeHtml(p.keterangan || '-')}</td>
+                                <td class="py-2 px-3 text-center">
+                                  <button type="button" onclick="hapusCatatanPresensi('${safeId}')" class="p-1 text-rose-600 hover:bg-rose-50 rounded" title="Hapus"><i class="fa-solid fa-trash text-xs"></i></button>
+                                </td>
+                              </tr>
+                            `;
+                          }).join('')}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                `;
+              }).reverse().join('')}
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
     }
 
     function hapusCatatanPresensi(encodedId) {
@@ -2691,12 +2905,22 @@
     }
 
     function resetFilterKehadiran() {
-      document.getElementById('lapFilterName').value = '';
-      document.getElementById('lapFilterBulan').value = '';
-      document.getElementById('lapFilterTahun').value = '';
-      document.getElementById('lapFilterStatus').value = '';
-      document.getElementById('dropdownLapSiswa').classList.add('hidden');
-      document.getElementById('btnClearLapFilterName').classList.add('hidden');
+      const elNama = document.getElementById('lapFilterName');
+      const elKat = document.getElementById('lapFilterKategori');
+      const elBulan = document.getElementById('lapFilterBulan');
+      const elTahun = document.getElementById('lapFilterTahun');
+      const elStatus = document.getElementById('lapFilterStatus');
+      const dropdown = document.getElementById('dropdownLapSiswa');
+      const btnClear = document.getElementById('btnClearLapFilterName');
+
+      if (elNama) elNama.value = '';
+      if (elKat) elKat.value = '';
+      if (elBulan) elBulan.value = '';
+      if (elTahun) elTahun.value = '';
+      if (elStatus) elStatus.value = '';
+      if (dropdown) dropdown.classList.add('hidden');
+      if (btnClear) btnClear.classList.add('hidden');
+
       terapkanFilterKehadiran();
     }
 
@@ -2784,14 +3008,51 @@
       terapkanFilterRekapSPP();
     }
 
+    function getFilteredRekapSPPList() {
+      const qNama = (document.getElementById('rekapSppFilterNama')?.value || '').trim().toLowerCase();
+      const qKategori = (document.getElementById('rekapSppFilterKategori')?.value || '').trim().toUpperCase();
+      const qBulanBayar = document.getElementById('rekapSppFilterBulanBayar')?.value || '';
+      const qPaket = (document.getElementById('rekapSppFilterBulan')?.value || '').trim().toLowerCase();
+      const qStatus = (document.getElementById('rekapSppFilterStatus')?.value || '').trim().toLowerCase();
+
+      return (appData.spp || []).filter(s => {
+        const nama = String(s.nama || '').toLowerCase();
+        const nis = String(s.nis || '').toLowerCase();
+        const paket = String(s.bulan || '').toLowerCase();
+        const status = String(s.status || '').toLowerCase();
+
+        if (qNama && !nama.includes(qNama) && !nis.includes(qNama)) return false;
+        if (qPaket && !paket.includes(qPaket)) return false;
+        if (qStatus && status !== qStatus) return false;
+
+        const siswaObj = (appData.siswa || []).find(sw => 
+          String(sw.username || '').toLowerCase() === nis || 
+          String(sw.nama || '').toLowerCase() === nama
+        );
+        const kategoriSiswa = (s.kategori || (siswaObj && siswaObj.kategori_bimbingan) || 'BIMBEL').toUpperCase();
+        if (qKategori && kategoriSiswa !== qKategori) return false;
+
+        if (qBulanBayar) {
+          const parts = formatTanggalIndo(s.tanggal).split('/');
+          if (parts.length === 3 && parts[1] !== qBulanBayar) return false;
+        }
+
+        return true;
+      });
+    }
+
     function resetFilterRekapSPP() {
       const elNama = document.getElementById('rekapSppFilterNama');
+      const elKategori = document.getElementById('rekapSppFilterKategori');
+      const elBulanBayar = document.getElementById('rekapSppFilterBulanBayar');
       const elBulan = document.getElementById('rekapSppFilterBulan');
       const elStatus = document.getElementById('rekapSppFilterStatus');
       const dropdown = document.getElementById('dropdownRekapSppSiswa');
       const btnClear = document.getElementById('btnClearRekapSppFilterNama');
 
       if (elNama) elNama.value = '';
+      if (elKategori) elKategori.value = '';
+      if (elBulanBayar) elBulanBayar.value = '';
       if (elBulan) elBulan.value = '';
       if (elStatus) elStatus.value = '';
       if (dropdown) dropdown.classList.add('hidden');
@@ -2804,29 +3065,16 @@
       const tbody = document.getElementById('tbodyRekapSPP');
       if (!tbody) return;
 
-      const qNama = (document.getElementById('rekapSppFilterNama')?.value || '').trim().toLowerCase();
-      const qPaket = (document.getElementById('rekapSppFilterBulan')?.value || '').trim().toLowerCase();
-      const qStatus = (document.getElementById('rekapSppFilterStatus')?.value || '').trim().toLowerCase();
-
-      const filteredList = (appData.spp || []).filter(s => {
-        const nama = String(s.nama || '').toLowerCase();
-        const nis = String(s.nis || '').toLowerCase();
-        const paket = String(s.bulan || '').toLowerCase();
-        const status = String(s.status || '').toLowerCase();
-
-        if (qNama && !nama.includes(qNama) && !nis.includes(qNama)) return false;
-        if (qPaket && !paket.includes(qPaket)) return false;
-        if (qStatus && status !== qStatus) return false;
-
-        return true;
-      });
+      const filteredList = getFilteredRekapSPPList();
 
       let totalNominal = 0;
+      let totalLunas = 0;
       let totalBelum = 0;
 
       filteredList.forEach(s => {
         if (String(s.status).toLowerCase() === 'lunas') {
           totalNominal += Number(s.nominal || 0);
+          totalLunas++;
         } else {
           totalBelum++;
         }
@@ -2834,20 +3082,29 @@
 
       const mTotalLunas = document.getElementById('rekapSppMetrikTotalLunas');
       const mTotalCount = document.getElementById('rekapSppMetrikTotalCount');
+      const mTotalCountLunas = document.getElementById('rekapSppMetrikTotalCountLunas');
       const mTotalBelum = document.getElementById('rekapSppMetrikTotalBelumLunas');
 
       if (mTotalLunas) mTotalLunas.textContent = `Rp ${totalNominal.toLocaleString('id-ID')}`;
       if (mTotalCount) mTotalCount.textContent = filteredList.length;
+      if (mTotalCountLunas) mTotalCountLunas.textContent = totalLunas;
       if (mTotalBelum) mTotalBelum.textContent = totalBelum;
 
       if (filteredList.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="11" class="py-6 text-center text-slate-400">Belum ada transaksi SPP yang sesuai filter.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="12" class="py-6 text-center text-slate-400">Belum ada transaksi SPP yang sesuai filter.</td></tr>`;
         return;
       }
 
       tbody.innerHTML = filteredList.map(s => {
         const safeId = encodeURIComponent(String(s.id || ''));
         const safeDataJson = encodeURIComponent(JSON.stringify(s));
+        const nis = String(s.nis || '').toLowerCase();
+        const nama = String(s.nama || '').toLowerCase();
+        const siswaObj = (appData.siswa || []).find(sw => 
+          String(sw.username || '').toLowerCase() === nis || 
+          String(sw.nama || '').toLowerCase() === nama
+        );
+        const kat = escapeHtml(s.kategori || (siswaObj && siswaObj.kategori_bimbingan) || 'BIMBEL');
         return `
           <tr class="hover:bg-slate-50 transition">
             <td class="py-2.5 px-3 font-mono font-bold">${escapeHtml(s.id)}</td>
@@ -2855,6 +3112,7 @@
             <td class="py-2.5 px-3 font-mono">${escapeHtml(s.nis)}</td>
             <td class="py-2.5 px-3 font-bold">${escapeHtml(s.nama)}</td>
             <td class="py-2.5 px-3">${escapeHtml(s.kelas || '-')}</td>
+            <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-indigo-100 text-indigo-800">${kat}</span></td>
             <td class="py-2.5 px-3 font-semibold text-indigo-700">${escapeHtml(s.bulan)} ${escapeHtml(s.tahun || '')}</td>
             <td class="py-2.5 px-3 font-black">Rp ${Number(s.nominal || 0).toLocaleString('id-ID')}</td>
             <td class="py-2.5 px-3">${escapeHtml(s.metode || 'Tunai')}</td>
@@ -3039,6 +3297,36 @@
       renderPortalSiswa(siswa);
     }
 
+    function toggleFolderPaket(headerEl) {
+      const card = headerEl.closest('.folder-paket-card');
+      if (!card) return;
+      const content = card.querySelector('.folder-paket-content');
+      const iconFolder = card.querySelector('.icon-folder-status');
+      const iconChevron = card.querySelector('.icon-chevron-status');
+
+      if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        if (iconFolder) {
+          iconFolder.classList.remove('fa-folder', 'text-amber-500');
+          iconFolder.classList.add('fa-folder-open', 'text-amber-600');
+        }
+        if (iconChevron) {
+          iconChevron.classList.remove('fa-chevron-down');
+          iconChevron.classList.add('fa-chevron-up');
+        }
+      } else {
+        content.classList.add('hidden');
+        if (iconFolder) {
+          iconFolder.classList.remove('fa-folder-open', 'text-amber-600');
+          iconFolder.classList.add('fa-folder', 'text-amber-500');
+        }
+        if (iconChevron) {
+          iconChevron.classList.remove('fa-chevron-up');
+          iconChevron.classList.add('fa-chevron-down');
+        }
+      }
+    }
+
     function renderPortalSiswa(s) {
       ['scanner', 'siswa', 'spp', 'laporan', 'rekapSPP', 'users', 'settings'].forEach(t => {
         const idSuffix = (t.toLowerCase() === 'rekapspp') ? 'RekapSPP' : (t.charAt(0).toUpperCase() + t.slice(1).toLowerCase());
@@ -3069,15 +3357,7 @@
       document.getElementById('portalProfilOrtu').textContent = s.nama_ortu || '-';
       document.getElementById('portalProfilTelp').textContent = s.no_telp || '-';
 
-      const sUsernameClean = String(s.username || '').toLowerCase().trim();
-      const presensiSiswa = (appData.presensi || []).filter(p => {
-        const nisStr = String(p.nis || p.username || '').toLowerCase().trim();
-        return nisStr === sUsernameClean || (p.nama && String(p.nama).toLowerCase().trim() === String(s.nama || '').toLowerCase().trim());
-      });
-
-      // Urutkan riwayat kehadiran siswa dari tanggal & waktu terbaru ke paling lama
-      presensiSiswa.sort((a, b) => parseDateTimeKehadiran(b) - parseDateTimeKehadiran(a));
-
+      const presensiSiswa = (appData.presensi || []).filter(p => p.nis && String(p.nis).toLowerCase() === String(s.username).toLowerCase());
       const totalHadir = presensiSiswa.filter(p => p.status === 'Hadir').length;
       const paketSelesai = Math.floor(totalHadir / 12);
       const sesi = totalHadir % 12;
@@ -3085,152 +3365,114 @@
       document.getElementById('portalProgressPaketText').textContent = `${sesi} / 12 Pertemuan (Paket ke-${paketSelesai + 1})`;
       document.getElementById('portalProgressBar').style.width = `${Math.round((sesi / 12) * 100)}%`;
 
-      const containerPaket = document.getElementById('portalContainerPresensiPaket');
-      if (containerPaket) {
-        if (presensiSiswa.length === 0) {
-          containerPaket.innerHTML = `
-            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm text-center text-xs text-slate-400">
-              Belum ada catatan kehadiran untuk Anda.
-            </div>
-          `;
-        } else {
-          // Buat salinan terurut kronologis (dari pertama hadir) untuk menghitung sesi paket 12x
-          const kronologis = [...presensiSiswa].sort((a, b) => parseDateTimeKehadiran(a) - parseDateTimeKehadiran(b));
-          const groupedPackages = [];
-          for (let i = 0; i < kronologis.length; i += 12) {
-            const batch = kronologis.slice(i, i + 12);
-            // Tiap folder tetap menyajikan baris tanggal dari yang terbaru ke yang lama
-            const batchSortedDesc = [...batch].sort((a, b) => parseDateTimeKehadiran(b) - parseDateTimeKehadiran(a));
-            groupedPackages.push({
-              paketNomor: Math.floor(i / 12) + 1,
-              items: batchSortedDesc,
-              isComplete: batch.length === 12,
-              jumlahSesi: batch.length
-            });
-          }
-
-          // Tampilkan folder paket terbaru di posisi paling atas
-          groupedPackages.reverse();
-
-          containerPaket.innerHTML = groupedPackages.map((pkg, idx) => {
-            // Semua folder terlipat rapi agar daftar tidak panjang; klik folder untuk membuka 12 pertemuannya
-            const isOpenDefault = false;
-            const folderId = `folderPaketContent_${pkg.paketNomor}`;
-            const iconId = `folderPaketIcon_${pkg.paketNomor}`;
-            const chevronId = `folderChevron_${pkg.paketNomor}`;
-
-            return `
-              <div class="bg-white rounded-2xl border ${pkg.isComplete ? 'border-emerald-200' : 'border-indigo-200'} shadow-sm overflow-hidden transition-all duration-200">
-                <!-- Header Folder Interaktif -->
-                <div onclick="toggleFolderPaket('${pkg.paketNomor}')" class="p-3.5 sm:p-4 bg-slate-50 hover:bg-slate-100/80 cursor-pointer flex items-center justify-between gap-3 select-none transition border-b border-slate-100">
-                  <div class="flex items-center gap-2.5 sm:gap-3">
-                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl ${pkg.isComplete ? 'bg-emerald-100 text-emerald-700' : 'bg-indigo-100 text-indigo-700'} flex items-center justify-center text-base sm:text-lg flex-shrink-0 shadow-sm">
-                      <i id="${iconId}" class="fa-solid ${isOpenDefault ? 'fa-folder-open' : 'fa-folder'}"></i>
-                    </div>
-                    <div>
-                      <div class="flex items-center gap-2">
-                        <h4 class="text-xs sm:text-sm font-bold text-slate-800 font-brand">Folder Paket ke-${pkg.paketNomor}</h4>
-                        <span class="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full ${pkg.isComplete ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-indigo-50 text-indigo-700 border border-indigo-200'}">
-                          ${pkg.jumlahSesi}/12 Sesi
-                        </span>
-                      </div>
-                      <p class="text-[10px] sm:text-[11px] text-slate-500 mt-0.5">
-                        ${pkg.isComplete ? 'Paket selesai (12 pertemuan). Klik untuk lihat rincian.' : 'Paket sedang berjalan. Klik untuk lihat rincian sesi.'}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div class="flex items-center gap-2">
-                    <span class="hidden xs:inline-block px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase ${pkg.isComplete ? 'bg-emerald-500 text-white' : 'bg-amber-500 text-white'} shadow-sm">
-                      ${pkg.isComplete ? '<i class="fa-solid fa-circle-check"></i> Selesai' : '<i class="fa-solid fa-spinner fa-spin"></i> Berjalan'}
-                    </span>
-                    <div class="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-500 text-xs shadow-sm">
-                      <i id="${chevronId}" class="fa-solid fa-chevron-${isOpenDefault ? 'up' : 'down'} transition-transform duration-200"></i>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Konten Folder (Daftar Riwayat Sesi) -->
-                <div id="${folderId}" class="${isOpenDefault ? '' : 'hidden'} p-3 sm:p-4 space-y-3 bg-white">
-                  <div class="overflow-x-auto -mx-3 sm:mx-0">
-                    <table class="w-full text-left text-xs text-slate-700 divide-y divide-slate-200 min-w-[480px]">
-                      <thead class="bg-slate-50 text-slate-600 font-semibold uppercase text-[10px]">
-                        <tr>
-                          <th class="py-2.5 px-3">Tanggal</th>
-                          <th class="py-2.5 px-3">Waktu</th>
-                          <th class="py-2.5 px-3">Status</th>
-                          <th class="py-2.5 px-3">Keterangan</th>
-                        </tr>
-                      </thead>
-                      <tbody class="divide-y divide-slate-100">
-                        ${pkg.items.map(p => `
-                          <tr class="hover:bg-slate-50 transition">
-                            <td class="py-2.5 px-3 font-semibold text-slate-800">${escapeHtml(formatTanggalIndo(p.tanggal))}</td>
-                            <td class="py-2.5 px-3 font-mono font-medium">${escapeHtml(formatHanyaJam(p.waktu))}</td>
-                            <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">${escapeHtml(p.status)}</span></td>
-                            <td class="py-2.5 px-3 text-slate-500">${escapeHtml(p.keterangan || '-')}</td>
-                          </tr>
-                        `).join('')}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            `;
-          }).join('');
-        }
-      }
-
-      const sppSiswa = (appData.spp || []).filter(sp => {
-        const nisStr = String(sp.nis || sp.username || '').toLowerCase().trim();
-        return nisStr === sUsernameClean || (sp.nama && String(sp.nama).toLowerCase().trim() === String(s.nama || '').toLowerCase().trim());
-      });
-
+      const sppSiswa = (appData.spp || []).filter(sp => sp.nis && String(sp.nis).toLowerCase() === String(s.username).toLowerCase());
       const paketNama = `Paket ${paketSelesai + 1}`;
-      const transaksiPaketIni = sppSiswa.find(sp => String(sp.bulan || '').toLowerCase().includes(paketNama.toLowerCase()));
-
       const elBulanLabel = document.getElementById('portalSppStatusBulanNama');
       const elBadge = document.getElementById('portalSppStatusBadge');
 
-      if (elBulanLabel) {
-        elBulanLabel.textContent = paketNama;
+      if (elBulanLabel) elBulanLabel.textContent = paketNama;
+      if (elBadge) {
+        elBadge.className = 'px-3 py-1 rounded-full text-[11px] font-extrabold uppercase bg-amber-500 text-white shadow-sm inline-block';
+        elBadge.innerHTML = `<i class="fa-solid fa-circle-info mr-1"></i> SILAHKAN CEK DI MENU REKAP SPP`;
       }
 
-      if (elBadge) {
-        if (transaksiPaketIni && String(transaksiPaketIni.status).toLowerCase() === 'lunas') {
-          elBadge.className = 'px-3 py-1 rounded-full text-[11px] font-extrabold uppercase bg-emerald-500 text-white shadow-sm flex items-center gap-1.5';
-          elBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> LUNAS (Rp ${Number(transaksiPaketIni.nominal || 0).toLocaleString('id-ID')})`;
-        } else if (transaksiPaketIni) {
-          elBadge.className = 'px-3 py-1 rounded-full text-[11px] font-extrabold uppercase bg-rose-500 text-white shadow-sm flex items-center gap-1.5';
-          elBadge.innerHTML = `<i class="fa-solid fa-clock"></i> BELUM LUNAS`;
+      // Render Riwayat Kehadiran per Folder Paket (12 Pertemuan per folder)
+      const containerPaket = document.getElementById('portalContainerPresensiPaket');
+      if (containerPaket) {
+        if (presensiSiswa.length === 0) {
+          containerPaket.innerHTML = `<div class="p-8 text-center text-slate-400 bg-white rounded-2xl border border-slate-200">Belum ada riwayat kehadiran tercatat.</div>`;
         } else {
-          elBadge.className = 'px-3 py-1 rounded-full text-[11px] font-extrabold uppercase bg-amber-500 text-white shadow-sm flex items-center gap-1.5';
-          elBadge.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> SILAHKAN CEK DI MENU REKAP SPP`;
+          const presensiAsc = [...presensiSiswa].sort((a, b) => parseTanggalDanWaktuTimestamp(a.tanggal, a.waktu) - parseTanggalDanWaktuTimestamp(b.tanggal, b.waktu));
+          
+          const paketGroups = [];
+          for (let i = 0; i < presensiAsc.length; i += 12) {
+            paketGroups.push(presensiAsc.slice(i, i + 12));
+          }
+
+          containerPaket.innerHTML = paketGroups.map((group, idx) => {
+            const noPaket = idx + 1;
+            const jumlahSesi = group.length;
+            const isCompleted = jumlahSesi >= 12;
+            const groupDesc = [...group].sort((a, b) => parseTanggalDanWaktuTimestamp(b.tanggal, b.waktu) - parseTanggalDanWaktuTimestamp(a.tanggal, a.waktu));
+
+            return `
+              <div class="folder-paket-card bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition">
+                <div onclick="toggleFolderPaket(this)" class="p-4 bg-slate-50 hover:bg-slate-100/80 cursor-pointer flex items-center justify-between transition border-b border-slate-100 select-none">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-lg flex-shrink-0 shadow-inner">
+                      <i class="icon-folder-status fa-solid fa-folder text-amber-500"></i>
+                    </div>
+                    <div>
+                      <div class="font-bold text-slate-800 text-xs sm:text-sm font-brand flex items-center gap-2">
+                        <span>Folder Paket ke-${noPaket}</span>
+                        <span class="text-[10px] px-2 py-0.5 rounded-full font-bold ${isCompleted ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : 'bg-indigo-100 text-indigo-800 border border-indigo-200'}">
+                          ${isCompleted ? 'Selesai (12/12)' : `Berjalan (${jumlahSesi}/12)`}
+                        </span>
+                      </div>
+                      <div class="text-[11px] text-slate-500 mt-0.5">
+                        Klik untuk melihat 12 pertemuan paket ini
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2 text-slate-400">
+                    <span class="text-[11px] font-semibold hidden sm:inline text-slate-500">${jumlahSesi} Sesi</span>
+                    <i class="icon-chevron-status fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                  </div>
+                </div>
+
+                <div class="folder-paket-content hidden overflow-x-auto p-0">
+                  <table class="w-full text-left text-xs text-slate-700 divide-y divide-slate-100">
+                    <thead class="bg-indigo-50/50 text-indigo-900 font-bold uppercase text-[10px]">
+                      <tr>
+                        <th class="py-2.5 px-4">Pertemuan</th>
+                        <th class="py-2.5 px-4">Tanggal</th>
+                        <th class="py-2.5 px-4">Waktu</th>
+                        <th class="py-2.5 px-4">Status</th>
+                        <th class="py-2.5 px-4">Keterangan</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                      ${groupDesc.map((p, pIdx) => `
+                        <tr class="hover:bg-slate-50 transition">
+                          <td class="py-2.5 px-4 font-bold text-slate-800">Sesi ke-${jumlahSesi - pIdx}</td>
+                          <td class="py-2.5 px-4 font-semibold text-slate-800">${escapeHtml(formatTanggalIndo(p.tanggal))}</td>
+                          <td class="py-2.5 px-4 font-mono font-medium text-slate-600">${escapeHtml(formatHanyaJam(p.waktu))}</td>
+                          <td class="py-2.5 px-4">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${p.status === 'Hadir' ? 'bg-emerald-100 text-emerald-800' : (p.status === 'Izin' ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-800')}">
+                              ${escapeHtml(p.status)}
+                            </span>
+                          </td>
+                          <td class="py-2.5 px-4 text-slate-500">${escapeHtml(p.keterangan || '-')}</td>
+                        </tr>
+                      `).join('')}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            `;
+          }).reverse().join('');
         }
       }
 
+      // Render SPP Siswa
       const tbodySpp = document.getElementById('tbodyPortalSpp');
       if (tbodySpp) {
-        if (sppSiswa.length === 0) {
-          tbodySpp.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-slate-400">Belum ada riwayat transaksi SPP untuk Anda.</td></tr>`;
-        } else {
-          tbodySpp.innerHTML = sppSiswa.map(sp => {
-            const safeDataJson = encodeURIComponent(JSON.stringify(sp));
-            return `
-              <tr class="hover:bg-slate-50 transition">
-                <td class="py-2.5 px-3 font-mono font-bold">${escapeHtml(sp.id)}</td>
-                <td class="py-2.5 px-3">${escapeHtml(formatTanggalIndo(sp.tanggal))}</td>
-                <td class="py-2.5 px-3 font-semibold text-indigo-700">${escapeHtml(sp.bulan)} ${escapeHtml(sp.tahun || '')}</td>
-                <td class="py-2.5 px-3 font-bold">Rp ${Number(sp.nominal || 0).toLocaleString('id-ID')}</td>
-                <td class="py-2.5 px-3">${escapeHtml(sp.metode || 'Tunai')}</td>
-                <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${sp.status === 'Lunas' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${escapeHtml(sp.status)}</span></td>
-                <td class="py-2.5 px-3 text-center">
-                  <button type="button" onclick="bukaKuitansiByJson('${safeDataJson}')" class="px-2 py-1 bg-amber-500 text-white rounded text-[10px] font-bold">Kuitansi</button>
-                </td>
-              </tr>
-            `;
-          }).join('');
-        }
+        tbodySpp.innerHTML = sppSiswa.map(sp => {
+          const safeDataJson = encodeURIComponent(JSON.stringify(sp));
+          return `
+            <tr class="hover:bg-slate-50 transition">
+              <td class="py-2.5 px-3 font-mono font-bold">${escapeHtml(sp.id)}</td>
+              <td class="py-2.5 px-3">${escapeHtml(formatTanggalIndo(sp.tanggal))}</td>
+              <td class="py-2.5 px-3 font-semibold text-indigo-700">${escapeHtml(sp.bulan)} ${escapeHtml(sp.tahun || '')}</td>
+              <td class="py-2.5 px-3 font-bold">Rp ${Number(sp.nominal || 0).toLocaleString('id-ID')}</td>
+              <td class="py-2.5 px-3">${escapeHtml(sp.metode || 'Tunai')}</td>
+              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${sp.status === 'Lunas' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${escapeHtml(sp.status)}</span></td>
+              <td class="py-2.5 px-3 text-center">
+                <button type="button" onclick="bukaKuitansiByJson('${safeDataJson}')" class="px-2 py-1 bg-amber-500 text-white rounded text-[10px] font-bold shadow-sm">Kuitansi</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
       }
 
       switchPortalTab('presensi');
@@ -3240,30 +3482,12 @@
       ['presensi', 'spp', 'profil'].forEach(t => {
         document.getElementById(`portalSubTab${t.charAt(0).toUpperCase() + t.slice(1)}`)?.classList.add('hidden');
         const b = document.getElementById(`btnPortalTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
-        if (b) b.className = 'portal-tab-btn flex-1 min-w-[110px] py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 text-slate-600 hover:bg-slate-100';
+        if (b) b.className = 'portal-tab-btn flex-1 min-w-[120px] py-2.5 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 text-slate-600 hover:bg-slate-100';
       });
 
       document.getElementById(`portalSubTab${tab.charAt(0).toUpperCase() + tab.slice(1)}`)?.classList.remove('hidden');
       const btn = document.getElementById(`btnPortalTab${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
-      if (btn) btn.className = 'portal-tab-btn flex-1 min-w-[110px] py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 bg-indigo-600 text-white shadow-sm';
-    }
-
-    function toggleFolderPaket(paketNomor) {
-      const content = document.getElementById(`folderPaketContent_${paketNomor}`);
-      const icon = document.getElementById(`folderPaketIcon_${paketNomor}`);
-      const chevron = document.getElementById(`folderChevron_${paketNomor}`);
-      if (!content) return;
-
-      const isHidden = content.classList.contains('hidden');
-      if (isHidden) {
-        content.classList.remove('hidden');
-        if (icon) icon.className = 'fa-solid fa-folder-open';
-        if (chevron) chevron.className = 'fa-solid fa-chevron-up transition-transform duration-200';
-      } else {
-        content.classList.add('hidden');
-        if (icon) icon.className = 'fa-solid fa-folder';
-        if (chevron) chevron.className = 'fa-solid fa-chevron-down transition-transform duration-200';
-      }
+      if (btn) btn.className = 'portal-tab-btn flex-1 min-w-[120px] py-2.5 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 bg-indigo-600 text-white shadow-sm';
     }
 
     function cetakSemuaKartuA4() {
@@ -3283,7 +3507,7 @@
         const batch = appData.siswa.slice(i, i + perPage);
         const cardsHtml = batch.map((s, idx) => {
           const barcodeId = `barcode-a4-${i + idx}`;
-          const badgeText = escapeHtml((s.kategori_bimbingan || 'BIMBA').toUpperCase());
+          const badgeText = escapeHtml((s.kategori_bimbingan || 'BIMBEL').toUpperCase());
           return `
             <div style="background-color: #2b2882; border-radius: 18px; padding: 14px 16px; width: 95mm; height: 62mm; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; page-break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-family: 'Outfit', 'Inter', sans-serif; position: relative;">
               <div>
@@ -3371,7 +3595,7 @@
       printArea.classList.remove('hidden');
 
       const barcodeId = `barcode-single-${Date.now()}`;
-      const badgeText = escapeHtml((s.kategori_bimbingan || 'BIMBA').toUpperCase());
+      const badgeText = escapeHtml((s.kategori_bimbingan || 'BIMBEL').toUpperCase());
 
       printArea.innerHTML = `
         <div class="a4-print-page" style="width: 210mm; min-height: 297mm; padding: 20mm; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
@@ -3479,52 +3703,84 @@
     }
 
     function downloadLaporanPresensiCSV() {
-      let csv = 'Tanggal,Waktu,Username,Nama Siswa,Kelas,Status,Keterangan\n';
-      appData.presensi.forEach(p => {
-        csv += `"${p.tanggal}","${formatHanyaJam(p.waktu)}","${p.nis}","${p.nama}","${p.kelas}","${p.status}","${p.keterangan}"\n`;
+      const list = getFilteredKehadiranList();
+      let csv = 'No,Tanggal,Waktu,Username,Nama Siswa,Kelas,Kategori,Status,Keterangan\n';
+      list.forEach((p, idx) => {
+        const nis = String(p.nis || '').toLowerCase();
+        const nama = String(p.nama || '').toLowerCase();
+        const siswaObj = (appData.siswa || []).find(s => 
+          String(s.username || '').toLowerCase() === nis || 
+          String(s.nama || '').toLowerCase() === nama
+        );
+        const kat = siswaObj && siswaObj.kategori_bimbingan ? siswaObj.kategori_bimbingan : 'BIMBEL';
+        csv += `${idx + 1},"${formatTanggalIndo(p.tanggal)}","${formatHanyaJam(p.waktu)}","${p.nis}","${p.nama}","${p.kelas || '-'}","${kat}","${p.status}","${p.keterangan || '-'}"\n`;
       });
-      unduhFileBlob(new Blob([csv], { type: 'text/csv;charset=utf-8;' }), 'Rekap_Kehadiran.csv');
+      unduhFileBlob(new Blob([csv], { type: 'text/csv;charset=utf-8;' }), 'Rekap_Kehadiran_Filter.csv');
     }
 
     function downloadRekapSPPCSV() {
-      let csv = 'No Kuitansi,Tanggal,Username,Nama Siswa,Kelas,Paket,Tahun,Nominal,Metode,Status,Keterangan\n';
-      appData.spp.forEach(s => {
-        csv += `"${s.id}","${s.tanggal}","${s.nis}","${s.nama}","${s.kelas}","${s.bulan}","${s.tahun}",${s.nominal},"${s.metode}","${s.status}","${s.keterangan || '-'}"\n`;
+      const list = getFilteredRekapSPPList();
+      let csv = 'No Kuitansi,Tanggal,Username,Nama Siswa,Kelas,Kategori,Paket,Tahun,Nominal,Metode,Status,Keterangan\n';
+      list.forEach(s => {
+        const nis = String(s.nis || '').toLowerCase();
+        const nama = String(s.nama || '').toLowerCase();
+        const siswaObj = (appData.siswa || []).find(sw => 
+          String(sw.username || '').toLowerCase() === nis || 
+          String(sw.nama || '').toLowerCase() === nama
+        );
+        const kat = s.kategori || (siswaObj && siswaObj.kategori_bimbingan) || 'BIMBEL';
+        csv += `"${s.id}","${formatTanggalIndo(s.tanggal)}","${s.nis}","${s.nama}","${s.kelas || '-'}","${kat}","${s.bulan}","${s.tahun || ''}",${s.nominal},"${s.metode || 'Tunai'}","${s.status}","${s.keterangan || '-'}"\n`;
       });
-      unduhFileBlob(new Blob([csv], { type: 'text/csv;charset=utf-8;' }), 'Rekap_SPP.csv');
+      unduhFileBlob(new Blob([csv], { type: 'text/csv;charset=utf-8;' }), 'Rekap_Laporan_SPP.csv');
     }
 
     function cetakLaporanPresensiPDF() {
-      const qNama = (document.getElementById('lapFilterName')?.value || '').trim().toLowerCase();
-      const qBulan = document.getElementById('lapFilterBulan')?.value || '';
-      const qTahun = (document.getElementById('lapFilterTahun')?.value || '').trim();
-      const qStatus = document.getElementById('lapFilterStatus')?.value || '';
-
-      const data = (appData.presensi || []).filter(p => {
-        const pNama = String(p.nama || '').toLowerCase();
-        const pNis = String(p.nis || '').toLowerCase();
-        if (qNama && !pNama.includes(qNama) && !pNis.includes(qNama)) return false;
-        if (qStatus && p.status !== qStatus) return false;
-        const parts = formatTanggalIndo(p.tanggal).split('/');
-        if (parts.length === 3) {
-          if (qBulan && parts[1] !== qBulan) return false;
-          if (qTahun && parts[2] !== qTahun) return false;
-        }
-        return true;
-      });
-
-      // Urutkan dari tanggal & waktu terbaru ke paling lama
-      data.sort((a, b) => parseDateTimeKehadiran(b) - parseDateTimeKehadiran(a));
-
+      const list = getFilteredKehadiranList();
       const printArea = document.getElementById('printArea');
       if (!printArea) return;
+
       printArea.innerHTML = `
         <div style="font-family: Arial, sans-serif; padding: 20px;">
-          <h2 style="text-align: center; margin-bottom: 4px;">REKAP KEHADIRAN SISWA BIMBEL BA</h2>
-          <p style="text-align: center; font-size: 11px; color: #475569; margin-bottom: 16px;">Dicetak pada: ${new Date().toLocaleString('id-ID')}</p>
-          <table style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 11px;" border="1" cellpadding="6">
-            <tr style="background: #f1f5f9;"><th>No</th><th>Tanggal</th><th>Waktu</th><th>Nama Siswa (Username)</th><th>Kelas</th><th>Status</th><th>Keterangan</th></tr>
-            ${data.map((d, i) => `<tr><td style="padding: 4px; text-align: center;">${i+1}</td><td style="padding: 4px;">${formatTanggalIndo(d.tanggal)}</td><td style="padding: 4px; font-family: monospace;">${formatHanyaJam(d.waktu)}</td><td style="padding: 4px; font-weight: bold;">${d.nama} (${d.nis})</td><td style="padding: 4px;">${d.kelas || '-'}</td><td style="padding: 4px;">${d.status}</td><td style="padding: 4px;">${d.keterangan || '-'}</td></tr>`).join('')}
+          <h2 style="text-align: center; margin-bottom: 4px;">LAPORAN REKAP KEHADIRAN SISWA BIMBEL BA</h2>
+          <p style="text-align: center; font-size: 11px; color: #475569; margin-bottom: 16px;">Dicetak pada: ${new Date().toLocaleString('id-ID')} | Total Data: ${list.length}</p>
+          <table style="width: 100%; border-collapse: collapse; font-size: 11px;" border="1" cellpadding="6">
+            <thead>
+              <tr style="background: #f1f5f9;">
+                <th>No</th>
+                <th>Tanggal</th>
+                <th>Waktu</th>
+                <th>Username</th>
+                <th>Nama Siswa</th>
+                <th>Kelas</th>
+                <th>Kategori</th>
+                <th>Status</th>
+                <th>Keterangan</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${list.map((d, i) => {
+                const nis = String(d.nis || '').toLowerCase();
+                const nama = String(d.nama || '').toLowerCase();
+                const siswaObj = (appData.siswa || []).find(s => 
+                  String(s.username || '').toLowerCase() === nis || 
+                  String(s.nama || '').toLowerCase() === nama
+                );
+                const kat = siswaObj && siswaObj.kategori_bimbingan ? siswaObj.kategori_bimbingan : 'BIMBEL';
+                return `
+                  <tr>
+                    <td style="text-align: center;">${i + 1}</td>
+                    <td>${formatTanggalIndo(d.tanggal)}</td>
+                    <td style="text-align: center; font-family: monospace;">${formatHanyaJam(d.waktu)}</td>
+                    <td style="font-family: monospace;">${d.nis}</td>
+                    <td style="font-weight: bold;">${d.nama}</td>
+                    <td>${d.kelas || '-'}</td>
+                    <td>${kat}</td>
+                    <td>${d.status}</td>
+                    <td>${d.keterangan || '-'}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
           </table>
         </div>
       `;
@@ -3532,22 +3788,7 @@
     }
 
     function cetakLaporanSPPPDF() {
-      const qNama = (document.getElementById('rekapSppFilterNama')?.value || '').trim().toLowerCase();
-      const qPaket = (document.getElementById('rekapSppFilterBulan')?.value || '').trim().toLowerCase();
-      const qStatus = (document.getElementById('rekapSppFilterStatus')?.value || '').trim().toLowerCase();
-
-      const data = (appData.spp || []).filter(s => {
-        const nama = String(s.nama || '').toLowerCase();
-        const nis = String(s.nis || '').toLowerCase();
-        const paket = String(s.bulan || '').toLowerCase();
-        const status = String(s.status || '').toLowerCase();
-
-        if (qNama && !nama.includes(qNama) && !nis.includes(qNama)) return false;
-        if (qPaket && !paket.includes(qPaket)) return false;
-        if (qStatus && status !== qStatus) return false;
-        return true;
-      });
-
+      const data = getFilteredRekapSPPList();
       const printArea = document.getElementById('printArea');
       if (!printArea) return;
 
@@ -3559,42 +3800,68 @@
       printArea.innerHTML = `
         <div style="font-family: Arial, sans-serif; padding: 20px;">
           <h2 style="text-align: center; margin-bottom: 4px;">LAPORAN REKAP TRANSAKSI SPP BIMBEL BA</h2>
-          <p style="text-align: center; font-size: 11px; color: #475569; margin-bottom: 16px;">Dicetak pada: ${new Date().toLocaleString('id-ID')}</p>
+          <p style="text-align: center; font-size: 11px; color: #475569; margin-bottom: 16px;">Dicetak pada: ${new Date().toLocaleString('id-ID')} | Total Transaksi: ${data.length}</p>
           <table style="width: 100%; border-collapse: collapse; font-size: 11px;" border="1" cellpadding="6">
             <thead>
               <tr style="background: #f1f5f9;">
-                <th style="padding: 6px;">No Kuitansi</th>
-                <th style="padding: 6px;">Tanggal</th>
-                <th style="padding: 6px;">Nama Siswa</th>
-                <th style="padding: 6px;">Kelas</th>
-                <th style="padding: 6px;">Paket</th>
-                <th style="padding: 6px;">Nominal</th>
-                <th style="padding: 6px;">Status</th>
+                <th>No</th>
+                <th>No Kuitansi</th>
+                <th>Tanggal</th>
+                <th>Nama Siswa</th>
+                <th>Kelas</th>
+                <th>Kategori</th>
+                <th>Paket</th>
+                <th>Nominal</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
-              ${data.map(d => `
-                <tr>
-                  <td style="padding: 5px; font-family: monospace;">${d.id}</td>
-                  <td style="padding: 5px;">${formatTanggalIndo(d.tanggal)}</td>
-                  <td style="padding: 5px; font-weight: bold;">${d.nama} (${d.nis})</td>
-                  <td style="padding: 5px;">${d.kelas || '-'}</td>
-                  <td style="padding: 5px;">${d.bulan} ${d.tahun}</td>
-                  <td style="padding: 5px; font-weight: bold;">Rp ${Number(d.nominal || 0).toLocaleString('id-ID')}</td>
-                  <td style="padding: 5px;">${d.status}</td>
-                </tr>
-              `).join('')}
+              ${data.map((d, i) => {
+                const nis = String(d.nis || '').toLowerCase();
+                const nama = String(d.nama || '').toLowerCase();
+                const siswaObj = (appData.siswa || []).find(sw => 
+                  String(sw.username || '').toLowerCase() === nis || 
+                  String(sw.nama || '').toLowerCase() === nama
+                );
+                const kat = d.kategori || (siswaObj && siswaObj.kategori_bimbingan) || 'BIMBEL';
+                return `
+                  <tr>
+                    <td style="text-align: center;">${i + 1}</td>
+                    <td style="font-family: monospace;">${d.id}</td>
+                    <td>${formatTanggalIndo(d.tanggal)}</td>
+                    <td style="font-weight: bold;">${d.nama} (${d.nis})</td>
+                    <td>${d.kelas || '-'}</td>
+                    <td>${kat}</td>
+                    <td>${d.bulan} ${d.tahun || ''}</td>
+                    <td style="font-weight: bold;">Rp ${Number(d.nominal || 0).toLocaleString('id-ID')}</td>
+                    <td>${d.status}</td>
+                  </tr>
+                `;
+              }).join('')}
             </tbody>
             <tfoot>
               <tr style="background: #f8fafc; font-weight: bold;">
-                <td colspan="5" style="padding: 6px; text-align: right;">TOTAL SPP LUNAS:</td>
-                <td colspan="2" style="padding: 6px;">Rp ${totalNominal.toLocaleString('id-ID')}</td>
+                <td colspan="7" style="text-align: right;">TOTAL SPP LUNAS:</td>
+                <td colspan="2">Rp ${totalNominal.toLocaleString('id-ID')}</td>
               </tr>
             </tfoot>
           </table>
         </div>
       `;
       window.print();
+    }
+
+    function unduhFileBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -3629,15 +3896,10 @@
       renderTableUsers();
       updateSyncStatsUI();
 
-      // Sinkronisasi otomatis data terbaru dari Google Sheets saat aplikasi dibuka
+      // Sinkronisasi otomatis data Sheets saat aplikasi dimuat
       syncAllSheetsData(true);
 
-      // Auto-sync polling setiap 30 detik
-      setInterval(() => {
-        syncAllSheetsData(true);
-      }, 30000);
-
-      // Memastikan aplikasi selalu mulai di layar login yang bersih
+      // Mulai dengan dialog login
       handleLogout();
     });
   </script>
