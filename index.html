@@ -1421,6 +1421,7 @@
     const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbxT7IWkz_pHVuWC5foOg_ORlB3kDYPmZJ0dN8DhLNgzntllVlOznEA3Fe2CMk255IU/exec';
     const STORAGE_KEY = 'sim_bimbel_ba_v3_2_state';
     const SETTINGS_KEY = 'sim_bimbel_ba_global_settings';
+    const DELETED_PRESENSI_KEY = 'sim_bimbel_ba_deleted_presensi_ids';
 
     // In-memory data store
     let appData = {
@@ -1445,6 +1446,15 @@
     let globalSettings = {
       apiUrl: DEFAULT_API_URL
     };
+
+    let deletedPresensiIds = [];
+    try {
+      const savedDeleted = localStorage.getItem(DELETED_PRESENSI_KEY);
+      if (savedDeleted) deletedPresensiIds = JSON.parse(savedDeleted);
+      if (!Array.isArray(deletedPresensiIds)) deletedPresensiIds = [];
+    } catch(e) {
+      deletedPresensiIds = [];
+    }
 
     let cachedSppSearchResults = [];
     let cachedManualSearchResults = [];
@@ -1576,7 +1586,16 @@
 
         if (result && (result.status === 'success' || result.success) && result.data) {
           if (Array.isArray(result.data.siswa) && result.data.siswa.length > 0) appData.siswa = result.data.siswa;
-          if (Array.isArray(result.data.presensi)) appData.presensi = result.data.presensi;
+          
+          if (Array.isArray(result.data.presensi)) {
+            // Filter ketat: Jangan tampilkan data yang sudah pernah dihapus permanen
+            appData.presensi = result.data.presensi.filter(p => {
+              const idClean = String(p.id || '').trim().toLowerCase();
+              const compositeKey = `${String(p.nis || p.username || '').trim().toLowerCase()}_${formatTanggalIndo(p.tanggal)}_${String(p.waktu || '').trim()}`;
+              return !deletedPresensiIds.includes(idClean) && !deletedPresensiIds.includes(compositeKey);
+            });
+          }
+
           if (Array.isArray(result.data.spp)) appData.spp = result.data.spp;
           if (Array.isArray(result.data.users) && result.data.users.length > 0) appData.users = result.data.users;
 
@@ -2839,18 +2858,59 @@
       const item = (appData.presensi || []).find(p => String(p.id).trim().toLowerCase() === id.trim().toLowerCase());
       const nama = item ? item.nama : 'Siswa';
       const tgl = item ? formatTanggalIndo(item.tanggal) : '';
+      const nis = item ? (item.nis || item.username || '') : '';
+      const waktu = item ? item.waktu : '';
 
       bukaModalKonfirmasiHapus(
         'Hapus Catatan Presensi',
-        `Apakah Anda yakin ingin menghapus presensi ${nama} pada tanggal ${tgl}? Data di Google Spreadsheet juga akan terhapus.`,
+        `Apakah Anda yakin ingin menghapus presensi ${nama} pada tanggal ${tgl}? Data akan terhapus permanen dari aplikasi dan Google Spreadsheet dan tidak akan ditampilkan lagi.`,
         () => {
-          appData.presensi = (appData.presensi || []).filter(p => String(p.id).trim().toLowerCase() !== id.trim().toLowerCase());
+          // 1. Simpan tanda hapus permanen (Tombstone) ke array dan localStorage
+          const idClean = String(id).trim().toLowerCase();
+          const compositeKey = `${String(nis).trim().toLowerCase()}_${tgl}_${String(waktu).trim()}`;
+          if (idClean && !deletedPresensiIds.includes(idClean)) deletedPresensiIds.push(idClean);
+          if (compositeKey && !deletedPresensiIds.includes(compositeKey)) deletedPresensiIds.push(compositeKey);
+          try {
+            localStorage.setItem(DELETED_PRESENSI_KEY, JSON.stringify(deletedPresensiIds));
+          } catch(e) {}
+
+          // 2. Hapus secara permanen dari memori lokal dan localStorage
+          appData.presensi = (appData.presensi || []).filter(p => {
+            const matchId = String(p.id).trim().toLowerCase() === idClean;
+            const matchCompound = nis && tgl && String(p.nis || '').trim().toLowerCase() === String(nis).trim().toLowerCase() && formatTanggalIndo(p.tanggal) === tgl && String(p.waktu || '') === String(waktu || '');
+            return !matchId && !matchCompound;
+          });
           saveDataToStorage();
+
+          // 3. Render ulang antarmuka langsung agar item langsung hilang
           terapkanFilterKehadiran();
           renderLivePresensiLog();
           updateSyncStatsUI();
-          showToast(`Presensi ${nama} berhasil dihapus dari aplikasi & Sheets`, 'info');
-          sendDataToGoogleSheets({ action: 'hapusPresensi', id: id });
+          showToast(`Presensi ${nama} berhasil dihapus permanen!`, 'success');
+
+          // 4. Kirim payload penghapusan permanen ke Google Spreadsheet
+          const payload = {
+            action: 'hapusPresensi',
+            id: id,
+            nis: nis,
+            username: nis,
+            tanggal: tgl,
+            waktu: waktu
+          };
+
+          const url = globalSettings.apiUrl;
+          if (url) {
+            fetch(url, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify(payload)
+            }).then(() => {
+              addSyncLog(`Presensi [${id} - ${nama}] terhapus permanen dari Google Sheets.`, 'success');
+            }).catch(err => {
+              addSyncLog(`Gagal menghapus presensi di Sheets: ${err.message}`, 'error');
+            });
+          }
         }
       );
     }
