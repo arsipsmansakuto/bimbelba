@@ -556,7 +556,7 @@
 
         <!-- Filter Rekap Kehadiran -->
         <div class="bg-slate-50 rounded-xl p-3 sm:p-4 border border-slate-200">
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
             <div class="relative">
               <label class="block text-[11px] font-semibold text-slate-700 mb-1">Nama Siswa</label>
               <div class="relative">
@@ -567,6 +567,17 @@
                 </button>
               </div>
               <div id="dropdownLapSiswa" class="hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-xl z-30 divide-y divide-slate-100"></div>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-700 mb-1">Tanggal</label>
+              <div class="relative">
+                <input type="text" id="lapFilterTanggal" onchange="terapkanFilterKehadiran()" placeholder="Pilih tanggal..." class="w-full bg-white border border-slate-300 rounded-xl pl-8 pr-7 py-2 text-xs text-slate-800 focus:outline-none cursor-pointer" readonly>
+                <i class="fa-solid fa-calendar-day absolute left-2.5 top-2.5 text-slate-400 text-xs pointer-events-none"></i>
+                <button type="button" id="btnClearLapFilterTanggal" onclick="clearLapFilterTanggal()" class="hidden absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 text-xs">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
             </div>
 
             <div>
@@ -613,7 +624,7 @@
               </select>
             </div>
 
-            <div class="sm:col-span-2 lg:col-span-5 flex justify-end gap-2 pt-1">
+            <div class="sm:col-span-2 lg:col-span-6 flex justify-end gap-2 pt-1">
               <button type="button" onclick="terapkanFilterKehadiran()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
                 <i class="fa-solid fa-filter"></i> Terapkan
               </button>
@@ -707,7 +718,7 @@
 
         <!-- Bilah Filter Laporan SPP -->
         <div class="bg-slate-50 rounded-xl p-3 sm:p-4 border border-slate-200">
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
             <div class="relative">
               <label class="block text-[11px] font-semibold text-slate-700 mb-1">Nama Siswa / NIS</label>
               <div class="relative">
@@ -718,6 +729,17 @@
                 </button>
               </div>
               <div id="dropdownRekapSppSiswa" class="hidden absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-xl z-30 divide-y divide-slate-100"></div>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-700 mb-1">Tanggal Bayar</label>
+              <div class="relative">
+                <input type="text" id="rekapSppFilterTanggal" onchange="terapkanFilterRekapSPP()" placeholder="Pilih tanggal..." class="w-full bg-white border border-slate-300 rounded-xl pl-8 pr-7 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer" readonly>
+                <i class="fa-solid fa-calendar-day absolute left-2.5 top-2.5 text-slate-400 text-xs pointer-events-none"></i>
+                <button type="button" id="btnClearRekapSppFilterTanggal" onclick="clearRekapSppFilterTanggal()" class="hidden absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 text-xs">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
             </div>
 
             <div>
@@ -763,7 +785,7 @@
               </select>
             </div>
 
-            <div class="sm:col-span-2 lg:col-span-5 flex justify-end gap-2 pt-1">
+            <div class="sm:col-span-2 lg:col-span-6 flex justify-end gap-2 pt-1">
               <button type="button" onclick="terapkanFilterRekapSPP()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
                 <i class="fa-solid fa-filter"></i> Terapkan
               </button>
@@ -1418,7 +1440,7 @@
   </div>
 
   <script>
-    const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbxT7IWkz_pHVuWC5foOg_ORlB3kDYPmZJ0dN8DhLNgzntllVlOznEA3Fe2CMk255IU/exec';
+    const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbxAb3hioRLvLPcoO3XtsQwxv2AvxrLkpTdxg-plxKJSJM85bgLIO-hbehJty-xHfiab/exec';
     const STORAGE_KEY = 'sim_bimbel_ba_v3_2_state';
     const SETTINGS_KEY = 'sim_bimbel_ba_global_settings';
     const DELETED_PRESENSI_KEY = 'sim_bimbel_ba_deleted_presensi_ids';
@@ -2631,16 +2653,26 @@
 
     function getFilteredKehadiranList() {
       const qNama = (document.getElementById('lapFilterName')?.value || '').trim().toLowerCase();
+      const qTanggal = (document.getElementById('lapFilterTanggal')?.value || '').trim();
       const qKat = document.getElementById('lapFilterKategori')?.value || '';
       const qBulan = document.getElementById('lapFilterBulan')?.value || '';
       const qTahun = (document.getElementById('lapFilterTahun')?.value || '').trim();
       const qStatus = document.getElementById('lapFilterStatus')?.value || '';
+
+      const btnClearTgl = document.getElementById('btnClearLapFilterTanggal');
+      if (btnClearTgl) {
+        if (qTanggal) btnClearTgl.classList.remove('hidden');
+        else btnClearTgl.classList.add('hidden');
+      }
 
       const filtered = (appData.presensi || []).filter(p => {
         const pNama = String(p.nama || '').toLowerCase();
         const pNis = String(p.nis || '').toLowerCase();
         if (qNama && !pNama.includes(qNama) && !pNis.includes(qNama)) return false;
         if (qStatus && p.status !== qStatus) return false;
+
+        const pTglFormatted = formatTanggalIndo(p.tanggal);
+        if (qTanggal && pTglFormatted !== qTanggal) return false;
 
         if (qKat) {
           const siswaObj = (appData.siswa || []).find(s => 
@@ -2651,7 +2683,7 @@
           if (kategoriSiswa.toUpperCase() !== qKat.toUpperCase()) return false;
         }
 
-        const parts = formatTanggalIndo(p.tanggal).split('/');
+        const parts = pTglFormatted.split('/');
         if (parts.length === 3) {
           if (qBulan && parts[1] !== qBulan) return false;
           if (qTahun && parts[2] !== qTahun) return false;
@@ -2854,8 +2886,8 @@
     }
 
     function hapusCatatanPresensi(encodedId) {
-      const id = decodeURIComponent(encodedId);
-      const item = (appData.presensi || []).find(p => String(p.id).trim().toLowerCase() === id.trim().toLowerCase());
+      const id = decodeURIComponent(encodedId || '').trim();
+      const item = (appData.presensi || []).find(p => String(p.id || '').trim().toLowerCase() === id.toLowerCase());
       const nama = item ? item.nama : 'Siswa';
       const tgl = item ? formatTanggalIndo(item.tanggal) : '';
       const nis = item ? (item.nis || item.username || '') : '';
@@ -2863,32 +2895,33 @@
 
       bukaModalKonfirmasiHapus(
         'Hapus Catatan Presensi',
-        `Apakah Anda yakin ingin menghapus presensi ${nama} pada tanggal ${tgl}? Data akan terhapus permanen dari aplikasi dan Google Spreadsheet dan tidak akan ditampilkan lagi.`,
+        `Apakah Anda yakin ingin menghapus data presensi ${nama} (${id})? Data akan dihapus secara permanen dari tampilan dan Google Spreadsheet.`,
         () => {
-          // 1. Simpan tanda hapus permanen (Tombstone) ke array dan localStorage
-          const idClean = String(id).trim().toLowerCase();
+          const idClean = id.toLowerCase();
           const compositeKey = `${String(nis).trim().toLowerCase()}_${tgl}_${String(waktu).trim()}`;
+          
+          // 1. Simpan tanda hapus permanen agar tidak muncul lagi saat sync ulang
           if (idClean && !deletedPresensiIds.includes(idClean)) deletedPresensiIds.push(idClean);
           if (compositeKey && !deletedPresensiIds.includes(compositeKey)) deletedPresensiIds.push(compositeKey);
           try {
             localStorage.setItem(DELETED_PRESENSI_KEY, JSON.stringify(deletedPresensiIds));
           } catch(e) {}
 
-          // 2. Hapus secara permanen dari memori lokal dan localStorage
+          // 2. Hapus data dari memori aplikasi dan localStorage secara langsung
           appData.presensi = (appData.presensi || []).filter(p => {
-            const matchId = String(p.id).trim().toLowerCase() === idClean;
-            const matchCompound = nis && tgl && String(p.nis || '').trim().toLowerCase() === String(nis).trim().toLowerCase() && formatTanggalIndo(p.tanggal) === tgl && String(p.waktu || '') === String(waktu || '');
-            return !matchId && !matchCompound;
+            const currentId = String(p.id || '').trim().toLowerCase();
+            const currentComposite = `${String(p.nis || p.username || '').trim().toLowerCase()}_${formatTanggalIndo(p.tanggal)}_${String(p.waktu || '').trim()}`;
+            return currentId !== idClean && currentComposite !== compositeKey;
           });
           saveDataToStorage();
 
-          // 3. Render ulang antarmuka langsung agar item langsung hilang
+          // 3. Render ulang tab Rekap Kehadiran dan komponen terkait agar data langsung hilang dari layar
           terapkanFilterKehadiran();
           renderLivePresensiLog();
           updateSyncStatsUI();
-          showToast(`Presensi ${nama} berhasil dihapus permanen!`, 'success');
+          showToast(`Data presensi ${nama} berhasil dihapus!`, 'success');
 
-          // 4. Kirim payload penghapusan permanen ke Google Spreadsheet
+          // 4. Kirim instruksi penghapusan permanen ke Google Spreadsheet
           const payload = {
             action: 'hapusPresensi',
             id: id,
@@ -2900,16 +2933,27 @@
 
           const url = globalSettings.apiUrl;
           if (url) {
-            fetch(url, {
-              method: 'POST',
-              mode: 'no-cors',
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify(payload)
-            }).then(() => {
-              addSyncLog(`Presensi [${id} - ${nama}] terhapus permanen dari Google Sheets.`, 'success');
-            }).catch(err => {
-              addSyncLog(`Gagal menghapus presensi di Sheets: ${err.message}`, 'error');
-            });
+            const jsonPayload = JSON.stringify(payload);
+            try {
+              fetch(url, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: jsonPayload
+              }).then(() => {
+                addSyncLog(`Presensi [${id} - ${nama}] berhasil dihapus dari Google Spreadsheet.`, 'success');
+              }).catch(err => {
+                // Fallback kirim via URLSearchParams jika mode fetch biasa terkendala
+                try {
+                  const formBody = new URLSearchParams();
+                  formBody.append('data', jsonPayload);
+                  fetch(url, { method: 'POST', mode: 'no-cors', body: formBody });
+                } catch(e) {}
+                addSyncLog(`Sinkronisasi hapus presensi dikirim: ${err.message}`, 'info');
+              });
+            } catch (err) {
+              addSyncLog(`Gagal mengirim perintah hapus ke Spreadsheet: ${err.message}`, 'error');
+            }
           }
         }
       );
@@ -2917,12 +2961,23 @@
 
     function resetFilterKehadiran() {
       document.getElementById('lapFilterName').value = '';
+      clearLapFilterTanggal();
       document.getElementById('lapFilterKategori').value = '';
       document.getElementById('lapFilterBulan').value = '';
       document.getElementById('lapFilterTahun').value = '';
       document.getElementById('lapFilterStatus').value = '';
       document.getElementById('dropdownLapSiswa').classList.add('hidden');
       document.getElementById('btnClearLapFilterName').classList.add('hidden');
+      terapkanFilterKehadiran();
+    }
+
+    function clearLapFilterTanggal() {
+      const el = document.getElementById('lapFilterTanggal');
+      if (el) {
+        if (el._flatpickr) el._flatpickr.clear();
+        else el.value = '';
+      }
+      document.getElementById('btnClearLapFilterTanggal')?.classList.add('hidden');
       terapkanFilterKehadiran();
     }
 
@@ -3010,6 +3065,16 @@
       terapkanFilterRekapSPP();
     }
 
+    function clearRekapSppFilterTanggal() {
+      const el = document.getElementById('rekapSppFilterTanggal');
+      if (el) {
+        if (el._flatpickr) el._flatpickr.clear();
+        else el.value = '';
+      }
+      document.getElementById('btnClearRekapSppFilterTanggal')?.classList.add('hidden');
+      terapkanFilterRekapSPP();
+    }
+
     function resetFilterRekapSPP() {
       const elNama = document.getElementById('rekapSppFilterNama');
       const elKat = document.getElementById('rekapSppFilterKategori');
@@ -3020,6 +3085,7 @@
       const btnClear = document.getElementById('btnClearRekapSppFilterNama');
 
       if (elNama) elNama.value = '';
+      clearRekapSppFilterTanggal();
       if (elKat) elKat.value = '';
       if (elBulanKal) elBulanKal.value = '';
       if (elBulan) elBulan.value = '';
@@ -3032,10 +3098,17 @@
 
     function getFilteredRekapSPPList() {
       const qNama = (document.getElementById('rekapSppFilterNama')?.value || '').trim().toLowerCase();
+      const qTanggal = (document.getElementById('rekapSppFilterTanggal')?.value || '').trim();
       const qKat = document.getElementById('rekapSppFilterKategori')?.value || '';
       const qBulanKal = document.getElementById('rekapSppFilterBulanKalender')?.value || '';
       const qPaket = (document.getElementById('rekapSppFilterBulan')?.value || '').trim().toLowerCase();
       const qStatus = (document.getElementById('rekapSppFilterStatus')?.value || '').trim().toLowerCase();
+
+      const btnClearTgl = document.getElementById('btnClearRekapSppFilterTanggal');
+      if (btnClearTgl) {
+        if (qTanggal) btnClearTgl.classList.remove('hidden');
+        else btnClearTgl.classList.add('hidden');
+      }
 
       const filtered = (appData.spp || []).filter(s => {
         const nama = String(s.nama || '').toLowerCase();
@@ -3044,6 +3117,10 @@
         const status = String(s.status || '').toLowerCase();
 
         if (qNama && !nama.includes(qNama) && !nis.includes(qNama)) return false;
+
+        const sTglFormatted = formatTanggalIndo(s.tanggal);
+        if (qTanggal && sTglFormatted !== qTanggal) return false;
+
         if (qPaket && !paket.includes(qPaket)) return false;
         if (qStatus && status !== qStatus) return false;
 
@@ -3057,7 +3134,7 @@
         }
 
         if (qBulanKal) {
-          const parts = formatTanggalIndo(s.tanggal).split('/');
+          const parts = sTglFormatted.split('/');
           if (parts.length === 3 && parts[1] !== qBulanKal) return false;
         }
 
@@ -3446,7 +3523,7 @@
                     <tr>
                       <td class="py-2 px-3 font-semibold">${formatTanggalIndo(p.tanggal)}</td>
                       <td class="py-2 px-3 font-mono">${formatHanyaJam(p.waktu)}</td>
-                      <td class="py-2 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">${escapeHtml(p.status)}</span></td>
+                      <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">${escapeHtml(p.status)}</span></td>
                       <td class="py-2 px-3 text-slate-500">${escapeHtml(p.keterangan || '-')}</td>
                     </tr>
                   `).join('')}
@@ -3927,6 +4004,24 @@
           if (document.getElementById('presensiTanggal')) flatpickr('#presensiTanggal', cfg);
           if (document.getElementById('sppTanggal')) flatpickr('#sppTanggal', cfg);
           if (document.getElementById('editSppTanggal')) flatpickr('#editSppTanggal', cfg);
+          if (document.getElementById('lapFilterTanggal')) {
+            flatpickr('#lapFilterTanggal', {
+              dateFormat: 'd/m/Y',
+              allowInput: false,
+              onChange: function() {
+                terapkanFilterKehadiran();
+              }
+            });
+          }
+          if (document.getElementById('rekapSppFilterTanggal')) {
+            flatpickr('#rekapSppFilterTanggal', {
+              dateFormat: 'd/m/Y',
+              allowInput: false,
+              onChange: function() {
+                terapkanFilterRekapSPP();
+              }
+            });
+          }
         } catch (e) {
           console.warn('Flatpickr init warning:', e);
         }
