@@ -1610,11 +1610,19 @@
           if (Array.isArray(result.data.siswa) && result.data.siswa.length > 0) appData.siswa = result.data.siswa;
           
           if (Array.isArray(result.data.presensi)) {
-            // Filter ketat: Jangan tampilkan data yang sudah pernah dihapus permanen
+            // Filter ketat: data yang sudah dihapus permanen tidak akan dimuat kembali
             appData.presensi = result.data.presensi.filter(p => {
               const idClean = String(p.id || '').trim().toLowerCase();
-              const compositeKey = `${String(p.nis || p.username || '').trim().toLowerCase()}_${formatTanggalIndo(p.tanggal)}_${String(p.waktu || '').trim()}`;
-              return !deletedPresensiIds.includes(idClean) && !deletedPresensiIds.includes(compositeKey);
+              const pNis = String(p.nis || p.username || '').trim().toLowerCase();
+              const pTgl = formatTanggalIndo(p.tanggal);
+              const pWaktu = String(p.waktu || '').trim();
+              const compositeKey = `${pNis}_${pTgl}_${pWaktu}`;
+              const compositeRaw = `${pNis}_${pTgl.replace(/[^0-9]/g, '')}_${pWaktu.replace(/[^0-9]/g, '')}`;
+
+              if (idClean && deletedPresensiIds.includes(idClean)) return false;
+              if (deletedPresensiIds.includes(compositeKey)) return false;
+              if (deletedPresensiIds.includes(compositeRaw)) return false;
+              return true;
             });
           }
 
@@ -2898,30 +2906,41 @@
         `Apakah Anda yakin ingin menghapus data presensi ${nama} (${id})? Data akan dihapus secara permanen dari tampilan dan Google Spreadsheet.`,
         () => {
           const idClean = id.toLowerCase();
-          const compositeKey = `${String(nis).trim().toLowerCase()}_${tgl}_${String(waktu).trim()}`;
+          const nisClean = String(nis).trim().toLowerCase();
+          const tglClean = tgl.replace(/[^0-9]/g, '');
+          const waktuClean = String(waktu).replace(/[^0-9]/g, '');
+
+          const compositeKey = `${nisClean}_${tgl}_${String(waktu).trim()}`;
+          const compositeRaw = `${nisClean}_${tglClean}_${waktuClean}`;
           
-          // 1. Simpan tanda hapus permanen agar tidak muncul lagi saat sync ulang
-          if (idClean && !deletedPresensiIds.includes(idClean)) deletedPresensiIds.push(idClean);
-          if (compositeKey && !deletedPresensiIds.includes(compositeKey)) deletedPresensiIds.push(compositeKey);
+          // 1. Simpan tanda hapus permanen agar tidak muncul kembali saat sync
+          [idClean, compositeKey, compositeRaw].forEach(k => {
+            if (k && !deletedPresensiIds.includes(k)) deletedPresensiIds.push(k);
+          });
           try {
             localStorage.setItem(DELETED_PRESENSI_KEY, JSON.stringify(deletedPresensiIds));
           } catch(e) {}
 
-          // 2. Hapus data dari memori aplikasi dan localStorage secara langsung
+          // 2. Hapus seketika dari memori lokal dan localStorage
           appData.presensi = (appData.presensi || []).filter(p => {
-            const currentId = String(p.id || '').trim().toLowerCase();
-            const currentComposite = `${String(p.nis || p.username || '').trim().toLowerCase()}_${formatTanggalIndo(p.tanggal)}_${String(p.waktu || '').trim()}`;
-            return currentId !== idClean && currentComposite !== compositeKey;
+            const curId = String(p.id || '').trim().toLowerCase();
+            const curNis = String(p.nis || p.username || '').trim().toLowerCase();
+            const curTgl = formatTanggalIndo(p.tanggal);
+            const curWaktu = String(p.waktu || '').trim();
+
+            if (curId && curId === idClean) return false;
+            if (nisClean && curNis === nisClean && curTgl === tgl && curWaktu === String(waktu).trim()) return false;
+            return true;
           });
           saveDataToStorage();
 
-          // 3. Render ulang tab Rekap Kehadiran dan komponen terkait agar data langsung hilang dari layar
+          // 3. Render ulang tampilan seketika
           terapkanFilterKehadiran();
           renderLivePresensiLog();
           updateSyncStatsUI();
-          showToast(`Data presensi ${nama} berhasil dihapus!`, 'success');
+          showToast(`Data presensi ${nama} berhasil dihapus permanen!`, 'success');
 
-          // 4. Kirim instruksi penghapusan permanen ke Google Spreadsheet
+          // 4. Kirim instruksi penghapusan ke doPost Spreadsheet Apps Script
           const payload = {
             action: 'hapusPresensi',
             id: id,
@@ -2934,25 +2953,34 @@
           const url = globalSettings.apiUrl;
           if (url) {
             const jsonPayload = JSON.stringify(payload);
-            try {
+            let beaconSent = false;
+            if (navigator.sendBeacon) {
+              try {
+                const blobPayload = new Blob([jsonPayload], { type: 'text/plain;charset=utf-8' });
+                beaconSent = navigator.sendBeacon(url, blobPayload);
+              } catch (e) {
+                beaconSent = false;
+              }
+            }
+
+            if (!beaconSent) {
               fetch(url, {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: jsonPayload
               }).then(() => {
-                addSyncLog(`Presensi [${id} - ${nama}] berhasil dihapus dari Google Spreadsheet.`, 'success');
+                addSyncLog(`Presensi [${id} - ${nama}] dihapus dari Google Spreadsheet.`, 'success');
               }).catch(err => {
-                // Fallback kirim via URLSearchParams jika mode fetch biasa terkendala
                 try {
                   const formBody = new URLSearchParams();
                   formBody.append('data', jsonPayload);
                   fetch(url, { method: 'POST', mode: 'no-cors', body: formBody });
                 } catch(e) {}
-                addSyncLog(`Sinkronisasi hapus presensi dikirim: ${err.message}`, 'info');
+                addSyncLog(`Perintah hapus presensi terkirim: ${err.message}`, 'info');
               });
-            } catch (err) {
-              addSyncLog(`Gagal mengirim perintah hapus ke Spreadsheet: ${err.message}`, 'error');
+            } else {
+              addSyncLog(`Presensi [${id} - ${nama}] dihapus dari Google Spreadsheet.`, 'success');
             }
           }
         }
